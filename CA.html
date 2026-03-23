@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NSE Institutional Scanner</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#090909;--bg2:#0f0f0f;--bg3:#141414;--bg4:#1a1a1a;
+  --border:#1e1e1e;--border2:#272727;--border3:#303030;
+  --text:#b8b8b8;--text-hi:#e2e2e2;--text-lo:#555;--text-med:#888;
+  --green:#00c853;--green-hi:#69ff47;--green-dim:#0a2a0a;
+  --amber:#ffab00;--red:#ff1744;--orange:#ff6d00;--row-hover:#111;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'JetBrains Mono',monospace;background:var(--bg);color:var(--text);font-size:11px;display:flex;flex-direction:column}
+
+/* ── HEADER ─── */
+#hdr{background:var(--bg2);border-bottom:1px solid var(--border3);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.hdr-brand{display:flex;align-items:center;gap:12px}
+.hdr-dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hdr-title{font-size:13px;font-weight:700;color:var(--amber);letter-spacing:2.5px;text-transform:uppercase}
+.hdr-sub{font-size:9px;color:var(--text-lo);letter-spacing:1px;margin-top:2px}
+.hdr-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.badge{background:var(--bg4);border:1px solid var(--border2);padding:3px 9px;font-size:9px;letter-spacing:1px;color:var(--text-med);text-transform:uppercase}
+.badge.live{color:var(--green);border-color:#1a3a1a}
+.badge.warn{color:var(--amber);border-color:#2a1e00}
+.badge.err{color:var(--red);border-color:#2a0000}
+
+/* ── PROXY BAR ─── */
+#proxy-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:6px 18px;display:flex;gap:6px;align-items:center;flex-shrink:0;flex-wrap:wrap}
+.px-label{font-size:9px;color:var(--text-lo);letter-spacing:1px;text-transform:uppercase;margin-right:4px}
+.px-pill{font-size:9px;padding:2px 8px;border-radius:3px;background:var(--bg4);border:1px solid var(--border2);color:var(--text-lo);letter-spacing:.5px}
+.px-pill.testing{color:var(--amber);border-color:#2a1e00;animation:blink .8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.px-pill.ok{color:var(--green);border-color:#1a3a1a}
+.px-pill.fail{color:var(--red);border-color:#2a0000;opacity:.5}
+.px-pill.active{color:var(--green);border-color:var(--green);background:var(--green-dim);font-weight:700}
+
+/* ── TABS ─── */
+.tab-row{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.tab-row::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;padding:9px 16px;background:none;border:none;color:var(--text-lo);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
+
+/* ── CONTROLS ─── */
+#ctrl{background:var(--bg2);border-bottom:1px solid var(--border2);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
+.ctrl-group{display:flex;flex-direction:column;gap:4px}
+.ctrl-label{font-size:9px;color:var(--text-lo);letter-spacing:1.5px;text-transform:uppercase}
+select,input[type=text]{background:var(--bg4);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 9px;outline:none;-webkit-appearance:none;appearance:none}
+select:focus,input:focus{border-color:var(--green)}
+select{padding-right:22px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
+.vdiv{width:1px;height:34px;background:var(--border2);align-self:center}
+.btn{padding:6px 16px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px}
+.btn-scan{background:var(--green);color:#000}
+.btn-scan:hover{background:var(--green-hi)}
+.btn-scan:disabled{background:#0f2a0f;color:#1a4a1a;cursor:not-allowed}
+.btn-stop{background:var(--red);color:#fff}
+.btn-stop:hover{background:#ff4569}
+.btn-csv{background:var(--bg4);border:1px solid var(--border2);color:var(--amber)}
+.btn-csv:hover{border-color:var(--amber)}
+.btn-sec{background:var(--bg4);border:1px solid var(--border2);color:var(--text-med)}
+.btn-sec:hover{border-color:var(--border3);color:var(--text)}
+
+/* ── CUSTOM INPUT ─── */
+#custom-row{background:var(--bg2);border-bottom:1px solid var(--border);padding:7px 18px;display:none;align-items:center;gap:10px;flex-shrink:0}
+#custom-row.show{display:flex}
+#custom-input{flex:1;max-width:640px;font-size:11px;padding:6px 10px}
+.hint{font-size:9px;color:var(--text-lo)}
+
+/* ── PROGRESS ─── */
+#prog-wrap{background:var(--bg2);border-bottom:1px solid var(--border);padding:7px 18px;display:none;flex-shrink:0}
+#prog-wrap.show{display:block}
+.prog-hd{display:flex;justify-content:space-between;font-size:9px;color:var(--text-lo);margin-bottom:4px;letter-spacing:.5px}
+.prog-track{background:#111;height:2px;width:100%}
+.prog-fill{background:linear-gradient(90deg,var(--green),#0099ff);height:2px;width:0%;transition:width .3s;box-shadow:0 0 4px var(--green)}
+
+/* ── STATS ─── */
+#stats{background:var(--bg);border-bottom:1px solid var(--border);padding:5px 18px;display:flex;gap:22px;flex-shrink:0;font-size:9px;letter-spacing:.5px;align-items:center}
+.stat{color:var(--text-lo);display:flex;gap:5px}
+.stat .v{color:var(--text-hi)}.stat .v.g{color:var(--green)}.stat .v.a{color:var(--amber)}.stat .v.r{color:var(--red)}
+#stats .right{margin-left:auto}
+
+/* ── TABLE ─── */
+#tbl-wrap{flex:1;overflow:auto}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+thead th{background:var(--bg2);position:sticky;top:0;z-index:10;padding:8px 11px;font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--amber);border-bottom:1px solid var(--border3);text-align:left;cursor:pointer;white-space:nowrap;user-select:none}
+thead th:hover{color:#ffd740}
+thead th.s-asc::after{content:' ▲';color:var(--green);font-size:8px}
+thead th.s-desc::after{content:' ▼';color:var(--green);font-size:8px}
+.c-rk{width:38px}.c-sym{width:130px}.c-sc{width:70px}.c-rs{width:100px}.c-rsi{width:72px}
+.c-lo{width:110px}.c-hi{width:110px}.c-200{width:88px}.c-50{width:88px}.c-px{width:88px}.c-br{width:72px}
+tbody tr{border-bottom:1px solid #131313;transition:background .08s;cursor:default}
+tbody tr:hover{background:var(--row-hover)}
+tbody td{padding:6px 11px;font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc{display:inline-block;padding:1px 7px;font-weight:700;font-size:11px;min-width:28px;text-align:center}
+.sc8{background:#0b2d00;color:#69ff47;border:1px solid #1e5500}
+.sc6{background:#072500;color:#00c853;border:1px solid #0d4000}
+.sc4{background:#2d1500;color:#ff6d00;border:1px solid #4a2800}
+.sc2{background:#200000;color:#ff1744;border:1px solid #3a0000}
+.tag{display:inline-block;padding:1px 6px;font-size:9px;font-weight:600}
+.ty{background:#0a1a0a;color:var(--green);border:1px solid #163016}
+.tn{background:#1a0a0a;color:var(--red);border:1px solid #301616}
+.tna{background:#141414;color:var(--text-lo);border:1px solid #222}
+.vp{color:var(--green)}.vn{color:var(--red)}.vn2{color:var(--orange)}.vm{color:var(--text-med)}
+.msg-row td{text-align:center;padding:50px;color:var(--text-lo);line-height:1.8}
+.msg-row .big{font-size:13px;color:var(--text-med);margin-bottom:8px}
+
+/* ── SCORE TOOLTIP ─── */
+.tip-wrap{position:relative}
+.tip-wrap:hover .tip{display:block}
+.tip{display:none;position:absolute;right:0;top:100%;z-index:200;background:#111;border:1px solid var(--border3);padding:8px 12px;min-width:230px;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.9);pointer-events:none}
+.tip-row{display:flex;justify-content:space-between;gap:20px;padding:2px 0;font-size:9px;border-bottom:1px solid #1a1a1a}
+.tip-row:last-child{border:none}
+.tip-lbl{color:var(--text-lo)}
+.tip-pass{color:var(--green)}.tip-fail{color:var(--red)}.tip-na{color:var(--text-lo)}
+
+/* ── TOAST ─── */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border3);padding:10px 18px;font-size:11px;color:var(--text);z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:320px;text-align:center;border-radius:3px}
+#toast.show{opacity:1}
+
+#ftr{background:var(--bg2);border-top:1px solid var(--border);padding:5px 18px;display:flex;justify-content:space-between;font-size:9px;color:var(--text-lo);letter-spacing:.5px;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-dot"></div>
+    <div>
+      <div class="hdr-title">NSE Institutional Scanner</div>
+      <div class="hdr-sub">8-FACTOR MODEL · RS RATIO DOUBLE-WEIGHTED · YAHOO FINANCE</div>
+    </div>
+  </div>
+  <div class="hdr-meta">
+    <div class="badge" id="badge-time">——:——:——</div>
+    <div class="badge" id="badge-scan">IDLE</div>
+  </div>
+</div>
+
+<!-- PROXY STATUS BAR -->
+<div id="proxy-bar">
+  <span class="px-label">PROXY</span>
+  <span class="px-pill testing" id="px-0">corsproxy.io</span>
+  <span class="px-pill" id="px-1">allorigins</span>
+  <span class="px-pill" id="px-2">codetabs</span>
+  <span class="px-pill" id="px-3">htmldriven</span>
+  <span class="px-pill" id="px-4">thingproxy</span>
+  <span class="px-pill" id="px-5">cors.sh</span>
+</div>
+
+<!-- INDEX TABS -->
+<div class="tab-row" id="idx-tabs">
+  <button class="tab active" data-idx="n50">NIFTY 50</button>
+  <button class="tab" data-idx="n100">NIFTY 100</button>
+  <button class="tab" data-idx="n200">NIFTY 200</button>
+  <button class="tab" data-idx="n500">NIFTY 500</button>
+  <button class="tab" data-idx="custom">CUSTOM</button>
+</div>
+
+<!-- CONTROLS -->
+<div id="ctrl">
+  <div class="ctrl-group">
+    <div class="ctrl-label">Min Score</div>
+    <select id="sel-min">
+      <option value="0">All (0+)</option>
+      <option value="4">4+</option>
+      <option value="5">5+</option>
+      <option value="6">6+</option>
+      <option value="7" selected>7+</option>
+      <option value="8">8 only</option>
+    </select>
+  </div>
+  <div class="vdiv"></div>
+  <button class="btn btn-scan" id="btn-scan" disabled>▶ SCAN</button>
+  <button class="btn btn-stop" id="btn-stop" style="display:none">■ STOP</button>
+  <button class="btn btn-csv" id="btn-csv">⬇ CSV</button>
+  <button class="btn btn-sec" id="btn-clear">✕ CLEAR</button>
+</div>
+
+<!-- CUSTOM -->
+<div id="custom-row">
+  <div class="ctrl-label">Symbols</div>
+  <input type="text" id="custom-input" placeholder="RELIANCE, TCS, INFY, M&M  (NSE codes, comma-separated)" />
+  <span class="hint">No .NS suffix · M&amp;M, BAJAJ-AUTO supported</span>
+</div>
+
+<!-- PROGRESS -->
+<div id="prog-wrap">
+  <div class="prog-hd">
+    <span id="prog-txt">Initialising…</span>
+    <span id="prog-eta" style="color:var(--text-med)"></span>
+    <span id="prog-pct">0%</span>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+</div>
+
+<!-- STATS -->
+<div id="stats">
+  <div class="stat">UNIVERSE <b class="v" id="st-total">—</b></div>
+  <div class="stat">SCANNED <b class="v" id="st-done">—</b></div>
+  <div class="stat">SCORE 8 <b class="v g" id="st-s8">—</b></div>
+  <div class="stat">SCORE 6+ <b class="v a" id="st-s6">—</b></div>
+  <div class="stat">ERRORS <b class="v r" id="st-err">—</b></div>
+  <div class="stat">SHOWN <b class="v" id="st-shown">—</b></div>
+  <div class="stat right">SORT <b class="v a" id="st-sort">SCORE ↓</b></div>
+</div>
+
+<!-- TABLE -->
+<div id="tbl-wrap">
+<table>
+  <thead>
+    <tr>
+      <th class="c-rk" data-col="rank">#</th>
+      <th class="c-sym" data-col="symbol">SYMBOL</th>
+      <th class="c-sc s-desc" data-col="score">SCORE</th>
+      <th class="c-rs" data-col="rsRatio">RS RATIO</th>
+      <th class="c-rsi" data-col="rsi">RSI 14</th>
+      <th class="c-lo" data-col="fromLow">% 52W LOW</th>
+      <th class="c-hi" data-col="fromHigh">% 52W HIGH</th>
+      <th class="c-200" data-col="sma200w">200W SMA</th>
+      <th class="c-50" data-col="sma50d">50D SMA</th>
+      <th class="c-px" data-col="price">PRICE ₹</th>
+      <th class="c-br" data-col="breakout8">BRKOUT</th>
+    </tr>
+  </thead>
+  <tbody id="tbl-body">
+    <tr class="msg-row">
+      <td colspan="11">
+        <div class="big">NSE Institutional Scanner</div>
+        Detecting best proxy… then press SCAN<br>
+        <span style="color:#333;font-size:9px;margin-top:6px;display:block">NIFTY 50 · NIFTY 100 · NIFTY 200 · NIFTY 500 · CUSTOM LIST</span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div id="toast"></div>
+
+<div id="ftr">
+  <div>NSE INSTITUTIONAL SCANNER · 8-FACTOR MODEL · Data: Yahoo Finance · For informational use only</div>
+  <div id="ftr-r">—</div>
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════
+//  STOCK UNIVERSES
+// ═══════════════════════════════════════════════════════
+const N50 = ["RELIANCE","TCS","HDFCBANK","INFY","ICICIBANK","HINDUNILVR","ITC","SBIN","BHARTIARTL","KOTAKBANK","LT","AXISBANK","ASIANPAINT","MARUTI","TITAN","BAJFINANCE","WIPRO","ULTRACEMCO","ONGC","NTPC","POWERGRID","SUNPHARMA","TECHM","INDUSINDBK","NESTLEIND","BAJAJFINSV","HCLTECH","DIVISLAB","ADANIENT","DRREDDY","CIPLA","COALINDIA","TATAMOTORS","JSWSTEEL","TATASTEEL","HINDALCO","BPCL","EICHERMOT","GRASIM","APOLLOHOSP","SBILIFE","HDFCLIFE","BRITANNIA","HEROMOTOCO","BAJAJ-AUTO","M&M","TATACONSUM","ADANIPORTS","TRENT","SHRIRAMFIN"];
+const NEXT50 = ["ABB","ADANIGREEN","ADANIPOWER","AMBUJACEM","BAJAJHLDNG","BANKBARODA","BEL","BERGEPAINT","BOSCHLTD","CANBK","CHOLAFIN","COLPAL","CUMMINSIND","DLF","GAIL","GODREJCP","GODREJPROP","HAL","HAVELLS","HDFCAMC","ICICIGI","ICICIPRULI","INDHOTEL","IOC","IRCTC","JIOFIN","LODHA","LUPIN","MARICO","MOTHERSON","MUTHOOTFIN","NYKAA","OFSS","PAYTM","PFC","PERSISTENT","PIDILITIND","POLYCAB","RECLTD","SBICARD","SIEMENS","TATAPOWER","TORNTPHARM","TVSMOTOR","UNIONBANK","AUROPHARMA","VEDL","ZOMATO","ZYDUSLIFE","UBL"];
+const N200X = ["ACC","ALKEM","APOLLOTYRE","ASHOKLEY","ASTRAL","AUBANK","BANDHANBNK","BHEL","BIOCON","BSE","CDSL","CGPOWER","COFORGE","CROMPTON","DALBHARAT","DEEPAKNTR","DEEPAKFERT","DIXON","DMART","EMAMILTD","ESCORTS","FEDERALBNK","GLENMARK","GMRINFRA","GUJGASLTD","HINDCOPPER","HINDPETRO","HUDCO","IDFCFIRSTB","INDUSTOWER","IRFC","JKCEMENT","JUBLFOOD","KPITTECH","LALPATHLAB","LTF","LTIM","MCX","MFSL","MPHASIS","NAUKRI","NHPC","OBEROIRLTY","PAGEIND","PETRONET","PHOENIXLTD","PNB","POLICYBZR","PRESTIGE","REDINGTON","SAIL","SJVN","STARHEALTH","SUNDARMFIN","SUPREMEIND","SYNGENE","TATACOMM","TATAELXSI","TATAINVEST","TIINDIA","TORNTPOWER","VBL","VOLTAS","WHIRLPOOL","YESBANK","INDIANB","RITES","RAYMOND","NATIONALUM","CONCOR","MCDOWELL-N","TATATECH","ABCAPITAL","SUNTV","KALYANKJIL","JSWENERGY","NLCINDIA","KAYNES","AMBER","COCHINSHIP","BRIGADE","CENTURYTEX","BATAINDIA","RELAXO","HAPPSTMNDS","IPCALAB","CRISIL","CYIENT","NAVINFLUOR","TATACHEM","KARURVYSYA","ERIS","LICI","UNITDSPR","UTIAMC","MOTILALOFS","IIFLWAM","NAM-INDIA","360ONE","NUVAMA"];
+const N500X = ["3MINDIA","AARTIDRUGS","AARTIIND","AFFLE","AJANTPHARM","AKZOINDIA","ALEMBICLTD","ALKYLAMINE","AMARAJABAT","ANGELONE","APARINDS","APTUS","ASAHIINDIA","ASTERDM","AVANTIFEED","BALRAMCHIN","BALAMINES","BASF","BAYERCROP","BHARATFORG","BLUESTAR","BSOFT","CEATLTD","CHEMPLASTS","CMSINFO","DATAPATTNS","DCMSHRIRAM","DHANUKA","ELGI","EPL","EQUITASBNK","EXIDEIND","FDC","FINCABLES","FIVESTAR","FLUOROCHEM","GABRIEL","GALAXYSURF","GLAND","GLAXO","GRANULES","GRAPHITE","GREENPANEL","GRINDWELL","GRSE","GSPL","GULFOILLUB","HBLPOWER","HFCL","HIKAL","HONAUT","IBREALEST","IFBIND","INDIAMART","INTELLECT","JBCHEPHARM","JKLAKSHMI","JKPAPER","JUBLINGREA","KANSAINER","KIMS","KIRLOSBROS","KNRCON","KPIL","LATENTVIEW","LGBBROSLTD","LINDEINDIA","LTTS","LUXIND","MAHINDCIE","MAPMYINDIA","MASTEK","MAXHEALTH","MEDANTA","METROPOLIS","MIDHANI","MOIL","MRFLTD","NATCOPHARM","NESCO","NILKAMAL","NOCIL","OLECTRA","ORCHPHARMA","PATELENG","PCBL","POLYMED","PRAJIND","PRINCEPIPE","PVRINOX","QUESS","RADICO","RAILTEL","RAIN","RVNL","ROUTE","SAFARI","SANSERA","SCHAEFFLER","SHAKTIPUMP","SKIPPER","SKFINDIA","SOBHA","SPARC","STLTECH","SUBROS","SUDARSCHEM","SUNDRMFAST","SUPRAJIT","SUZLON","SWANENERGY","SYMPHONY","TANLA","TEJASNET","THYROCARE","TITAGARH","TTKPRESTIG","TVSHLTD","UJJIVAN","UJJIVANSFB","UNICHEMLAB","VAIBHAVGBL","VINATIORGA","VMART","VRL","WELCORP","WELSPUNIND","WESTLIFE","WOCKPHARMA","ZENSARTECH","ZYDUSWELL","GOCOLORS","EIDPARRY","ATUL","DEEPAKIND","JYOTHYLAB","UFLEX","CSBBANK","CENTURYPLY","VSTIND","GLOBALHEALT","MEDPLUS","BIKAJI","CAMPUS","DELHIVERY","MTAR","CRAFTSMAN","AETHER","UTKARSH","NAZARA","CAMS","DODLA","SHOPERSTOP","NUVOCO","IREDA","INDIGRID","POWERMECH","AAVAS","HOMEFIRST","CREDITACC","POONAWALLA","GEOJITFSL","TRIDENT","SOLARINDS","BAJAJELEC","VGUARD","NIACL","PGHH","DOMS","APLAPOLLO","MASFIN","VARROC","SEQUENT","SOLARA"];
+
+function getUniverse(idx){
+  const pool=[],seen=new Set();
+  const add=arr=>{for(const s of arr){if(!seen.has(s)){seen.add(s);pool.push(s)}}};
+  if(idx==='n50') add(N50);
+  else if(idx==='n100'){add(N50);add(NEXT50);}
+  else if(idx==='n200'){add(N50);add(NEXT50);add(N200X);}
+  else if(idx==='n500'){add(N50);add(NEXT50);add(N200X);add(N500X);}
+  return pool;
+}
+
+// ═══════════════════════════════════════════════════════
+//  PROXY CHAIN  — same 6 as confirmed working
+// ═══════════════════════════════════════════════════════
+const PROXIES = [
+  {name:'corsproxy.io', wrap:u=>`https://corsproxy.io/?${encodeURIComponent(u)}`},
+  {name:'allorigins',   wrap:u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`},
+  {name:'codetabs',     wrap:u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`},
+  {name:'htmldriven',   wrap:u=>`https://htmldriven.com/cors?url=${encodeURIComponent(u)}`},
+  {name:'thingproxy',   wrap:u=>`https://thingproxy.freeboard.io/fetch/${u}`},
+  {name:'cors.sh',      wrap:u=>`https://cors.sh/${u}`},
+];
+let activeProxyIdx = -1;
+let proxyReady     = false;
+
+// ── Upfront proxy detection (like DASH scanner) ──────
+// Tests each proxy in order with a real Yahoo Finance call.
+// Marks each pill ok/fail. Enables SCAN button when first ok found.
+async function detectProxy(){
+  const testUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/RELIANCE.NS?interval=1wk&range=1mo';
+  setPill(-1,'testing'); // show first pill as testing
+
+  for(let i=0;i<PROXIES.length;i++){
+    setPill(i,'testing');
+    try{
+      const url = PROXIES[i].wrap(testUrl);
+      const ctrl = new AbortController();
+      const tid  = setTimeout(()=>ctrl.abort(),8000);
+      const res  = await fetch(url,{signal:ctrl.signal});
+      clearTimeout(tid);
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data = await res.json();
+      if(!data?.chart?.result?.[0]) throw new Error('No chart result');
+      // SUCCESS
+      PROXIES[i].status='ok';
+      setPill(i,'active');
+      activeProxyIdx=i;
+      proxyReady=true;
+      document.getElementById('btn-scan').disabled=false;
+      toast('✅ Connected via '+PROXIES[i].name);
+      setBadge('badge-scan','READY','live');
+      // Mark remaining as untested
+      for(let j=i+1;j<PROXIES.length;j++) setPill(j,'');
+      return;
+    }catch(e){
+      PROXIES[i].status='fail';
+      setPill(i,'fail');
+    }
+  }
+  // All failed
+  setBadge('badge-scan','NO PROXY','err');
+  toast('⚠️ All proxies failed. Try a VPN or different network.');
+  setBody('<tr class="msg-row"><td colspan="11"><div class="big" style="color:var(--red)">All proxies failed</div>Try a VPN, or run the GitHub Actions version instead.</td></tr>');
+}
+
+function setPill(idx,state){
+  if(idx<0) return;
+  const el=document.getElementById('px-'+idx);
+  if(!el) return;
+  el.className='px-pill'+(state?' '+state:'');
+}
+
+// ── Fetch via active proxy only (not fallback chain during scan) ──
+async function fetchJSON(rawUrl){
+  if(!proxyReady) throw new Error('No proxy ready');
+  const url=PROXIES[activeProxyIdx].wrap(rawUrl);
+  const ctrl=new AbortController();
+  const tid=setTimeout(()=>ctrl.abort(),15000);
+  const res=await fetch(url,{signal:ctrl.signal});
+  clearTimeout(tid);
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  const data=await res.json();
+  if(data?.chart?.error) throw new Error(data.chart.error.description||'Chart error');
+  if(!data?.chart?.result?.[0]) throw new Error('No data');
+  return data.chart.result[0];
+}
+
+function yfUrl(sym,interval,range){
+  const s=encodeURIComponent(sym.replace(/&/g,'%26')+'.NS');
+  return `https://query1.finance.yahoo.com/v8/finance/chart/${s}?interval=${interval}&range=${range}`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  PARSE CHART RESULT
+// ═══════════════════════════════════════════════════════
+function parseChart(result){
+  const q=result.indicators.quote[0];
+  const adj=(result.indicators.adjclose||[])[0]?.adjclose;
+  const rawC=adj||q.close;
+  const c=[],h=[],l=[];
+  for(let i=0;i<rawC.length;i++){
+    if(rawC[i]!=null && q.high[i]!=null && q.low[i]!=null){
+      c.push(rawC[i]); h.push(q.high[i]); l.push(q.low[i]);
+    }
+  }
+  return{close:c,high:h,low:l};
+}
+
+// ═══════════════════════════════════════════════════════
+//  INDICATORS
+// ═══════════════════════════════════════════════════════
+function SMA(arr,n){
+  if(!arr||arr.length<n) return null;
+  return arr.slice(-n).reduce((a,b)=>a+b,0)/n;
+}
+
+function RSI(closes,period=14){
+  if(!closes||closes.length<period+2) return null;
+  const start=closes.length-period-1;
+  let gains=0,losses=0;
+  for(let i=start;i<start+period;i++){
+    const d=closes[i+1]-closes[i];
+    d>0?gains+=d:losses-=d;
+  }
+  let ag=gains/period,al=losses/period;
+  const last=closes[closes.length-1]-closes[closes.length-2];
+  ag=(ag*(period-1)+Math.max(last,0))/period;
+  al=(al*(period-1)+Math.max(-last,0))/period;
+  if(al===0) return 100;
+  return 100-(100/(1+ag/al));
+}
+
+// ═══════════════════════════════════════════════════════
+//  8-FACTOR SCORING  (max 8 pts)
+// ═══════════════════════════════════════════════════════
+function scoreStock(wk,dy,niftyWk){
+  const r={};
+  let sc=0;
+  const wC=wk.close,wH=wk.high,wL=wk.low,n=wC.length;
+  const dC=dy.close;
+
+  // F1 — Close > 200W SMA (1 pt)
+  const s200=SMA(wC,200);
+  r.sma200w=s200!=null?wC[n-1]>s200:null;
+  if(r.sma200w===true) sc++;
+
+  // F2 — 30%+ above 52W low (1 pt)
+  const bk=Math.min(n,52);
+  const lo52=Math.min(...wL.slice(n-bk));
+  r.fromLow=lo52>0?((wC[n-1]-lo52)/lo52)*100:null;
+  if(r.fromLow!==null&&r.fromLow>30) sc++;
+
+  // F3 — 15%+ pullback from 52W high (1 pt)
+  const hi52=Math.max(...wH.slice(n-bk));
+  r.fromHigh=hi52>0?((wC[n-1]-hi52)/hi52)*100:null;
+  if(r.fromHigh!==null&&r.fromHigh<-15) sc++;
+
+  // F4 — 8W breakout: close > highest high of prior 8 weeks (1 pt)
+  r.breakout8=false;
+  if(n>=9){
+    const h8=Math.max(...wH.slice(n-9,n-1));
+    r.breakout8=wC[n-1]>h8;
+    if(r.breakout8) sc++;
+  }
+
+  // F5 — Higher high AND higher low vs prior week (1 pt)
+  r.hhhl=n>=2&&wH[n-1]>wH[n-2]&&wL[n-1]>wL[n-2];
+  if(r.hhhl) sc++;
+
+  // F6 — RS ratio (stock/NIFTY) > 10W SMA of RS — DOUBLE WEIGHT (2 pts)
+  r.rsRatio=null;r.rsPass=false;
+  if(niftyWk&&niftyWk.close.length>=12){
+    const nC=niftyWk.close,nn=nC.length;
+    const len=Math.min(n,nn,15);
+    if(len>=10){
+      const rs=[];
+      for(let i=0;i<len;i++) rs.push(wC[n-len+i]/nC[nn-len+i]);
+      const rsSMA=SMA(rs,10);
+      r.rsRatio=wC[n-1]/nC[nn-1];
+      r.rsPass=rsSMA!==null&&r.rsRatio>rsSMA;
+      if(r.rsPass) sc+=2;
+    }
+  }
+
+  // F7 — Close > 50D SMA (1 pt)
+  const s50=SMA(dC,50);
+  r.sma50d=s50!=null?dC[dC.length-1]>s50:null;
+  if(r.sma50d===true) sc++;
+
+  // F8 — RSI(14) > 55 (1 pt)
+  r.rsi=RSI(dC,14);
+  if(r.rsi!==null&&r.rsi>55) sc++;
+
+  r.price=wC[n-1]; r.score=sc;
+  return r;
+}
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let results=[],scanTotal=0,scanDone=0,scanErrors=0;
+let scanStop=false,niftyCache=null,scanStart=0;
+let sortCol='score',sortDir='desc';
+
+// ═══════════════════════════════════════════════════════
+//  SCAN ORCHESTRATOR
+//  Concurrency = 3, delay = 150ms — same pattern as DASH scanner
+// ═══════════════════════════════════════════════════════
+async function startScan(){
+  if(!proxyReady){toast('Proxy not ready — please wait.');return;}
+  const tab=document.querySelector('.tab.active');
+  const idx=tab.dataset.idx;
+  let stocks=[];
+
+  if(idx==='custom'){
+    const raw=document.getElementById('custom-input').value;
+    stocks=raw.split(/[,\n\r]+/).map(s=>s.trim().toUpperCase()).filter(Boolean);
+    if(!stocks.length){alert('Enter at least one NSE symbol.');return;}
+  } else {
+    stocks=getUniverse(idx);
+  }
+
+  results=[];scanDone=0;scanErrors=0;scanStop=false;
+  scanTotal=stocks.length;niftyCache=null;scanStart=Date.now();
+
+  setScanUI(true);
+  setBody('<tr class="msg-row"><td colspan="11">⟳ Fetching NIFTY baseline…</td></tr>');
+  updateStats();
+
+  // Fetch NIFTY weekly once
+  try{
+    const nr=await fetchJSON('https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEI?interval=1wk&range=5y');
+    niftyCache=parseChart(nr);
+  }catch(e){
+    console.warn('NIFTY fetch failed:',e.message);
+    toast('NIFTY baseline failed — RS scores will be N/A');
+  }
+
+  const CONCURRENCY=3;
+  const DELAY_MS=150;  // same as DASH scanner
+
+  async function processOne(sym){
+    if(scanStop) return;
+    try{
+      const [wkR,dyR]=await Promise.all([
+        fetchJSON(yfUrl(sym,'1wk','5y')),
+        fetchJSON(yfUrl(sym,'1d','6mo')),
+      ]);
+      const wk=parseChart(wkR),dy=parseChart(dyR);
+      if(wk.close.length<15) throw new Error(`Only ${wk.close.length} weekly bars`);
+      if(dy.close.length<20) throw new Error(`Only ${dy.close.length} daily bars`);
+      results.push({symbol:sym,...scoreStock(wk,dy,niftyCache)});
+    }catch(e){
+      scanErrors++;
+      results.push({symbol:sym,score:-1,_err:true,_errmsg:e.message});
+    }
+    scanDone++;
+    updateProgress();
+    updateStats();
+    // Live render every 5 stocks
+    if(scanDone%5===0||scanDone===scanTotal) renderTable();
+  }
+
+  for(let i=0;i<stocks.length;i+=CONCURRENCY){
+    if(scanStop) break;
+    await Promise.all(stocks.slice(i,i+CONCURRENCY).map(s=>processOne(s)));
+    if(i+CONCURRENCY<stocks.length) await sleep(DELAY_MS);
+  }
+
+  setScanUI(false);
+  renderTable();
+  updateStats();
+  setBadge('badge-scan',scanStop?'STOPPED':'COMPLETE','live');
+  toast(scanStop?'Scan stopped':'✅ Scan complete — '+results.filter(r=>!r._err).length+' stocks scored');
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ═══════════════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════════════
+function setScanUI(s){
+  document.getElementById('btn-scan').disabled=s;
+  document.getElementById('btn-scan').style.display=s?'none':'inline-flex';
+  document.getElementById('btn-stop').style.display=s?'inline-flex':'none';
+  document.getElementById('prog-wrap').classList.toggle('show',s);
+  setBadge('badge-scan',s?'SCANNING…':'READY','live');
+}
+
+function updateProgress(){
+  const pct=Math.round(scanDone/scanTotal*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-txt').textContent=`Scanning ${scanDone} / ${scanTotal} · ${scanErrors} errors`;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  if(scanDone>3){
+    const elapsed=(Date.now()-scanStart)/1000,rate=scanDone/elapsed;
+    const rem=Math.max(0,(scanTotal-scanDone)/rate);
+    const m=Math.floor(rem/60),s=Math.round(rem%60);
+    document.getElementById('prog-eta').textContent=`ETA ${m>0?m+'m ':''}${s}s`;
+  }
+}
+
+function updateStats(){
+  const minSc=parseInt(document.getElementById('sel-min').value);
+  const valid=results.filter(r=>!r._err);
+  document.getElementById('st-total').textContent=scanTotal||'—';
+  document.getElementById('st-done').textContent=scanDone||'—';
+  document.getElementById('st-s8').textContent=valid.filter(r=>r.score>=8).length;
+  document.getElementById('st-s6').textContent=valid.filter(r=>r.score>=6).length;
+  document.getElementById('st-err').textContent=scanErrors;
+  document.getElementById('st-shown').textContent=valid.filter(r=>r.score>=minSc).length;
+}
+
+function setBadge(id,txt,cls){
+  const el=document.getElementById(id);
+  el.textContent=txt;el.className='badge'+(cls?' '+cls:'');
+}
+function setBody(h){document.getElementById('tbl-body').innerHTML=h;}
+function toast(msg,ms=3500){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),ms);
+}
+
+// ═══════════════════════════════════════════════════════
+//  TABLE RENDERING
+// ═══════════════════════════════════════════════════════
+const scClass=s=>s>=8?'sc8':s>=6?'sc6':s>=4?'sc4':'sc2';
+const tag=v=>v===null||v===undefined?'<span class="tag tna">N/A</span>':v?'<span class="tag ty">✓</span>':'<span class="tag tn">✗</span>';
+const pctFmt=(v,gp=true)=>v==null?'<span class="vm">—</span>':`<span class="${gp?(v>0?'vp':'vn'):(v<0?'vp':'vn')}">${v>0?'+':''}${v.toFixed(1)}%</span>`;
+const rsiFmt=v=>v==null?'<span class="vm">—</span>':`<span class="${v>60?'vp':v<40?'vn':'vm'}">${v.toFixed(1)}</span>`;
+const rsFmt=(v,p)=>v==null?'<span class="vm">—</span>':`<span class="${p?'vp':'vn2'}">${v.toFixed(4)}${p?' ▲':''}</span>`;
+
+function tipHtml(r){
+  const row=(l,v)=>`<div class="tip-row"><span class="tip-lbl">${l}</span><span class="${v===null?'tip-na':v?'tip-pass':'tip-fail'}">${v===null?'N/A':v?'PASS':'FAIL'}</span></div>`;
+  return `<div class="tip">
+    ${row('F1 · 200W SMA',r.sma200w)}
+    ${row('F2 · 30%+ above 52W Low',r.fromLow!=null?r.fromLow>30:null)}
+    ${row('F3 · Pullback >15% from 52W High',r.fromHigh!=null?r.fromHigh<-15:null)}
+    ${row('F4 · 8W Breakout',r.breakout8)}
+    ${row('F5 · Higher H + Higher L',r.hhhl)}
+    ${row('F6 · RS Ratio > 10W SMA (×2 pts)',r.rsPass)}
+    ${row('F7 · 50D SMA',r.sma50d)}
+    ${row('F8 · RSI(14) > 55',r.rsi!=null?r.rsi>55:null)}
+  </div>`;
+}
+
+function renderTable(){
+  const minSc=parseInt(document.getElementById('sel-min').value);
+  let data=results.filter(r=>!r._err&&r.score>=minSc);
+  data.sort((a,b)=>{
+    let av=a[sortCol],bv=b[sortCol];
+    if(av==null) av=sortDir==='desc'?-Infinity:Infinity;
+    if(bv==null) bv=sortDir==='desc'?-Infinity:Infinity;
+    if(typeof av==='boolean'){av=av?1:0;bv=bv?1:0;}
+    return sortDir==='desc'?bv-av:av-bv;
+  });
+  if(!data.length){
+    const msg=results.filter(r=>!r._err).length>0
+      ?`No stocks with score ≥ ${minSc} — lower Min Score filter`
+      :'Select an index and press SCAN';
+    setBody(`<tr class="msg-row"><td colspan="11">${msg}</td></tr>`);
+    document.getElementById('st-shown').textContent='0';
+    return;
+  }
+  setBody(data.map((r,i)=>`<tr>
+    <td class="c-rk" style="color:var(--text-lo)">${i+1}</td>
+    <td class="c-sym" style="color:var(--text-hi);font-weight:600">${r.symbol}</td>
+    <td class="c-sc"><div class="tip-wrap"><span class="sc ${scClass(r.score)}">${r.score}/8</span>${tipHtml(r)}</div></td>
+    <td class="c-rs">${rsFmt(r.rsRatio,r.rsPass)}</td>
+    <td class="c-rsi">${rsiFmt(r.rsi)}</td>
+    <td class="c-lo">${pctFmt(r.fromLow,true)}</td>
+    <td class="c-hi">${pctFmt(r.fromHigh,false)}</td>
+    <td class="c-200">${tag(r.sma200w)}</td>
+    <td class="c-50">${tag(r.sma50d)}</td>
+    <td class="c-px" style="color:var(--text-med)">${r.price?'₹'+r.price.toFixed(1):'—'}</td>
+    <td class="c-br">${tag(r.breakout8)}</td>
+  </tr>`).join(''));
+  document.getElementById('st-shown').textContent=data.length;
+  document.getElementById('st-sort').textContent=sortCol.toUpperCase()+' '+(sortDir==='desc'?'↓':'↑');
+}
+
+// ═══════════════════════════════════════════════════════
+//  SORT
+// ═══════════════════════════════════════════════════════
+document.querySelectorAll('thead th[data-col]').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const col=th.dataset.col;
+    if(col==='rank') return;
+    if(sortCol===col) sortDir=sortDir==='desc'?'asc':'desc';
+    else{sortCol=col;sortDir='desc';}
+    document.querySelectorAll('thead th').forEach(t=>t.classList.remove('s-asc','s-desc'));
+    th.classList.add(sortDir==='desc'?'s-desc':'s-asc');
+    renderTable();
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+//  CSV EXPORT
+// ═══════════════════════════════════════════════════════
+document.getElementById('btn-csv').addEventListener('click',()=>{
+  const valid=results.filter(r=>!r._err);
+  if(!valid.length){toast('No data to export.');return;}
+  const hdr=['Symbol','Score','RS Ratio','RSI 14','% 52W Low','% 52W High','200W SMA','50D SMA','8W Breakout','HigherHL','Price'];
+  const rows=valid.map(r=>[r.symbol,r.score,r.rsRatio?.toFixed(4)??'',r.rsi?.toFixed(1)??'',r.fromLow?.toFixed(1)??'',r.fromHigh?.toFixed(1)??'',r.sma200w!=null?(r.sma200w?'YES':'NO'):'N/A',r.sma50d!=null?(r.sma50d?'YES':'NO'):'N/A',r.breakout8!=null?(r.breakout8?'YES':'NO'):'N/A',r.hhhl!=null?(r.hhhl?'YES':'NO'):'N/A',r.price?.toFixed(2)??'']);
+  const csv=[hdr,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download=`nse_scan_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+});
+
+// ═══════════════════════════════════════════════════════
+//  HANDLERS
+// ═══════════════════════════════════════════════════════
+document.getElementById('btn-scan').addEventListener('click',startScan);
+document.getElementById('btn-stop').addEventListener('click',()=>{
+  scanStop=true;setScanUI(false);
+});
+document.getElementById('btn-clear').addEventListener('click',()=>{
+  results=[];scanDone=0;scanTotal=0;scanErrors=0;
+  setBody('<tr class="msg-row"><td colspan="11"><div class="big">Cleared</div>Select an index and press SCAN</td></tr>');
+  updateStats();setBadge('badge-scan',proxyReady?'READY':'DETECTING','');
+});
+document.getElementById('sel-min').addEventListener('change',()=>{renderTable();updateStats();});
+
+document.querySelectorAll('.tab[data-idx]').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab[data-idx]').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('custom-row').classList.toggle('show',t.dataset.idx==='custom');
+  });
+});
+
+// Clock
+setInterval(()=>{
+  const now=new Date();
+  document.getElementById('badge-time').textContent=now.toLocaleTimeString('en-IN',{hour12:false});
+  document.getElementById('ftr-r').textContent=now.toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+},1000);
+
+// ── AUTO-DETECT PROXY ON LOAD ─────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  setBadge('badge-scan','DETECTING','warn');
+  detectProxy();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DASH Scanner — NSE India</title>
+<style>
+:root {
+  --bg:        #060810;
+  --bg2:       #0d1117;
+  --bg3:       #161b27;
+  --bg4:       #1e2535;
+  --border:    #252d3d;
+  --text:      #c9d1d9;
+  --muted:     #6b7a99;
+  --accent:    #00d4aa;
+  --bull:      #00e676;
+  --bear:      #ff4444;
+  --mr:        #ffa726;
+  --neutral:   #5c6bc0;
+  --yellow:    #ffd600;
+  --cyan:      #00bcd4;
+  --purple:    #ab47bc;
+  --radius:    10px;
+  --font:      'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 13px; min-height: 100vh; overflow-x: hidden; }
+
+/* ─── HEADER ─────────────────────────────────── */
+header {
+  background: linear-gradient(135deg, #0d1117 0%, #111827 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px 10px;
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), #0099ff); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: #000; }
+.logo h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: #fff; }
+.logo span { font-size: 10px; color: var(--muted); display: block; margin-top: -2px; }
+#scan-time { font-size: 10px; color: var(--muted); text-align: right; }
+#live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); display: inline-block; margin-right: 4px; }
+#live-dot.active { background: var(--bull); animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ─── TABS ────────────────────────────────────── */
+.tab-row { display: flex; background: var(--bg2); border-bottom: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.tab-row::-webkit-scrollbar { display: none; }
+.tab { flex: 0 0 auto; padding: 10px 16px; background: none; border: none; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .5px; cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; white-space: nowrap; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab:active { background: rgba(255,255,255,.04); }
+
+/* ─── CONTROLS ────────────────────────────────── */
+.controls { padding: 10px 12px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+#custom-wrap { width: 100%; display: none; }
+#custom-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px; color: var(--text); font-size: 12px; outline: none; }
+#custom-input:focus { border-color: var(--accent); }
+select { background: var(--bg3); border: 1px solid var(--border); border-radius: 7px; padding: 7px 10px; color: var(--text); font-size: 12px; outline: none; flex: 1; min-width: 120px; -webkit-appearance: none; }
+.scan-btn { background: linear-gradient(135deg, var(--accent) 0%, #0099ff 100%); border: none; border-radius: 8px; padding: 8px 18px; color: #000; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+.scan-btn:active { opacity: .8; }
+.scan-btn.stop { background: linear-gradient(135deg, #ff4444, #cc0000); color: #fff; }
+#proxy-status { font-size: 10px; color: var(--muted); width: 100%; }
+.proxy-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--muted); margin-right: 3px; }
+.proxy-dot.ok { background: var(--bull); }
+.proxy-dot.fail { background: var(--bear); }
+
+/* ─── PROGRESS ────────────────────────────────── */
+#progress-wrap { padding: 10px 12px; background: var(--bg2); display: none; }
+#progress-bar { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; margin-bottom: 6px; }
+#progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #0099ff); border-radius: 2px; transition: width .3s; width: 0%; }
+#progress-text { font-size: 11px; color: var(--muted); text-align: center; }
+
+/* ─── SUMMARY ─────────────────────────────────── */
+#summary { display: none; padding: 10px 12px; background: var(--bg2); border-bottom: 1px solid var(--border); }
+.sum-row { display: flex; gap: 8px; }
+.sum-box { flex: 1; background: var(--bg3); border-radius: 8px; padding: 8px 6px; text-align: center; border: 1px solid var(--border); }
+.sum-box .sum-label { font-size: 9px; font-weight: 700; letter-spacing: .8px; margin-bottom: 3px; }
+.sum-box .sum-val { font-size: 20px; font-weight: 800; }
+.sum-box.bull .sum-label { color: var(--bull); }
+.sum-box.bull .sum-val { color: var(--bull); }
+.sum-box.bear .sum-label { color: var(--bear); }
+.sum-box.bear .sum-val { color: var(--bear); }
+.sum-box.mr .sum-label { color: var(--mr); }
+.sum-box.mr .sum-val { color: var(--mr); }
+.sum-box.neutral .sum-label { color: var(--neutral); }
+.sum-box.neutral .sum-val { color: var(--neutral); }
+
+/* ─── TABLE ───────────────────────────────────── */
+#results-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; min-width: 380px; }
+thead { position: sticky; top: 0; z-index: 10; }
+th { background: var(--bg3); padding: 9px 8px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .6px; color: var(--muted); border-bottom: 1px solid var(--border); cursor: pointer; white-space: nowrap; }
+th:after { content: ' ↕'; opacity: .3; font-size: 9px; }
+th.sort-asc:after { content: ' ↑'; opacity: 1; color: var(--accent); }
+th.sort-desc:after { content: ' ↓'; opacity: 1; color: var(--accent); }
+td { padding: 9px 8px; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: middle; white-space: nowrap; }
+tr:active td { background: rgba(255,255,255,.03); }
+.sym { font-weight: 700; font-size: 12px; color: #fff; }
+.sym small { display: block; font-size: 9px; color: var(--muted); font-weight: 400; }
+
+/* Signal badges */
+.sig { display: inline-block; padding: 3px 7px; border-radius: 5px; font-size: 10px; font-weight: 800; letter-spacing: .4px; }
+.sig.STRONG-BUY  { background: rgba(0,230,118,.2); color: var(--bull); border: 1px solid rgba(0,230,118,.4); }
+.sig.BUY         { background: rgba(0,212,170,.15); color: var(--accent); border: 1px solid rgba(0,212,170,.3); }
+.sig.MR-BUY      { background: rgba(255,167,38,.15); color: var(--mr); border: 1px solid rgba(255,167,38,.3); }
+.sig.MR-SELL     { background: rgba(171,71,188,.15); color: var(--purple); border: 1px solid rgba(171,71,188,.3); }
+.sig.SELL        { background: rgba(255,68,68,.15); color: var(--bear); border: 1px solid rgba(255,68,68,.3); }
+.sig.STRONG-SELL { background: rgba(204,0,0,.2); color: #ff2020; border: 1px solid rgba(204,0,0,.4); }
+.sig.NEUTRAL     { background: rgba(92,107,192,.15); color: var(--neutral); border: 1px solid rgba(92,107,192,.3); }
+.sig.ERROR       { background: rgba(107,122,153,.1); color: var(--muted); border: 1px solid var(--border); }
+
+/* Score bar */
+.score-wrap { display: flex; align-items: center; gap: 5px; }
+.score-num { font-weight: 700; font-size: 12px; min-width: 14px; }
+.score-bar { width: 40px; height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 2px; }
+
+.chg.pos { color: var(--bull); }
+.chg.neg { color: var(--bear); }
+
+.rsi-val { font-weight: 600; }
+.rsi-val.ob { color: var(--bear); }
+.rsi-val.os { color: var(--bull); }
+.rsi-val.mid { color: var(--text); }
+
+/* Detail row */
+.detail-row td { background: var(--bg3) !important; padding: 0; }
+.detail-inner { padding: 10px 12px; display: none; }
+.detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+.detail-item { background: var(--bg4); border-radius: 7px; padding: 7px 9px; }
+.detail-item label { font-size: 9px; color: var(--muted); font-weight: 600; letter-spacing: .5px; display: block; margin-bottom: 2px; }
+.detail-item span { font-size: 13px; font-weight: 700; }
+.score-breakdown { background: var(--bg4); border-radius: 7px; padding: 8px 10px; }
+.score-breakdown h4 { font-size: 10px; color: var(--muted); margin-bottom: 6px; letter-spacing: .5px; }
+.score-item { display: flex; align-items: center; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid var(--border); }
+.score-item:last-child { border: none; }
+.score-item span { font-size: 11px; }
+.score-item .ok { color: var(--bull); }
+.score-item .no { color: var(--muted); }
+.tv-link { display: inline-block; margin-top: 8px; padding: 6px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 7px; font-size: 11px; color: var(--accent); text-decoration: none; }
+
+#no-results { text-align: center; padding: 60px 20px; color: var(--muted); }
+#no-results .icon { font-size: 48px; margin-bottom: 12px; }
+#no-results p { font-size: 13px; }
+
+/* Modal for errors */
+#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; font-size: 12px; color: var(--text); z-index: 999; opacity: 0; transition: opacity .3s; pointer-events: none; max-width: 280px; text-align: center; }
+#toast.show { opacity: 1; }
+
+/* Proxy bar */
+.proxy-bar { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.proxy-pill { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: var(--bg4); border: 1px solid var(--border); color: var(--muted); }
+.proxy-pill.active { border-color: var(--accent); color: var(--accent); }
+.proxy-pill.fail { border-color: var(--bear); color: var(--bear); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">D</div>
+    <div>
+      <h1>DASH Scanner</h1>
+      <span>NSE India · Real-time Signal</span>
+    </div>
+  </div>
+  <div>
+    <div><span id="live-dot"></span><span id="scan-time">Not scanned</span></div>
+    <div id="result-count" style="font-size:10px;color:var(--muted);text-align:right"></div>
+  </div>
+</header>
+
+<!-- Index tabs -->
+<div class="tab-row">
+  <button class="tab active" data-list="N50">NIFTY 50</button>
+  <button class="tab" data-list="N100">NIFTY 100</button>
+  <button class="tab" data-list="N200">NIFTY 200</button>
+  <button class="tab" data-list="N500">NIFTY 500</button>
+  <button class="tab" data-list="FUT">FUTURES</button>
+  <button class="tab" data-list="CUSTOM">CUSTOM</button>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <div id="custom-wrap">
+    <input type="text" id="custom-input" placeholder="e.g. RELIANCE, TCS, INFY (NSE symbols, comma separated)">
+  </div>
+  <select id="sig-filter">
+    <option value="ALL">All Signals</option>
+    <option value="BUY">Buy Signals</option>
+    <option value="SELL">Sell Signals</option>
+    <option value="MR">MR Only</option>
+    <option value="STRONG">Strong Only</option>
+  </select>
+  <select id="sort-col">
+    <option value="score">Score ↓</option>
+    <option value="chg">Change% ↓</option>
+    <option value="rsi">RSI</option>
+    <option value="sym">Symbol</option>
+  </select>
+  <button class="scan-btn" id="scan-btn">▶ SCAN</button>
+  <div id="proxy-status">
+    <div class="proxy-bar" id="proxy-bar">Detecting proxy...</div>
+  </div>
+</div>
+
+<!-- Progress -->
+<div id="progress-wrap">
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+  <div id="progress-text">Initialising...</div>
+</div>
+
+<!-- Summary -->
+<div id="summary">
+  <div class="sum-row">
+    <div class="sum-box bull"><div class="sum-label">STRONG BUY</div><div class="sum-val" id="sum-sbuy">0</div></div>
+    <div class="sum-box bull" style="opacity:.7"><div class="sum-label">BUY</div><div class="sum-val" id="sum-buy">0</div></div>
+    <div class="sum-box mr"><div class="sum-label">MR</div><div class="sum-val" id="sum-mr">0</div></div>
+    <div class="sum-box bear" style="opacity:.7"><div class="sum-label">SELL</div><div class="sum-val" id="sum-sell">0</div></div>
+    <div class="sum-box bear"><div class="sum-label">STRONG SELL</div><div class="sum-val" id="sum-ssell">0</div></div>
+  </div>
+</div>
+
+<!-- Results -->
+<div id="results-wrap">
+  <div id="no-results"><div class="icon">📊</div><p>Select an index and tap SCAN<br>to analyse signals</p></div>
+  <table id="results-table" style="display:none">
+    <thead>
+      <tr>
+        <th data-col="sym">SYMBOL</th>
+        <th data-col="signal">SIGNAL</th>
+        <th data-col="score">SCORE</th>
+        <th data-col="price">PRICE</th>
+        <th data-col="chg">CHG%</th>
+        <th data-col="rsi">RSI</th>
+      </tr>
+    </thead>
+    <tbody id="results-body"></tbody>
+  </table>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STOCK LISTS
+// ═══════════════════════════════════════════════
+const N50 = [
+  'ADANIENT','ADANIPORTS','APOLLOHOSP','ASIANPAINT','AXISBANK',
+  'BAJAJ-AUTO','BAJFINANCE','BAJAJFINSV','BPCL','BHARTIARTL',
+  'BRITANNIA','CIPLA','COALINDIA','DIVISLAB','DRREDDY',
+  'EICHERMOT','GRASIM','HCLTECH','HDFCBANK','HDFCLIFE',
+  'HEROMOTOCO','HINDALCO','HINDUNILVR','ICICIBANK','ITC',
+  'INDUSINDBK','INFY','JSWSTEEL','KOTAKBANK','LTIM',
+  'LT','M&M','MARUTI','NESTLEIND','NTPC',
+  'ONGC','POWERGRID','RELIANCE','SBILIFE','SHRIRAMFIN',
+  'SBIN','SUNPHARMA','TCS','TATACONSUM','TATAMOTORS',
+  'TATASTEEL','TECHM','TITAN','ULTRACEMCO','WIPRO'
+];
+
+const NEXT50 = [
+  'ABB','ADANIENSOL','ADANIGREEN','ADANIPOWER','AMBUJACEM',
+  'APOLLOTYRE','ATGL','AWL','BAJAJHFL','BANKBARODA',
+  'BERGEPAINT','BOSCHLTD','CANBK','CHOLAFIN','COLPAL',
+  'DABUR','DLF','GODREJCP','GODREJPROP','HAVELLS',
+  'HAL','ICICIPRULI','ICICIGI','INDUSTOWER','IOC',
+  'IRCTC','JIOFIN','LICI','MARICO','MCDOWELL-N',
+  'MOTHERSON','MUTHOOTFIN','NAUKRI','OBEROIRLTY','OFSS',
+  'PIDILITIND','PFC','PGHH','RECLTD','SRF',
+  'SIEMENS','TORNTPHARM','TATAPOWER','TORNTPOWER','TRENT',
+  'VBL','VEDL','VOLTAS','ZOMATO','ZYDUSLIFE'
+];
+
+const MIDCAP100 = [
+  'ABCAPITAL','ABFRL','AIAENG','AJANTPHARM','ALKEM',
+  'APARINDS','ASTRAL','AUROPHARMA','BANDHANBNK','BEL',
+  'BHEL','BSE','CAMS','CANFINHOME','CASTROLIND',
+  'CESC','CGPOWER','COFORGE','CONCOR','CRISIL',
+  'CROMPTON','DALBHARAT','DEEPAKNTR','DIXON','ELGIEQUIP',
+  'ESCORTS','EXIDEIND','FEDERALBNK','FORTIS','GAIL',
+  'GLAXO','GMRAIRPORT','GNFC','GODREJIND','GRINDWELL',
+  'GUJGASLTD','HAPPSTMNDS','HINDPETRO','HUDCO','IDFCFIRSTB',
+  'IEX','IIFL','INDIANB','INDIGO','INDIAMART',
+  'JKCEMENT','JUBLFOOD','KALYANKJIL','KANSAINER','KPIL',
+  'L&TFH','LALPATHLAB','LAURUSLABS','LICHSGFIN','LINDEINDIA',
+  'LUPIN','MANAPPURAM','MFSL','MPHASIS','MRF',
+  'NATIONALUM','NCC','NHPC','NMDC','NYKAA',
+  'PAGEIND','PERSISTENT','PETRONET','PHOENIXLTD','PIIND',
+  'POLYCAB','PRESTIGE','PVRINOX','RITES','SAIL',
+  'SCHAEFFLER','SOLARINDS','SUPREMEIND','SUZLON','TATACOMM',
+  'TATACHEM','TATAELXSI','THERMAX','TIMKEN','UBL',
+  'UPL','UTIAMC','VGUARD','WOCKPHARMA','ZEEL',
+  'AMARAJABAT','DELHIVERY','EMAMILTD','KPRMILL','METROPOLIS',
+  'MOTILALOFS','NUVAMA','RBLBANK','TTML','WELSPUNLIV'
+];
+
+const SMALLCAP300 = [
+  'AARTIIND','AAVAS','ACC','ACCELYA','ADANIGAS',
+  'ADANITRANS','AFFLE','AJAXENG','AKZOINDIA','ALBANL',
+  'ALKYLAMINE','ALLCARGO','ALOKINDS','AMBER','AMRUTANJAN',
+  'ANANTRAJ','ANGELONE','ANURAS','APTUS','ARVINDFASN',
+  'ASAHIINDIA','ASHOKLEY','ASKIND','ASMS','ASTRAZEN',
+  'AVANTIFEED','AVALON','BALMLAWRIE','BALRAMCHIN','BATA',
+  'BAYERCROP','BAJAJELEC','BALAJITELE','BATAINDIA','BIGBLOC',
+  'BIOCON','BLUESTARCO','BOROLTD','BRIGADE','BSOFT',
+  'CANFINHOME','CARBORUNIV','CEATLTD','CENTRALBK','CERA',
+  'CESC','CLEAN','COCHINSHIP','CONFIDENCE','CONTROL',
+  'CRAFTSMAN','CYIENT','DBREALTY','DCMSHRIRAM','DEEPAKFERT',
+  'DELTACORP','DEVYANI','DHANUKA','DFMFOODS','DHANI',
+  'DOLAT','DREDGECORP','DRHORN','EIDPARRY','ELECON',
+  'ENGINERSIN','EPL','ERIS','ESABINDIA','ESTER',
+  'EXCEL','FINEORG','FINPIPE','FLAIR','FLEX',
+  'GABRIEL','GARFIBRES','GATEWAY','GHCL','GICRE',
+  'GILLETTE','GLENMARK','GMM','GNFC','GODREJAGRO',
+  'GPPL','GRAPHITE','GREENPANEL','GRSE','GSFC',
+  'GULF','HBLPOWER','HDFCAMC','HERITGFOOD','HIKAL',
+  'HIMADRI','HLEGLAS','HONAUT','HSCL','HUDCO',
+  'IBREALEST','IFBAGRO','IFCI','IGPL','INDIANHUME',
+  'INDORAMA','INFIBEAM','INGERRAND','INKIA','INTELLECT',
+  'IOB','IRCON','IRFC','ITI','JAMNAAUTO',
+  'JAYAGROGN','JBCHEPHARM','JCHAC','JINDALSAW','JKTYRE',
+  'JMFINANCIL','JPPOWER','JSL','JYOTHYLAB','KAJARIACER',
+  'KANSAINER','KARURVYSYA','KCP','KDDL','KEI',
+  'KIRLOSKAR','KNRCON','KOHINOOR','KOLTEPATIL','KRBL',
+  'KSCL','KUNDREDDL','KTKBANK','L&TFH','LAKSHVILAS',
+  'LATENTVIEW','LEMONTREE','LGBBROSLTD','LLOYDSENGG','LNDC',
+  'LODHA','LTTS','LUXIND','MAHINDCIE','MAHLIFE',
+  'MANINFRA','MAPMYINDIA','MARATHON','MASTEK','MAXHEALTH',
+  'MBLINFRA','MEDANTA','MEDPLUS','MIDHANI','MINDTREE',
+  'MMTC','MOLDTKPAC','MOREPENLAB','MSUMI','MTARTECH',
+  'MUTHOOTFIN','NACLIND','NATCOPHARM','NAVINFLUOR','NBCC',
+  'NESCO','NETWORK18','NFL','NIITLTD','NLCINDIA',
+  'NOCIL','NRBBEARING','NSIL','NUCLEUS','OLECTRA',
+  'ONMOBILE','OPTIEMUS','ORCHPHARMA','ORIENT','ORIENTELEC',
+  'PATELENG','PAUSHAKLTD','PCJEWELLER','PDMJEPAPER','PENIND',
+  'PFIZER','PHIL','PIX','PLASMAGEN','POLICYBZR',
+  'PRAJIND','PRINCEPIPE','PRIVISCL','PRSMJOHNSN','PSB',
+  'PTCIL','RAGHAVPRO','RAJRATAN','RATNAMANI','RAYMOND',
+  'REDINGTON','RELAXO','RENUKA','RESPONIND','RHIM',
+  'RKFORGE','ROLCON','ROSSELLIND','ROUTE','RPSG',
+  'RUPA','SAMMAANCAP','SANDHAR','SANGAMIND','SASKEN',
+  'SEQUENT','SHARDACROP','SHFL','SHOPERSTOP','SHREDIGCEM',
+  'SHRIRAMCIT','SIMBHAOLI','SKIPPER','SNOWMAN','SONATSOFTW',
+  'SOUTHBANK','SPAL','SPARC','SPENCERS','SREINFRA',
+  'SRTRANSFIN','STCINDIA','STEELCAS','STERTOOLS','SUBROS',
+  'SUNDARMFIN','SUNFLAG','SUPRAJIT','SUPRIYA','SUVENPHAR',
+  'SWSOLAR','SYMPHONY','SYNGENE','TANLA','TASTYBITE',
+  'TCIEXP','TCNSCLOTHG','TEAMLEASE','TEJASNET','TIPSINDLTD',
+  'TITAGARH','TPLASTIK','TRIDENT','TRIVENI','TRITURBINE',
+  'TTKPRESTIG','TTL','TUBE','UCOBANK','UJJIVAN',
+  'UNOMINDA','UNIENTER','USHAMART','UTIAMC','VAIBHAVGBL',
+  'VARDHACRLC','VBL','VGUARD','VINATIORGA','VINDHYATEL',
+  'VISHNU','VMART','VOLTAMP','VSTIND','WABCO',
+  'WELCORP','WESTLIFE','WINDLAS','WOCKPHARMA','WONDERLA',
+  'XCHANGING','YESBANK','ZENTEC','ZEEMEDIA','ZENSARTECH'
+];
+
+const FUT_LIST = [
+  'RELIANCE','TCS','INFY','HDFCBANK','ICICIBANK',
+  'AXISBANK','SBIN','BAJFINANCE','KOTAKBANK','LT',
+  'WIPRO','HCLTECH','BHARTIARTL','ITC','MARUTI',
+  'TATAMOTORS','TATASTEEL','JSWSTEEL','ADANIENT','ADANIPORTS',
+  'NTPC','POWERGRID','ONGC','BPCL','HINDALCO',
+  'HINDUNILVR','SUNPHARMA','DRREDDY','CIPLA','DIVISLAB',
+  'APOLLOHOSP','ASIANPAINT','TITAN','ULTRACEMCO','TECHM',
+  'EICHERMOT','BAJAJ-AUTO','HEROMOTOCO','M&M','GRASIM',
+  'NESTLEIND','INDUSINDBK','HDFCLIFE','SBILIFE','BAJAJFINSV',
+  'COALINDIA','BRITANNIA','LTIM','SHRIRAMFIN','TATACONSUM',
+  'BANKBARODA','CANBK','FEDERALBNK','IDFCFIRSTB','BANDHANBNK',
+  'CHOLAFIN','MUTHOOTFIN','MANAPPURAM','LICHSGFIN','L&TFH',
+  'PFC','RECLTD','NHPC','NTPC','SUZLON',
+  'TATAPOWER','ADANIGREEN','ADANIPOWER','HAL','BEL',
+  'BHEL','ENGINERSIN','IRCTC','DLF','GODREJPROP',
+  'OBEROIRLTY','PRESTIGE','PHOENIXLTD','NAUKRI','ZOMATO',
+  'NYKAA','OFSS','MPHASIS','COFORGE','PERSISTENT',
+  'TATAELXSI','LUPIN','AUROPHARMA','ALKEM','TORNTPHARM',
+  'GAIL','IOC','HINDPETRO','NMDC','SAIL',
+  'POLYCAB','HAVELLS','CROMPTON','VOLTAS','WHIRLPOOL'
+];
+
+const LISTS = {
+  N50:   N50,
+  N100:  [...N50, ...NEXT50],
+  N200:  [...N50, ...NEXT50, ...MIDCAP100],
+  N500:  [...N50, ...NEXT50, ...MIDCAP100, ...SMALLCAP300],
+  FUT:   FUT_LIST,
+  CUSTOM:[]
+};
+
+// ═══════════════════════════════════════════════
+// CORS PROXIES — auto-detect on start
+// ═══════════════════════════════════════════════
+const PROXIES = [
+  { name:'corsproxy.io',   url:'https://corsproxy.io/?',                  status:'unknown' },
+  { name:'allorigins',    url:'https://api.allorigins.win/raw?url=',       status:'unknown' },
+  { name:'codetabs',      url:'https://api.codetabs.com/v1/proxy?quest=', status:'unknown' },
+];
+let activeProxyIdx = 0;
+let proxyReady = false;
+
+async function detectProxy() {
+  const testUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/RELIANCE.NS?interval=1d&range=5d';
+  renderProxyBar();
+  for (let i = 0; i < PROXIES.length; i++) {
+    try {
+      const r = await fetch(PROXIES[i].url + encodeURIComponent(testUrl), { signal: AbortSignal.timeout(6000) });
+      if (r.ok) {
+        const d = await r.json();
+        if (d?.chart?.result) {
+          PROXIES[i].status = 'ok';
+          activeProxyIdx = i;
+          proxyReady = true;
+          renderProxyBar();
+          return;
+        }
+      }
+      PROXIES[i].status = 'fail';
+    } catch {
+      PROXIES[i].status = 'fail';
+    }
+    renderProxyBar();
+  }
+  toast('⚠️ All proxies failed. Try on desktop or enable CORS.');
+}
+
+function renderProxyBar() {
+  const bar = document.getElementById('proxy-bar');
+  bar.innerHTML = PROXIES.map((p, i) =>
+    `<span class="proxy-pill ${p.status === 'ok' ? 'active' : p.status === 'fail' ? 'fail' : ''}">${p.name}${i === activeProxyIdx && p.status === 'ok' ? ' ✓' : ''}</span>`
+  ).join('');
+}
+
+async function fetchURL(url) {
+  const proxy = PROXIES[activeProxyIdx].url;
+  const res = await fetch(proxy + encodeURIComponent(url), { signal: AbortSignal.timeout(10000) });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+// ═══════════════════════════════════════════════
+// YAHOO FINANCE FETCH
+// ═══════════════════════════════════════════════
+async function fetchStock(symbol) {
+  const yfSym = encodeURIComponent(symbol + '.NS');
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${yfSym}?interval=1d&range=1y`;
+  const data = await fetchURL(url);
+  const result = data?.chart?.result?.[0];
+  if (!result) throw new Error('No data');
+  const q = result.indicators.quote[0];
+  const meta = result.meta;
+  const closes = q.close;
+  const highs  = q.high;
+  const lows   = q.low;
+  const vols   = q.volume;
+  // Filter nulls
+  const valid  = closes.map((_,i) => i).filter(i => closes[i] != null && highs[i] != null && lows[i] != null);
+  return {
+    closes:  valid.map(i => closes[i]),
+    highs:   valid.map(i => highs[i]),
+    lows:    valid.map(i => lows[i]),
+    volumes: valid.map(i => vols[i] || 0),
+    price:   meta.regularMarketPrice || closes[closes.length-1],
+    prevClose: meta.chartPreviousClose || closes[closes.length-2] || closes[closes.length-1],
+    symbol,
+    name: meta.shortName || symbol
+  };
+}
+
+async function fetchNifty() {
+  try {
+    const url = 'https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEI?interval=1d&range=1mo';
+    const data = await fetchURL(url);
+    const closes = data?.chart?.result?.[0]?.indicators?.quote?.[0]?.close?.filter(c => c != null) || [];
+    if (closes.length >= 2) {
+      return (closes[closes.length-1] - closes[0]) / closes[0];
+    }
+  } catch {}
+  return 0;
+}
+
+// ═══════════════════════════════════════════════
+// INDICATOR MATHS
+// ═══════════════════════════════════════════════
+function ema(data, period) {
+  if (data.length < period) return data.map(() => NaN);
+  const k = 2 / (period + 1);
+  const result = new Array(data.length).fill(NaN);
+  // Seed with SMA
+  let sum = 0;
+  for (let i = 0; i < period; i++) sum += data[i];
+  result[period-1] = sum / period;
+  for (let i = period; i < data.length; i++) {
+    result[i] = data[i] * k + result[i-1] * (1 - k);
+  }
+  return result;
+}
+
+function rsi(closes, period=14) {
+  if (closes.length < period+1) return closes.map(() => 50);
+  const gains = [], losses = [];
+  for (let i = 1; i < closes.length; i++) {
+    const diff = closes[i] - closes[i-1];
+    gains.push(Math.max(diff, 0));
+    losses.push(Math.max(-diff, 0));
+  }
+  const result = new Array(closes.length).fill(NaN);
+  // Init average
+  let avgG = gains.slice(0, period).reduce((a,b)=>a+b,0) / period;
+  let avgL = losses.slice(0, period).reduce((a,b)=>a+b,0) / period;
+  const rs0 = avgL === 0 ? 100 : avgG / avgL;
+  result[period] = 100 - 100 / (1 + rs0);
+  for (let i = period; i < gains.length; i++) {
+    avgG = (avgG * (period-1) + gains[i]) / period;
+    avgL = (avgL * (period-1) + losses[i]) / period;
+    const rs = avgL === 0 ? 100 : avgG / avgL;
+    result[i+1] = 100 - 100 / (1 + rs);
+  }
+  return result;
+}
+
+function atr(highs, lows, closes, period=14) {
+  if (closes.length < period+1) return closes.map(() => 0);
+  const tr = [highs[0] - lows[0]];
+  for (let i = 1; i < closes.length; i++) {
+    tr.push(Math.max(
+      highs[i] - lows[i],
+      Math.abs(highs[i] - closes[i-1]),
+      Math.abs(lows[i] - closes[i-1])
+    ));
+  }
+  const result = new Array(closes.length).fill(NaN);
+  let sum = tr.slice(0, period).reduce((a,b)=>a+b,0);
+  result[period-1] = sum / period;
+  for (let i = period; i < tr.length; i++) {
+    result[i] = (result[i-1] * (period-1) + tr[i]) / period;
+  }
+  return result;
+}
+
+function sma(data, period) {
+  return data.map((_, i) => {
+    if (i < period-1) return NaN;
+    return data.slice(i-period+1, i+1).reduce((a,b)=>a+b,0) / period;
+  });
+}
+
+function bollingerBands(closes, period=20, mult=2) {
+  const mid = sma(closes, period);
+  const upper = mid.map((m, i) => {
+    if (isNaN(m)) return NaN;
+    const slice = closes.slice(Math.max(0, i-period+1), i+1);
+    const mean = slice.reduce((a,b)=>a+b,0) / slice.length;
+    const std = Math.sqrt(slice.reduce((a,b)=>a+(b-mean)**2,0) / slice.length);
+    return m + mult * std;
+  });
+  const lower = mid.map((m, i) => {
+    if (isNaN(m)) return NaN;
+    const slice = closes.slice(Math.max(0, i-period+1), i+1);
+    const mean = slice.reduce((a,b)=>a+b,0) / slice.length;
+    const std = Math.sqrt(slice.reduce((a,b)=>a+(b-mean)**2,0) / slice.length);
+    return m - mult * std;
+  });
+  return { upper, mid, lower };
+}
+
+function adxSimple(highs, lows, closes, period=14) {
+  // Simplified ADX
+  if (closes.length < period*2) return 20;
+  const atrVals = atr(highs, lows, closes, period);
+  const dmPlus  = [];
+  const dmMinus = [];
+  for (let i = 1; i < highs.length; i++) {
+    const upMove   = highs[i]  - highs[i-1];
+    const downMove = lows[i-1] - lows[i];
+    dmPlus.push (upMove > downMove && upMove > 0 ? upMove : 0);
+    dmMinus.push(downMove > upMove && downMove > 0 ? downMove : 0);
+  }
+  const smoothDMplus  = sma(dmPlus,  period);
+  const smoothDMminus = sma(dmMinus, period);
+  const atrSlice      = atrVals.slice(1);
+  const diplus  = smoothDMplus.map( (v,i) => atrSlice[i] > 0 ? v / atrSlice[i] * 100 : 0);
+  const diminus = smoothDMminus.map((v,i) => atrSlice[i] > 0 ? v / atrSlice[i] * 100 : 0);
+  const dx      = diplus.map((dp,i) => {
+    const dm = diminus[i];
+    const sum = dp + dm;
+    return sum > 0 ? Math.abs(dp - dm) / sum * 100 : 0;
+  });
+  const adxArr = sma(dx, period);
+  const last   = adxArr.filter(v => !isNaN(v)).pop();
+  return last || 20;
+}
+
+// ═══════════════════════════════════════════════
+// SIGNAL COMPUTATION
+// ═══════════════════════════════════════════════
+function computeSignal(d, niftyReturn20d) {
+  const n = d.closes.length;
+  if (n < 210) return { signal:'ERROR', score:0, details:{}, rsi:50, chg:0, price:d.price };
+
+  const c = d.closes;
+  const price = d.price;
+  const chg   = ((price - d.prevClose) / d.prevClose) * 100;
+
+  // Indicators (last values)
+  const ema20arr  = ema(c, 20);
+  const ema50arr  = ema(c, 50);
+  const ema200arr = ema(c, 200);
+  const rsiArr    = rsi(c, 14);
+  const volSma    = sma(d.volumes, 20);
+  const bb        = bollingerBands(c, 20, 2);
+  const adxVal    = adxSimple(d.highs, d.lows, c, 14);
+
+  const e20  = ema20arr[n-1];
+  const e50  = ema50arr[n-1];
+  const e200 = ema200arr[n-1];
+  const e20p = ema20arr[n-2];  // previous bar EMA20
+  const e50p = ema50arr[n-2];  // previous bar EMA50
+  const rsiV = rsiArr[n-1];
+  const rsiP = rsiArr[n-2];
+  const volV = d.volumes[n-1];
+  const vsma = volSma[n-1];
+  const bbU  = bb.upper[n-1];
+  const bbL  = bb.lower[n-1];
+  const bbM  = bb.mid[n-1];
+
+  // 20-day stock return for RS
+  const price20ago  = c[n-21] || c[0];
+  const stockRet20  = (c[n-1] - price20ago) / price20ago;
+  const rsOutperform= niftyReturn20d !== 0 ? stockRet20 > niftyReturn20d : stockRet20 > 0;
+
+  // ── Trend Score (0–7) ───────────────────────
+  const s1 = price > e200 ? 1 : 0;                        // Above EMA200
+  const s2 = e20 > e50 ? 1 : 0;                           // EMA20 > EMA50
+  const s3 = e50 > ema50arr[n-6] ? 1 : 0;                 // EMA50 slope positive
+  const s4 = rsiV > 50 ? 1 : 0;                           // RSI > 50
+  const s5 = (!isNaN(vsma) && volV > vsma) ? 1 : 0;       // Volume > SMA
+  const s6 = rsOutperform ? 1 : 0;                        // RS outperform
+  const s7 = adxVal > 25 ? 1 : 0;                         // ADX trending
+
+  const scoreLong  = s1+s2+s3+s4+s5+s6+s7;
+  const scoreShort = (1-s1)+(1-s2)+(1-s3)+(1-s4)+s5+(1-s6)+(s7);
+
+  // ── Crossover detection ─────────────────────
+  const crossUp   = e20 > e50 && e20p <= e50p;
+  const crossDown = e20 < e50 && e20p >= e50p;
+
+  // ── MR conditions ───────────────────────────
+  const bbTouchLow  = price <= bbL * 1.01;                 // within 1% of lower band
+  const bbTouchHigh = price >= bbU * 0.99;
+  const rsiCrossUp  = rsiV > 30 && rsiP <= 30;
+  const rsiCrossDn  = rsiV < 70 && rsiP >= 70;
+  const rsiOS       = rsiV < 35;
+  const rsiOB       = rsiV > 65;
+
+  const mrLong  = (bbTouchLow  && (rsiCrossUp || rsiOS));
+  const mrShort = (bbTouchHigh && (rsiCrossDn || rsiOB));
+
+  // ── Signal determination ────────────────────
+  let signal = 'NEUTRAL';
+  let score  = scoreLong;
+
+  if      (crossUp   && scoreLong  >= 6) signal = 'STRONG-BUY';
+  else if (crossUp   && scoreLong  >= 4) signal = 'BUY';
+  else if (scoreLong >= 5 && e20 > e50)  signal = 'BUY';
+  else if (mrLong  && !mrShort)          signal = 'MR-BUY';
+  else if (mrShort && !mrLong)           signal = 'MR-SELL';
+  else if (crossDown && scoreShort >= 6) { signal = 'STRONG-SELL'; score = scoreShort; }
+  else if (crossDown && scoreShort >= 4) { signal = 'SELL'; score = scoreShort; }
+  else if (scoreShort >= 5 && e20 < e50) { signal = 'SELL'; score = scoreShort; }
+  else if (scoreLong >= 4)               signal = 'BUY';
+  else if (scoreShort >= 4)              { signal = 'SELL'; score = scoreShort; }
+
+  const details = {
+    ema20: e20, ema50: e50, ema200: e200,
+    rsi: rsiV, adx: adxVal,
+    bbU, bbL, bbM, price,
+    volRatio: vsma > 0 ? volV/vsma : 1,
+    s1,s2,s3,s4,s5,s6,s7,
+    crossUp, crossDown,
+    stockRet20: (stockRet20*100).toFixed(1),
+    niftyRet20: (niftyReturn20d*100).toFixed(1),
+    rsScore: niftyReturn20d !== 0 ? (stockRet20/Math.abs(niftyReturn20d)).toFixed(2) : 'N/A'
+  };
+
+  return { signal, score, details, rsi: rsiV, chg, price, name: d.name };
+}
+
+// ═══════════════════════════════════════════════
+// SCANNER ENGINE
+// ═══════════════════════════════════════════════
+let scanning    = false;
+let scanCancel  = false;
+let allResults  = [];
+let niftyRet    = 0;
+let sortState   = { col:'score', dir:'desc' };
+
+async function runScan() {
+  if (!proxyReady) { toast('Proxy not ready. Please wait...'); return; }
+  if (scanning) { scanCancel = true; return; }
+
+  const listKey = document.querySelector('.tab.active').dataset.list;
+  let symbols;
+  if (listKey === 'CUSTOM') {
+    const raw = document.getElementById('custom-input').value;
+    symbols = raw.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
+    if (!symbols.length) { toast('Enter at least one symbol'); return; }
+  } else {
+    symbols = [...LISTS[listKey]];
+  }
+
+  scanning   = true;
+  scanCancel = false;
+  allResults = [];
+
+  const btn = document.getElementById('scan-btn');
+  btn.textContent = '■ STOP';
+  btn.classList.add('stop');
+
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('summary').style.display = 'none';
+  document.getElementById('results-table').style.display = 'none';
+  document.getElementById('no-results').style.display = 'none';
+  document.getElementById('live-dot').classList.add('active');
+
+  // Fetch Nifty benchmark first
+  try { niftyRet = await fetchNifty(); } catch { niftyRet = 0; }
+
+  const total = symbols.length;
+  let done = 0, errors = 0;
+
+  // Queue with concurrency = 3
+  const CONCURRENCY = 3;
+  const DELAY_MS    = 150;
+
+  async function processSymbol(sym) {
+    if (scanCancel) return;
+    try {
+      const d = await fetchStock(sym);
+      const result = computeSignal(d, niftyRet);
+      result.symbol = sym;
+      result.name   = d.name;
+      allResults.push(result);
+    } catch (e) {
+      errors++;
+      allResults.push({ symbol:sym, name:sym, signal:'ERROR', score:0, details:{}, rsi:0, chg:0, price:0 });
+    }
+    done++;
+    updateProgress(done, total, errors);
+    renderLive();
+  }
+
+  // Batch execution
+  for (let i = 0; i < symbols.length; i += CONCURRENCY) {
+    if (scanCancel) break;
+    const batch = symbols.slice(i, i + CONCURRENCY).map(s => processSymbol(s));
+    await Promise.all(batch);
+    if (i + CONCURRENCY < symbols.length) await sleep(DELAY_MS);
+  }
+
+  // Final render
+  scanning = false;
+  scanCancel = false;
+  btn.textContent = '▶ SCAN';
+  btn.classList.remove('stop');
+  document.getElementById('live-dot').classList.remove('active');
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('scan-time').textContent = 'Scanned ' + now();
+  renderFull();
+}
+
+function updateProgress(done, total, errors) {
+  const pct = Math.round(done / total * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent =
+    `Scanning ${done}/${total} · ${errors} errors · ${pct}%`;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function now() {
+  const d = new Date();
+  return d.toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
+}
+
+// ═══════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════
+function applyFilters(results) {
+  const sigF  = document.getElementById('sig-filter').value;
+  const sortC = document.getElementById('sort-col').value;
+
+  let filtered = results.filter(r => r.signal !== 'ERROR');
+  if (sigF === 'BUY')    filtered = filtered.filter(r => r.signal.includes('BUY'));
+  if (sigF === 'SELL')   filtered = filtered.filter(r => r.signal.includes('SELL'));
+  if (sigF === 'MR')     filtered = filtered.filter(r => r.signal.includes('MR'));
+  if (sigF === 'STRONG') filtered = filtered.filter(r => r.signal.startsWith('STRONG'));
+
+  // Sort
+  const { col, dir } = sortState;
+  filtered.sort((a, b) => {
+    let va = a[col] ?? 0, vb = b[col] ?? 0;
+    if (col === 'sym') { va = a.symbol; vb = b.symbol; }
+    if (col === 'signal') { va = a.signal; vb = b.signal; }
+    if (typeof va === 'string') return dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    return dir === 'asc' ? va - vb : vb - va;
+  });
+
+  return filtered;
+}
+
+function updateSummary(results) {
+  const valid = results.filter(r => r.signal !== 'ERROR');
+  document.getElementById('sum-sbuy').textContent  = valid.filter(r=>r.signal==='STRONG-BUY').length;
+  document.getElementById('sum-buy').textContent   = valid.filter(r=>r.signal==='BUY').length;
+  document.getElementById('sum-mr').textContent    = valid.filter(r=>r.signal.includes('MR')).length;
+  document.getElementById('sum-sell').textContent  = valid.filter(r=>r.signal==='SELL').length;
+  document.getElementById('sum-ssell').textContent = valid.filter(r=>r.signal==='STRONG-SELL').length;
+  document.getElementById('summary').style.display = 'block';
+  document.getElementById('result-count').textContent = valid.length + ' symbols';
+}
+
+function scoreColor(s) {
+  if (s >= 6) return 'var(--bull)';
+  if (s >= 4) return 'var(--accent)';
+  if (s >= 3) return 'var(--mr)';
+  return 'var(--bear)';
+}
+
+function renderLive() {
+  if (allResults.length % 5 !== 0) return;
+  updateSummary(allResults);
+  const filtered = applyFilters(allResults);
+  buildTable(filtered);
+}
+
+function renderFull() {
+  updateSummary(allResults);
+  const filtered = applyFilters(allResults);
+  buildTable(filtered);
+}
+
+function buildTable(rows) {
+  const tbody = document.getElementById('results-body');
+  const table = document.getElementById('results-table');
+  const noRes = document.getElementById('no-results');
+
+  if (!rows.length) {
+    table.style.display = 'none';
+    noRes.style.display = 'block';
+    return;
+  }
+
+  table.style.display = 'table';
+  noRes.style.display = 'none';
+
+  tbody.innerHTML = rows.map((r, idx) => {
+    const chgClass = r.chg >= 0 ? 'pos' : 'neg';
+    const chgStr   = (r.chg >= 0 ? '+' : '') + (r.chg || 0).toFixed(2) + '%';
+    const priceStr = r.price ? r.price.toFixed(2) : '—';
+    const rsiClass = r.rsi >= 70 ? 'ob' : r.rsi <= 30 ? 'os' : 'mid';
+    const rsiStr   = r.rsi ? r.rsi.toFixed(1) : '—';
+    const sc       = r.score;
+    const scFill   = Math.min(sc / 7 * 100, 100).toFixed(0);
+    const scCol    = scoreColor(sc);
+    const sigClass = r.signal.replace(/\s/g,'-');
+    const d        = r.details || {};
+
+    const detailHTML = `
+      <tr class="detail-row" id="detail-row-${idx}">
+        <td colspan="6">
+          <div class="detail-inner" id="detail-${idx}">
+            <div class="detail-grid">
+              <div class="detail-item"><label>EMA 20</label><span>${d.ema20?.toFixed(1)||'—'}</span></div>
+              <div class="detail-item"><label>EMA 50</label><span>${d.ema50?.toFixed(1)||'—'}</span></div>
+              <div class="detail-item"><label>EMA 200</label><span>${d.ema200?.toFixed(1)||'—'}</span></div>
+              <div class="detail-item"><label>ADX</label><span style="color:${(d.adx||0)>25?'var(--bull)':'var(--mr)'}">${(d.adx||0).toFixed(1)}</span></div>
+              <div class="detail-item"><label>Vol Ratio</label><span style="color:${(d.volRatio||0)>1?'var(--bull)':'var(--bear)'}">${(d.volRatio||0).toFixed(2)}x</span></div>
+              <div class="detail-item"><label>RS Score</label><span style="color:${d.rsScore>1?'var(--bull)':'var(--bear)'}">${d.rsScore||'—'}</span></div>
+              <div class="detail-item"><label>BB Upper</label><span>${d.bbU?.toFixed(1)||'—'}</span></div>
+              <div class="detail-item"><label>BB Mid</label><span>${d.bbM?.toFixed(1)||'—'}</span></div>
+              <div class="detail-item"><label>BB Lower</label><span>${d.bbL?.toFixed(1)||'—'}</span></div>
+              <div class="detail-item"><label>Stock 20d</label><span>${d.stockRet20||'—'}%</span></div>
+              <div class="detail-item"><label>Nifty 20d</label><span>${d.niftyRet20||'—'}%</span></div>
+              <div class="detail-item"><label>Crossover</label><span style="color:${d.crossUp?'var(--bull)':d.crossDown?'var(--bear)':'var(--muted)'}">
+                ${d.crossUp?'↑ CROSS UP':d.crossDown?'↓ CROSS DN':'—'}</span></div>
+            </div>
+            <div class="score-breakdown">
+              <h4>TREND SCORE BREAKDOWN — ${sc}/7</h4>
+              ${[
+                ['Price > EMA200',   d.s1],
+                ['EMA20 > EMA50',    d.s2],
+                ['EMA50 Slope Up',   d.s3],
+                ['RSI > 50',         d.s4],
+                ['Vol > Average',    d.s5],
+                ['RS Outperform',    d.s6],
+                ['ADX > 25 (Trend)', d.s7],
+              ].map(([label, val]) => `
+                <div class="score-item">
+                  <span>${label}</span>
+                  <span class="${val?'ok':'no'}">${val?'✓ +1':'✗ 0'}</span>
+                </div>`).join('')}
+            </div>
+            <a class="tv-link" href="https://www.tradingview.com/chart/?symbol=NSE:${r.symbol}" target="_blank">📊 Open in TradingView →</a>
+          </div>
+        </td>
+      </tr>`;
+
+    return `
+      <tr class="data-row" data-idx="${idx}" onclick="toggleDetail(${idx})">
+        <td class="sym">${r.symbol}<small>${(r.name||'').substring(0,18)}</small></td>
+        <td><span class="sig ${sigClass}">${r.signal}</span></td>
+        <td>
+          <div class="score-wrap">
+            <span class="score-num" style="color:${scCol}">${sc}</span>
+            <div class="score-bar"><div class="score-fill" style="width:${scFill}%;background:${scCol}"></div></div>
+          </div>
+        </td>
+        <td>₹${priceStr}</td>
+        <td class="chg ${chgClass}">${chgStr}</td>
+        <td class="rsi-val ${rsiClass}">${rsiStr}</td>
+      </tr>
+      ${detailHTML}`;
+  }).join('');
+}
+
+function toggleDetail(idx) {
+  const el = document.getElementById(`detail-${idx}`);
+  if (!el) return;
+  const open = el.style.display === 'block';
+  // Close all others
+  document.querySelectorAll('.detail-inner').forEach(d => d.style.display = 'none');
+  if (!open) el.style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════
+// SORTING
+// ═══════════════════════════════════════════════
+document.querySelectorAll('th[data-col]').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    if (sortState.col === col) {
+      sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortState.col = col;
+      sortState.dir = 'desc';
+    }
+    document.querySelectorAll('th[data-col]').forEach(t => {
+      t.classList.remove('sort-asc','sort-desc');
+    });
+    th.classList.add(sortState.dir === 'asc' ? 'sort-asc' : 'sort-desc');
+    if (allResults.length) renderFull();
+  });
+});
+
+// ═══════════════════════════════════════════════
+// EVENT LISTENERS
+// ═══════════════════════════════════════════════
+document.getElementById('scan-btn').addEventListener('click', runScan);
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const isCustom = tab.dataset.list === 'CUSTOM';
+    document.getElementById('custom-wrap').style.display = isCustom ? 'block' : 'none';
+  });
+});
+
+document.getElementById('sig-filter').addEventListener('change', () => {
+  if (allResults.length) renderFull();
+});
+
+document.getElementById('sort-col').addEventListener('change', () => {
+  const col = document.getElementById('sort-col').value;
+  sortState = { col, dir: 'desc' };
+  if (allResults.length) renderFull();
+});
+
+// ─── TOAST ───────────────────────────────────
+function toast(msg, ms=3000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), ms);
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('proxy-bar').textContent = 'Detecting best proxy...';
+  detectProxy().then(() => {
+    if (proxyReady) {
+      const p = PROXIES[activeProxyIdx];
+      document.getElementById('scan-time').textContent = `Ready · ${p.name}`;
+      toast(`✅ Connected via ${p.name}`);
+    }
+  });
+});
+</script>
+</body>
+</html>

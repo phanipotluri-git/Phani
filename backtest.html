@@ -4,83 +4,118 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DASH-I Backtester v2</title>
+<title>DASH Dual Backtester — Daily vs Weekly</title>
 <style>
-:root {
-  --bg:     #060810;
-  --bg2:    #0b0f1a;
-  --bg3:    #111827;
-  --bg4:    #1a2235;
-  --bg5:    #202c42;
-  --border: #1e2d47;
-  --text:   #c8d6f0;
-  --muted:  #4a6080;
-  --bull:   #00e676;
-  --bear:   #ff4444;
-  --range:  #ff9800;
-  --accent: #3d8ef8;
-  --gold:   #ffd600;
-  --cyan:   #00bcd4;
-  --font:   'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+:root{
+  --bg:#060810;--bg2:#0b0f1a;--bg3:#111827;--bg4:#1a2235;--bg5:#202c42;
+  --border:#1e2d47;--text:#c8d6f0;--muted:#4a6080;
+  --bull:#00e676;--bear:#ff4444;--range:#ff9800;
+  --accent:#3d8ef8;--gold:#ffd600;--cyan:#00bcd4;--purple:#ab47bc;
+  --daily:#3d8ef8;--weekly:#ffd600;
+  --font:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;min-height:100vh;}
 
-header{
-background:linear-gradient(135deg,#0a1020,#070c18);
-border-bottom:1px solid var(–border);
+header{background:linear-gradient(135deg,#0a1020,#070c18);border-bottom:1px solid var(–border);
 padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
-position:sticky;top:0;z-index:100;
-}
+position:sticky;top:0;z-index:100;}
 .logo{display:flex;align-items:center;gap:10px;}
-.logo-icon{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#ffd600,#ff9800);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#000;}
+.logo-icon{width:36px;height:36px;border-radius:9px;
+background:linear-gradient(135deg,var(–daily),var(–weekly));
+display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#000;}
 .logo h1{font-size:16px;font-weight:800;color:#fff;}
 .logo p{font-size:9px;color:var(–muted);letter-spacing:.5px;}
 #hdr-right{text-align:right;font-size:10px;color:var(–muted);}
 
-#proxy-bar{background:var(–bg2);border-bottom:1px solid var(–border);padding:7px 16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.proxy-pill{font-size:9px;padding:2px 7px;border-radius:4px;background:var(–bg4);border:1px solid var(–border);color:var(–muted);}
+#proxy-bar{background:var(–bg2);border-bottom:1px solid var(–border);
+padding:7px 16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.proxy-pill{font-size:9px;padding:2px 7px;border-radius:4px;
+background:var(–bg4);border:1px solid var(–border);color:var(–muted);}
 .proxy-pill.ok{border-color:var(–bull);color:var(–bull);}
 .proxy-pill.fail{border-color:var(–bear);color:var(–bear);}
 .proxy-pill.trying{border-color:var(–gold);color:var(–gold);animation:pulse 1s infinite;}
-.force-btn{font-size:9px;padding:2px 7px;border-radius:4px;background:var(–bg4);border:1px solid var(–border);color:var(–muted);cursor:pointer;font-weight:700;}
-.force-btn.act{border-color:var(–accent);color:var(–accent);}
+.fbtn{font-size:9px;padding:2px 7px;border-radius:4px;background:var(–bg4);
+border:1px solid var(–border);color:var(–muted);cursor:pointer;font-weight:700;}
+.fbtn.act{border-color:var(–accent);color:var(–accent);}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 #params{background:var(–bg2);border-bottom:1px solid var(–border);padding:14px 16px;}
-.section-label{font-size:9px;font-weight:800;color:var(–muted);letter-spacing:.7px;margin-bottom:8px;}
-.symbol-row{display:flex;gap:8px;margin-bottom:10px;}
-#sym{flex:1;background:var(–bg3);border:1px solid var(–border);border-radius:8px;padding:10px 14px;color:#fff;font-size:15px;font-weight:800;outline:none;letter-spacing:.5px;}
+.sym-row{display:flex;gap:8px;margin-bottom:10px;}
+#sym{flex:1;background:var(–bg3);border:1px solid var(–border);border-radius:8px;
+padding:10px 14px;color:#fff;font-size:15px;font-weight:800;outline:none;letter-spacing:.5px;}
 #sym:focus{border-color:var(–accent);}
 #sym::placeholder{color:var(–muted);font-weight:400;font-size:13px;}
-.run-btn{background:linear-gradient(135deg,var(–gold),var(–range));border:none;border-radius:8px;padding:10px 22px;color:#000;font-size:14px;font-weight:900;cursor:pointer;white-space:nowrap;}
+.run-btn{background:linear-gradient(135deg,var(–daily),var(–weekly));
+border:none;border-radius:8px;padding:10px 22px;color:#000;
+font-size:14px;font-weight:900;cursor:pointer;white-space:nowrap;}
 .run-btn:active{opacity:.85;}
 .run-btn:disabled{opacity:.4;cursor:not-allowed;}
 .preset-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
-.preset-btn{font-size:10px;padding:4px 10px;border-radius:6px;cursor:pointer;background:var(–bg4);border:1px solid var(–border);color:var(–muted);font-weight:700;}
-.preset-btn:active{border-color:var(–accent);color:var(–accent);}
-.params-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-@media(min-width:600px){.params-grid{grid-template-columns:repeat(4,1fr);}}
+.prbtn{font-size:10px;padding:4px 10px;border-radius:6px;cursor:pointer;
+background:var(–bg4);border:1px solid var(–border);color:var(–muted);font-weight:700;}
+.prbtn:active{border-color:var(–accent);color:var(–accent);}
+
+/* Mode toggle */
+.mode-row{display:flex;gap:8px;margin-bottom:12px;}
+.mode-btn{flex:1;padding:8px;border-radius:8px;border:2px solid var(–border);
+background:var(–bg3);cursor:pointer;text-align:center;transition:all .15s;}
+.mode-btn.daily-btn.active{border-color:var(–daily);background:rgba(61,142,248,.1);}
+.mode-btn.weekly-btn.active{border-color:var(–weekly);background:rgba(255,214,0,.1);}
+.mode-btn.both-btn.active{border-color:var(–purple);background:rgba(171,71,188,.1);}
+.mode-btn .mb-title{font-size:12px;font-weight:800;margin-bottom:2px;}
+.mode-btn .mb-sub{font-size:9px;color:var(–muted);}
+.daily-btn.active .mb-title{color:var(–daily);}
+.weekly-btn.active .mb-title{color:var(–weekly);}
+.both-btn.active .mb-title{color:var(–purple);}
+
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media(min-width:600px){.pgrid{grid-template-columns:repeat(4,1fr);}}
 .pg{background:var(–bg3);border-radius:9px;padding:10px;border:1px solid var(–border);}
 .pg-title{font-size:9px;color:var(–muted);font-weight:800;letter-spacing:.5px;margin-bottom:7px;}
 .pr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
 .pr:last-child{margin-bottom:0;}
 .pr label{font-size:11px;color:var(–text);}
-.pr input,.pr select{background:var(–bg4);border:1px solid var(–border);border-radius:5px;padding:3px 7px;color:#fff;font-size:11px;font-weight:700;text-align:right;outline:none;width:78px;}
+.pr input,.pr select{background:var(–bg4);border:1px solid var(–border);border-radius:5px;
+padding:3px 7px;color:#fff;font-size:11px;font-weight:700;text-align:right;
+outline:none;width:78px;}
 .pr input:focus{border-color:var(–accent);}
+.sl{font-size:9px;color:var(–muted);letter-spacing:.6px;margin:10px 0 6px;font-weight:800;}
 
 #status-bar{padding:10px 16px;background:var(–bg2);border-bottom:1px solid var(–border);display:none;}
-#prog-bar{height:3px;background:var(–bg4);border-radius:2px;margin-bottom:6px;}
-#prog-fill{height:100%;background:linear-gradient(90deg,var(–gold),var(–range));border-radius:2px;transition:width .3s;width:0;}
-#status-text{font-size:11px;color:var(–muted);text-align:center;}
+#prog-wrap{height:3px;background:var(–bg4);border-radius:2px;margin-bottom:6px;}
+#prog-fill{height:100%;background:linear-gradient(90deg,var(–daily),var(–weekly));
+border-radius:2px;transition:width .3s;width:0;}
+#status-txt{font-size:11px;color:var(–muted);text-align:center;}
 
-/* DEBUG PANEL */
-#debug-panel{display:none;background:var(–bg3);border:1px solid var(–border);border-radius:8px;margin:10px 16px;padding:10px 12px;font-family:‘SF Mono’,monospace;font-size:10px;color:#a0b4cc;line-height:1.8;}
-#debug-panel h4{color:var(–gold);font-size:10px;margin-bottom:6px;letter-spacing:.5px;}
+/* Debug panel */
+#debug{display:none;background:var(–bg3);border:1px solid var(–border);
+border-radius:8px;margin:10px 16px;padding:10px 12px;
+font-family:‘SF Mono’,Monaco,monospace;font-size:10px;color:#a0b4cc;line-height:1.7;}
+#debug h4{color:var(–gold);margin-bottom:6px;font-size:10px;letter-spacing:.5px;}
 
+/* Comparison banner */
+#compare-banner{display:none;padding:12px 16px;background:var(–bg2);
+border-bottom:1px solid var(–border);}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.compare-col{border-radius:10px;padding:12px;border:2px solid;}
+.compare-col.daily-col{border-color:rgba(61,142,248,.4);background:rgba(61,142,248,.05);}
+.compare-col.weekly-col{border-color:rgba(255,214,0,.4);background:rgba(255,214,0,.05);}
+.compare-col .cc-title{font-size:10px;font-weight:800;letter-spacing:.5px;margin-bottom:8px;}
+.daily-col .cc-title{color:var(–daily);}
+.weekly-col .cc-title{color:var(–weekly);}
+.cc-row{display:flex;justify-content:space-between;padding:3px 0;
+border-bottom:1px solid rgba(255,255,255,.04);font-size:11px;}
+.cc-row:last-child{border:none;}
+.cc-row .cc-label{color:var(–muted);}
+.cc-row .cc-val{font-weight:700;}
+.winner-badge{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:800;
+background:rgba(0,230,118,.2);color:var(–bull);border:1px solid rgba(0,230,118,.3);}
+
+/* Results tabs */
 #results{display:none;}
-
-#metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:12px 16px;background:var(–bg2);border-bottom:1px solid var(–border);}
+#metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;
+padding:12px 16px;background:var(–bg2);border-bottom:1px solid var(–border);}
 @media(min-width:500px){#metrics{grid-template-columns:repeat(4,1fr);}}
 .mc{background:var(–bg3);border-radius:10px;padding:10px;border:1px solid var(–border);}
 .mc .ml{font-size:9px;color:var(–muted);font-weight:700;letter-spacing:.5px;margin-bottom:3px;}
@@ -89,24 +124,30 @@ position:sticky;top:0;z-index:100;
 .mc.pos .mv{color:var(–bull);}
 .mc.neg .mv{color:var(–bear);}
 .mc.neu .mv{color:var(–accent);}
-.mc.gld .mv{color:var(–gold);}
 
 #chart-wrap{padding:12px 16px;background:var(–bg2);border-bottom:1px solid var(–border);}
-#chart-title{font-size:10px;font-weight:800;color:var(–muted);letter-spacing:.5px;margin-bottom:8px;display:flex;justify-content:space-between;}
+#chart-title{font-size:10px;font-weight:800;color:var(–muted);letter-spacing:.5px;
+margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+.chart-legend{display:flex;gap:12px;}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:9px;color:var(–muted);}
+.leg-dot{width:10px;height:3px;border-radius:2px;}
 #eq-canvas{display:block;width:100%;height:200px;border-radius:8px;background:var(–bg3);}
 
 .rtabs{display:flex;background:var(–bg2);border-bottom:1px solid var(–border);}
-.rtab{flex:1;padding:10px;text-align:center;font-size:11px;font-weight:700;color:var(–muted);cursor:pointer;border-bottom:2px solid transparent;}
+.rtab{flex:1;padding:10px;text-align:center;font-size:11px;font-weight:700;
+color:var(–muted);cursor:pointer;border-bottom:2px solid transparent;}
 .rtab.active{color:var(–accent);border-bottom-color:var(–accent);}
 .rpane{display:none;}
 .rpane.active{display:block;}
 
-#tlog{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-#ttable{width:100%;border-collapse:collapse;min-width:580px;}
-#ttable th{background:var(–bg3);padding:7px 10px;text-align:left;font-size:9px;font-weight:800;letter-spacing:.6px;color:var(–muted);border-bottom:1px solid var(–border);white-space:nowrap;}
-#ttable td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.03);font-size:11px;white-space:nowrap;}
-.tw{color:var(–bull);}
-.tl{color:var(–bear);}
+#tlog-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+#ttable{width:100%;border-collapse:collapse;min-width:620px;}
+#ttable th{background:var(–bg3);padding:7px 10px;text-align:left;font-size:9px;
+font-weight:800;letter-spacing:.6px;color:var(–muted);
+border-bottom:1px solid var(–border);white-space:nowrap;}
+#ttable td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.03);
+font-size:11px;white-space:nowrap;}
+.tw{color:var(–bull);}.tl{color:var(–bear);}
 .etag{display:inline-block;font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;}
 .etag.TP2{background:rgba(0,230,118,.15);color:var(–bull);border:1px solid rgba(0,230,118,.3);}
 .etag.TP1{background:rgba(0,188,212,.15);color:var(–cyan);border:1px solid rgba(0,188,212,.3);}
@@ -114,11 +155,15 @@ position:sticky;top:0;z-index:100;
 .etag.TRAIL{background:rgba(255,152,0,.15);color:var(–range);border:1px solid rgba(255,152,0,.3);}
 .etag.TIME{background:rgba(92,107,192,.15);color:#7986cb;border:1px solid rgba(92,107,192,.3);}
 .etag.OPEN{background:rgba(75,75,75,.3);color:var(–muted);border:1px solid var(–border);}
+.src-tag{font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;display:inline-block;}
+.src-tag.D{background:rgba(61,142,248,.15);color:var(–daily);border:1px solid rgba(61,142,248,.3);}
+.src-tag.W{background:rgba(255,214,0,.15);color:var(–weekly);border:1px solid rgba(255,214,0,.3);}
 
 #hm-wrap{padding:12px 16px;}
 #hm-title{font-size:10px;font-weight:800;color:var(–muted);letter-spacing:.5px;margin-bottom:8px;}
 #hm-grid{display:grid;grid-template-columns:repeat(13,1fr);gap:3px;}
-.hmc{border-radius:4px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;}
+.hmc{border-radius:4px;aspect-ratio:1;display:flex;align-items:center;
+justify-content:center;font-size:7px;font-weight:700;}
 .hml{color:var(–muted);font-size:7px;font-weight:700;}
 .gL{background:rgba(0,230,118,.2);color:var(–bull);}
 .gM{background:rgba(0,230,118,.45);color:var(–bull);}
@@ -130,11 +175,15 @@ position:sticky;top:0;z-index:100;
 
 #stats-wrap{padding:12px 16px;}
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.sr{display:flex;justify-content:space-between;padding:6px 10px;background:var(–bg3);border-radius:7px;border:1px solid var(–border);}
-.sr .sl{font-size:11px;color:var(–muted);}
+.sr{display:flex;justify-content:space-between;padding:6px 10px;
+background:var(–bg3);border-radius:7px;border:1px solid var(–border);}
+.sr .sl2{font-size:11px;color:var(–muted);}
 .sr .sv{font-size:11px;font-weight:800;}
 
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(–bg3);border:1px solid var(–border);border-radius:10px;padding:10px 18px;font-size:12px;color:var(–text);z-index:999;opacity:0;transition:opacity .25s;pointer-events:none;max-width:300px;text-align:center;}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+background:var(–bg3);border:1px solid var(–border);border-radius:10px;
+padding:10px 18px;font-size:12px;color:var(–text);z-index:999;
+opacity:0;transition:opacity .25s;pointer-events:none;max-width:300px;text-align:center;}
 #toast.show{opacity:1;}
 </style>
 
@@ -143,10 +192,10 @@ position:sticky;top:0;z-index:100;
 
 <header>
   <div class="logo">
-    <div class="logo-icon">B</div>
+    <div class="logo-icon">D/W</div>
     <div>
-      <h1>DASH-I Backtester</h1>
-      <p>INVESTMENT STRATEGY · DAILY SIGNALS</p>
+      <h1>DASH Dual Backtester</h1>
+      <p>DAILY ENTRY vs WEEKLY ENTRY COMPARISON</p>
     </div>
   </div>
   <div id="hdr-right">
@@ -159,35 +208,56 @@ position:sticky;top:0;z-index:100;
   <span style="font-size:9px;color:var(--muted);font-weight:700">PROXY:</span>
   <span id="ppills">Detecting...</span>
   <span style="margin-left:auto;font-size:9px;color:var(--muted);font-weight:700">FORCE:</span>
-  <button class="force-btn" onclick="forceProxy(0)">corsproxy</button>
-  <button class="force-btn" onclick="forceProxy(1)">allorigins</button>
-  <button class="force-btn" onclick="forceProxy(2)">codetabs</button>
-  <button class="force-btn" onclick="forceProxy(3)">thingproxy</button>
+  <button class="fbtn" onclick="forceProxy(0)">corsproxy</button>
+  <button class="fbtn" onclick="forceProxy(1)">allorigins</button>
+  <button class="fbtn" onclick="forceProxy(2)">codetabs</button>
+  <button class="fbtn" onclick="forceProxy(3)">thingproxy</button>
 </div>
 
 <div id="params">
-  <div class="symbol-row">
+  <div class="sym-row">
     <input type="text" id="sym" placeholder="NSE symbol  e.g. RELIANCE" autocapitalize="characters" autocomplete="off">
     <button class="run-btn" id="run-btn" onclick="runBacktest()">▶ RUN</button>
   </div>
+
+  <!-- Mode selector -->
+
+  <div class="mode-row">
+    <div class="mode-btn daily-btn active" onclick="setMode('daily')">
+      <div class="mb-title">📅 Daily Entry</div>
+      <div class="mb-sub">EMA cross on daily chart<br>Weekly regime filter</div>
+    </div>
+    <div class="mode-btn weekly-btn" onclick="setMode('weekly')">
+      <div class="mb-title">📆 Weekly Entry</div>
+      <div class="mb-sub">EMA cross on weekly chart<br>No extra regime filter</div>
+    </div>
+    <div class="mode-btn both-btn" onclick="setMode('both')">
+      <div class="mb-title">⚡ Both (Compare)</div>
+      <div class="mb-sub">Run both, show side-by-side<br>comparison table</div>
+    </div>
+  </div>
+
+  <!-- Presets -->
+
   <div class="preset-row">
     <span style="font-size:9px;color:var(--muted);font-weight:700;align-self:center">PRESET:</span>
-    <button class="preset-btn" onclick="loadPreset('conservative')">Conservative</button>
-    <button class="preset-btn" onclick="loadPreset('balanced')">Balanced ★</button>
-    <button class="preset-btn" onclick="loadPreset('aggressive')">Aggressive</button>
-    <button class="preset-btn" onclick="loadPreset('trend')">Trend Ride</button>
+    <button class="prbtn" onclick="loadPreset('conservative')">Conservative</button>
+    <button class="prbtn" onclick="loadPreset('balanced')">Balanced ★</button>
+    <button class="prbtn" onclick="loadPreset('aggressive')">Aggressive</button>
+    <button class="prbtn" onclick="loadPreset('trend')">Trend Ride</button>
   </div>
-  <div class="section-label">STRATEGY PARAMETERS</div>
-  <div class="params-grid">
+
+  <div class="sl">SHARED PARAMETERS (apply to both modes)</div>
+  <div class="pgrid">
     <div class="pg">
-      <div class="pg-title">📈 ENTRY</div>
+      <div class="pg-title">📈 ENTRY CONDITIONS</div>
       <div class="pr"><label>Min Score</label><input type="number" id="p-ms" value="4" min="1" max="6"></div>
       <div class="pr"><label>RSI Min</label><input type="number" id="p-rsi" value="50" min="40" max="70"></div>
-      <div class="pr"><label>Regime</label>
-        <select id="p-strict"><option value="2">Weekly 2/3</option><option value="3">Weekly 3/3</option><option value="0">Daily Only</option></select>
-      </div>
       <div class="pr"><label>History</label>
         <select id="p-range"><option value="5y">5 years</option><option value="3y" selected>3 years</option><option value="2y">2 years</option><option value="1y">1 year</option></select>
+      </div>
+      <div class="pr"><label>D-Regime</label>
+        <select id="p-strict"><option value="2">Weekly 2/3</option><option value="3">Weekly 3/3</option></select>
       </div>
     </div>
     <div class="pg">
@@ -195,35 +265,43 @@ position:sticky;top:0;z-index:100;
       <div class="pr"><label>SL Mult</label><input type="number" id="p-sl" value="2.0" min="0.5" max="5" step="0.1"></div>
       <div class="pr"><label>TP1 Mult</label><input type="number" id="p-tp1" value="3.0" min="1" max="10" step="0.1"></div>
       <div class="pr"><label>TP2 Mult</label><input type="number" id="p-tp2" value="5.0" min="1" max="15" step="0.1"></div>
-      <div class="pr"><label>Time Stop</label><input type="number" id="p-ts" value="20" min="5" max="90"></div>
+      <div class="pr"><label>Time Stop</label><input type="number" id="p-ts" value="20" min="5" max="90">
+      </div>
     </div>
     <div class="pg">
       <div class="pg-title">🕯 CHANDELIER TRAIL</div>
       <div class="pr"><label>CE Length</label><input type="number" id="p-cel" value="22" min="5" max="50"></div>
+      <div class="pr"><label>CE ATR Len</label><input type="number" id="p-ceal" value="22" min="5" max="50"></div>
       <div class="pr"><label>CE Mult</label><input type="number" id="p-cem" value="3.0" min="1" max="6" step="0.1"></div>
       <div class="pr"><label>Activate</label>
         <select id="p-tf"><option value="tp1">After TP1</option><option value="entry">From Entry</option></select>
       </div>
-      <div class="pr"><label>TP1 Exit%</label><input type="number" id="p-tp1p" value="50" min="0" max="100"></div>
     </div>
     <div class="pg">
-      <div class="pg-title">💰 SIZING</div>
+      <div class="pg-title">💰 POSITION SIZING</div>
       <div class="pr"><label>Capital ₹</label><input type="number" id="p-cap" value="500000" min="10000"></div>
       <div class="pr"><label>Risk %</label><input type="number" id="p-risk" value="1.0" min="0.25" max="5" step="0.25"></div>
-      <div class="pr"><label>Max Trades</label><input type="number" id="p-max" value="1" min="1" max="5"></div>
+      <div class="pr"><label>TP1 Exit%</label><input type="number" id="p-tp1p" value="50" min="0" max="100"></div>
       <div class="pr"><label>Comm %</label><input type="number" id="p-comm" value="0.05" min="0" max="1" step="0.01"></div>
     </div>
   </div>
 </div>
 
 <div id="status-bar">
-  <div id="prog-bar"><div id="prog-fill"></div></div>
-  <div id="status-text">Loading...</div>
+  <div id="prog-wrap"><div id="prog-fill"></div></div>
+  <div id="status-txt">Loading...</div>
 </div>
 
-<!-- Debug panel — always visible after run -->
+<div id="debug"></div>
 
-<div id="debug-panel"></div>
+<!-- Comparison banner — shown in Both mode -->
+
+<div id="compare-banner">
+  <div style="font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.5px;margin-bottom:10px">
+    SIDE-BY-SIDE COMPARISON
+  </div>
+  <div class="compare-grid" id="compare-grid"></div>
+</div>
 
 <div id="results">
   <div id="metrics">
@@ -237,7 +315,10 @@ position:sticky;top:0;z-index:100;
     <div class="mc neu"><div class="ml">EXPECTANCY</div><div class="mv" id="m-exp">—</div><div class="ms">₹ per trade</div></div>
   </div>
   <div id="chart-wrap">
-    <div id="chart-title"><span>EQUITY CURVE</span><span id="chart-sub" style="font-weight:400;color:var(--muted)"></span></div>
+    <div id="chart-title">
+      <span>EQUITY CURVE</span>
+      <div class="chart-legend" id="chart-legend"></div>
+    </div>
     <canvas id="eq-canvas"></canvas>
   </div>
   <div class="rtabs">
@@ -246,9 +327,9 @@ position:sticky;top:0;z-index:100;
     <div class="rtab" onclick="switchTab(2)">FULL STATS</div>
   </div>
   <div class="rpane active" id="pane0">
-    <div id="tlog"><table id="ttable">
+    <div id="tlog-wrap"><table id="ttable">
       <thead><tr>
-        <th>#</th><th>ENTRY</th><th>EXIT</th><th>DAYS</th>
+        <th>#</th><th>SRC</th><th>ENTRY DATE</th><th>EXIT DATE</th><th>DAYS</th>
         <th>ENTRY ₹</th><th>EXIT ₹</th><th>QTY</th>
         <th>P&L ₹</th><th>P&L %</th><th>EXIT</th><th>SCORE</th>
       </tr></thead>
@@ -269,35 +350,35 @@ position:sticky;top:0;z-index:100;
 'use strict';
 
 // ═══════════════════════════════════════════════════════
-// PROXY — same proven v3 system
+// PROXY — proven v3 system
 // ═══════════════════════════════════════════════════════
-const PROXIES = [
-  {name:'corsproxy', url:'https://corsproxy.io/?'},
+const PROXIES=[
+  {name:'corsproxy',url:'https://corsproxy.io/?'},
   {name:'allorigins',url:'https://api.allorigins.win/raw?url='},
-  {name:'codetabs',  url:'https://api.codetabs.com/v1/proxy?quest='},
+  {name:'codetabs',url:'https://api.codetabs.com/v1/proxy?quest='},
   {name:'thingproxy',url:'https://thingproxy.freeboard.io/fetch/'},
 ];
 PROXIES.forEach(p=>p.status='?');
-let activeProxy=-1, proxyReady=false;
+let activeProxy=-1,proxyReady=false;
 
-function fetchWithTimeout(url,ms){
-  const c=new AbortController();
-  const t=setTimeout(()=>c.abort(),ms);
+function fetchWT(url,ms){
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
   return fetch(url,{signal:c.signal}).then(r=>{clearTimeout(t);return r;}).catch(e=>{clearTimeout(t);throw e;});
 }
 function renderProxy(){
   document.getElementById('ppills').innerHTML=PROXIES.map((p,i)=>
-    '<span class="proxy-pill '+(p.status==='ok'?'ok':p.status==='fail'?'fail':p.status==='trying'?'trying':'')+'">'+p.name+(p.status==='ok'?' ✓':p.status==='trying'?' …':'')+'</span>'
+    '<span class="proxy-pill '+(p.status==='ok'?'ok':p.status==='fail'?'fail':p.status==='trying'?'trying':'')+'">'+
+    p.name+(p.status==='ok'?' ✓':p.status==='trying'?' …':'')+'</span>'
   ).join('');
-  document.querySelectorAll('.force-btn').forEach((b,i)=>b.className='force-btn'+(i===activeProxy&&PROXIES[i].status==='ok'?' act':''));
+  document.querySelectorAll('.fbtn').forEach((b,i)=>b.className='fbtn'+(i===activeProxy&&PROXIES[i].status==='ok'?' act':''));
 }
 async function detectProxy(){
-  const test='https://query1.finance.yahoo.com/v8/finance/chart/RELIANCE.NS?interval=1d&range=5d';
+  const t='https://query1.finance.yahoo.com/v8/finance/chart/RELIANCE.NS?interval=1d&range=5d';
   renderProxy();
   for(let i=0;i<PROXIES.length;i++){
     PROXIES[i].status='trying';renderProxy();
     try{
-      const r=await fetchWithTimeout(PROXIES[i].url+encodeURIComponent(test),8000);
+      const r=await fetchWT(PROXIES[i].url+encodeURIComponent(t),8000);
       if(!r.ok)throw 0;
       const d=await r.json();
       if(d?.chart?.result?.[0]){PROXIES[i].status='ok';activeProxy=i;proxyReady=true;renderProxy();setConn('ok','● '+PROXIES[i].name);return;}
@@ -307,25 +388,33 @@ async function detectProxy(){
   setConn('fail','⚠️ All proxies failed');
 }
 async function forceProxy(idx){
-  activeProxy=idx;proxyReady=false;PROXIES.forEach(p=>p.status='?');PROXIES[idx].status='trying';renderProxy();
-  const test='https://query1.finance.yahoo.com/v8/finance/chart/RELIANCE.NS?interval=1d&range=5d';
+  activeProxy=idx;proxyReady=false;PROXIES.forEach(p=>p.status='?');
+  PROXIES[idx].status='trying';renderProxy();
+  const t='https://query1.finance.yahoo.com/v8/finance/chart/RELIANCE.NS?interval=1d&range=5d';
   try{
-    const r=await fetchWithTimeout(PROXIES[idx].url+encodeURIComponent(test),10000);
+    const r=await fetchWT(PROXIES[idx].url+encodeURIComponent(t),10000);
     if(!r.ok)throw 0;
     const d=await r.json();
     if(d?.chart?.result?.[0]){PROXIES[idx].status='ok';proxyReady=true;renderProxy();setConn('ok','● '+PROXIES[idx].name);toast('✅ '+PROXIES[idx].name+' connected');return;}
     throw 0;
   }catch{PROXIES[idx].status='fail';renderProxy();toast('❌ '+PROXIES[idx].name+' failed');}
 }
-function setConn(state,txt){
-  const el=document.getElementById('conn-txt');
-  el.textContent=txt;el.style.color=state==='ok'?'var(--bull)':state==='fail'?'var(--bear)':'var(--muted)';
-}
+function setConn(s,t){const e=document.getElementById('conn-txt');e.textContent=t;e.style.color=s==='ok'?'var(--bull)':s==='fail'?'var(--bear)':'var(--muted)';}
 async function proxyFetch(url){
   if(!proxyReady)throw new Error('No proxy');
-  const r=await fetchWithTimeout(PROXIES[activeProxy].url+encodeURIComponent(url),20000);
+  const r=await fetchWT(PROXIES[activeProxy].url+encodeURIComponent(url),20000);
   if(!r.ok)throw new Error('HTTP '+r.status);
   return r.json();
+}
+
+// ═══════════════════════════════════════════════════════
+// MODE
+// ═══════════════════════════════════════════════════════
+let currentMode='daily';
+function setMode(m){
+  currentMode=m;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.'+m+'-btn').classList.add('active');
 }
 
 // ═══════════════════════════════════════════════════════
@@ -333,18 +422,17 @@ async function proxyFetch(url){
 // ═══════════════════════════════════════════════════════
 function loadPreset(n){
   const P={
-    conservative:{ms:5,rsi:55,strict:'3',sl:2.5,tp1:3.0,tp2:5.0,ts:15,cem:3.5,risk:0.5,tf:'tp1', tp1p:50},
-    balanced:    {ms:4,rsi:50,strict:'2',sl:2.0,tp1:3.0,tp2:5.0,ts:20,cem:3.0,risk:1.0,tf:'tp1', tp1p:50},
-    aggressive:  {ms:3,rsi:45,strict:'0',sl:1.5,tp1:2.5,tp2:4.5,ts:25,cem:2.5,risk:2.0,tf:'entry',tp1p:33},
-    trend:       {ms:5,rsi:55,strict:'2',sl:3.0,tp1:4.0,tp2:8.0,ts:40,cem:4.0,risk:1.0,tf:'tp1', tp1p:0 },
+    conservative:{ms:5,rsi:55,strict:'3',sl:2.5,tp1:3.0,tp2:5.0,ts:15,cem:3.5,risk:0.5,tf:'tp1',tp1p:50},
+    balanced:    {ms:4,rsi:50,strict:'2',sl:2.0,tp1:3.0,tp2:5.0,ts:20,cem:3.0,risk:1.0,tf:'tp1',tp1p:50},
+    aggressive:  {ms:3,rsi:45,strict:'2',sl:1.5,tp1:2.5,tp2:4.5,ts:25,cem:2.5,risk:2.0,tf:'entry',tp1p:33},
+    trend:       {ms:5,rsi:55,strict:'2',sl:3.0,tp1:4.0,tp2:8.0,ts:40,cem:4.0,risk:1.0,tf:'tp1',tp1p:0},
   };
   const p=P[n];if(!p)return;
-  V('p-ms',p.ms);V('p-rsi',p.rsi);V('p-strict',p.strict);
-  V('p-sl',p.sl);V('p-tp1',p.tp1);V('p-tp2',p.tp2);V('p-ts',p.ts);
-  V('p-cel',22);V('p-cem',p.cem);V('p-tf',p.tf);V('p-tp1p',p.tp1p);
+  ['ms','rsi','sl','tp1','tp2','ts','cem','risk','tp1p'].forEach(k=>V('p-'+k,p[k]));
+  V('p-strict',p.strict);V('p-tf',p.tf);
   toast('Preset: '+n.charAt(0).toUpperCase()+n.slice(1));
 }
-function V(id,v){const el=document.getElementById(id);if(el)el.value=v;}
+function V(id,v){const e=document.getElementById(id);if(e)e.value=v;}
 
 // ═══════════════════════════════════════════════════════
 // INDICATORS
@@ -361,8 +449,7 @@ function ema(data,p){
 function sma(data,p){
   return data.map((_,i)=>{
     if(i<p-1)return NaN;
-    let s=0,c=0;
-    for(let j=i-p+1;j<=i;j++){if(!isNaN(data[j])){s+=data[j];c++;}}
+    let s=0,c=0;for(let j=i-p+1;j<=i;j++){if(!isNaN(data[j])){s+=data[j];c++;}}
     return c>0?s/c:NaN;
   });
 }
@@ -371,8 +458,7 @@ function rsi(C,p){
   if(C.length<p+2)return r;
   let gA=0,lA=0;
   for(let i=1;i<=p;i++){const d=C[i]-C[i-1];gA+=Math.max(d,0);lA+=Math.max(-d,0);}
-  gA/=p;lA/=p;
-  r[p]=lA===0?100:100-100/(1+gA/lA);
+  gA/=p;lA/=p;r[p]=lA===0?100:100-100/(1+gA/lA);
   for(let i=p+1;i<C.length;i++){
     const d=C[i]-C[i-1];
     gA=(gA*(p-1)+Math.max(d,0))/p;lA=(lA*(p-1)+Math.max(-d,0))/p;
@@ -380,41 +466,13 @@ function rsi(C,p){
   }
   return r;
 }
-function atr(H,L,C,p){
+function atrF(H,L,C,p){
   const tr=[H[0]-L[0]],r=Array(C.length).fill(NaN);
   for(let i=1;i<C.length;i++)tr.push(Math.max(H[i]-L[i],Math.abs(H[i]-C[i-1]),Math.abs(L[i]-C[i-1])));
   r[p-1]=tr.slice(0,p).reduce((a,b)=>a+b,0)/p;
   for(let i=p;i<tr.length;i++)r[i]=(r[i-1]*(p-1)+tr[i])/p;
   return r;
 }
-// Chandelier Exit — per bar, uses rolling highest high
-function chandelier(H,L,C,len,mult){
-  const atrV=atr(H,L,C,len);
-  const ceL=Array(C.length).fill(NaN);
-  const ceS=Array(C.length).fill(NaN);
-  // Use running max instead of slice for O(n) instead of O(n²)
-  let maxH=H[0],minL=L[0];
-  for(let i=1;i<len;i++){maxH=Math.max(maxH,H[i]);minL=Math.min(minL,L[i]);}
-  for(let i=len-1;i<C.length;i++){
-    if(i>=len){
-      // Remove old, add new — approximate with a window max (simplified)
-      maxH=H[i];for(let j=Math.max(0,i-len+1);j<=i;j++)maxH=Math.max(maxH,H[j]);
-      minL=L[i];for(let j=Math.max(0,i-len+1);j<=i;j++)minL=Math.min(minL,L[j]);
-    }
-    if(!isNaN(atrV[i])){ceL[i]=maxH-mult*atrV[i];ceS[i]=minL+mult*atrV[i];}
-  }
-  return{ceL,ceS};
-}
-
-// ═══════════════════════════════════════════════════════
-// REGIME — FIX BUG 2 & 4
-// No weekly resampling (caused timestamp bugs).
-// Uses daily bars directly with a 20-day lookback proxy for "weekly" structure.
-// Regime classification: 3-factor score same as DASH-I Pine Script:
-//   1. ADX(14) > 25
-//   2. EMA50 slope (today vs 10 bars ago — approx 2 weekly bars)
-//   3. Price structure: recent 20-bar high > prior 20-bar high (HH) AND recent low > prior low (HL)
-// ═══════════════════════════════════════════════════════
 function wilderADX(H,L,C,p){
   const n=C.length,res=Array(n).fill(NaN);
   if(n<p*2+2)return res;
@@ -441,234 +499,339 @@ function wilderADX(H,L,C,p){
   return res;
 }
 
-// FIX BUG 2: compute regime on daily bars directly
-// strictMode: 3=need all 3 factors, 2=need 2/3, 0=use EMA alignment only (most signals)
-function computeRegime(H,L,C,adxArr,ema50arr,strictMode){
-  const n=C.length;
-  const regimes=Array(n).fill('RANGE');
-  const WIN=20; // 20-day proxy for "monthly structure"
-  for(let i=WIN*2;i<n;i++){
-    const adxV  = isNaN(adxArr[i]) ? 20 : adxArr[i];
-    const e50   = ema50arr[i];
-    const e50p  = ema50arr[i-10]; // slope over 10 days (~2 weeks)
-    if(isNaN(e50)||isNaN(e50p))continue;
-    const slopeUp = e50>e50p;
-    const slopeDn = e50<e50p;
-
-    // Structure: recent WIN-bar high vs prior WIN-bar high
-    const hiRec  = Math.max(...H.slice(i-WIN+1,i+1));
-    const hiPrior= Math.max(...H.slice(i-WIN*2+1,i-WIN+1));
-    const loRec  = Math.min(...L.slice(i-WIN+1,i+1));
-    const loPrior= Math.min(...L.slice(i-WIN*2+1,i-WIN+1));
-    const hhhl   = hiRec>hiPrior*0.97 && loRec>loPrior*0.97;
-    const lhll   = hiRec<hiPrior*1.03 && loRec<loPrior*1.03;
-
-    const price  = C[i];
-    const adxOk  = adxV>25;
-
-    if(strictMode===0){
-      // Daily EMA-only mode: just use EMA20 vs EMA50 alignment
-      regimes[i] = price>e50 ? 'BULL' : price<e50 ? 'BEAR' : 'RANGE';
+// ═══════════════════════════════════════════════════════
+// RESAMPLE — daily to weekly OHLCV
+// ═══════════════════════════════════════════════════════
+function isoWeek(ts){
+  const d=new Date(ts*1000);
+  const y=d.getUTCFullYear(),m=d.getUTCMonth(),day=d.getUTCDate();
+  const jan4=new Date(Date.UTC(y,0,4));
+  const dow=(jan4.getUTCDay()||7);
+  const wk1Mon=new Date(jan4.getTime()-(dow-1)*86400000);
+  return y*100+Math.ceil(((new Date(Date.UTC(y,m,day))-wk1Mon)/86400000+1)/7);
+}
+function resampleWeekly(dates,O,H,L,C,V){
+  const wks=[];
+  let curWk=-1,wO=0,wH=0,wL=9e9,wC=0,wV=0,wDt=0,wEidx=0;
+  for(let i=0;i<dates.length;i++){
+    const wk=isoWeek(dates[i]);
+    if(wk!==curWk){
+      if(curWk>=0)wks.push({o:wO,h:wH,l:wL,c:wC,v:wV,dt:wDt,eidx:i-1,sidx:wEidx});
+      curWk=wk;wO=O[i];wH=H[i];wL=L[i];wC=C[i];wV=V[i];wDt=dates[i];wEidx=i;
     } else {
-      const upScore=(adxOk?1:0)+(slopeUp?1:0)+(hhhl?1:0);
-      const dnScore=(adxOk?1:0)+(slopeDn?1:0)+(lhll?1:0);
-      if     (upScore>=strictMode && price>e50) regimes[i]='BULL';
-      else if(dnScore>=strictMode && price<e50) regimes[i]='BEAR';
+      wH=Math.max(wH,H[i]);wL=Math.min(wL,L[i]);wC=C[i];wV+=V[i];
     }
   }
-  return regimes;
+  if(curWk>=0)wks.push({o:wO,h:wH,l:wL,c:wC,v:wV,dt:wDt,eidx:dates.length-1,sidx:wEidx});
+  return wks;
+}
+
+// ═══════════════════════════════════════════════════════
+// WEEKLY REGIME (for Daily-entry mode gate)
+// Pine: request.security("W",...) with ADX + EMA slope + HH-HL
+// ═══════════════════════════════════════════════════════
+function computeWeeklyRegime(dates,H,L,C,strictMode){
+  const n=C.length;
+  const wks=resampleWeekly(dates,C,H,L,C,Array(n).fill(1));
+  const nw=wks.length;
+  if(nw<20)return Array(n).fill('RANGE');
+  const wCa=wks.map(w=>w.c),wHa=wks.map(w=>w.h),wLa=wks.map(w=>w.l);
+  const wE20=ema(wCa,20),wADX=wilderADX(wHa,wLa,wCa,14);
+  const WIN=3;
+  const wReg=Array(nw).fill('RANGE');
+  for(let wi=WIN*2+5;wi<nw;wi++){
+    const adxV=isNaN(wADX[wi])?20:wADX[wi];
+    const e20w=wE20[wi],e20wp=wE20[wi-3];
+    if(isNaN(e20w)||isNaN(e20wp))continue;
+    const sUp=e20w>e20wp,sDn=e20w<e20wp,price=wCa[wi],adxOk=adxV>25;
+    const hiR=Math.max(...wHa.slice(wi-WIN+1,wi+1));
+    const hiP=Math.max(...wHa.slice(wi-WIN*2+1,wi-WIN+1));
+    const loR=Math.min(...wLa.slice(wi-WIN+1,wi+1));
+    const loP=Math.min(...wLa.slice(wi-WIN*2+1,wi-WIN+1));
+    const hhhl=hiR>hiP*0.96&&loR>loP*0.96;
+    const lhll=hiR<hiP*1.04&&loR<loP*1.04;
+    const uS=(adxOk?1:0)+(sUp?1:0)+(hhhl?1:0);
+    const dS=(adxOk?1:0)+(sDn?1:0)+(lhll?1:0);
+    const th=parseInt(strictMode)||2;
+    if(uS>=th&&price>e20w)wReg[wi]='BULL';
+    else if(dS>=th&&price<e20w)wReg[wi]='BEAR';
+  }
+  // Map weekly back to daily, lagged by 1 weekly bar (Pine: close[1] on weekly)
+  const dReg=Array(n).fill('RANGE');
+  let wi=0;
+  for(let i=0;i<n;i++){
+    while(wi<nw-1&&wks[wi+1].eidx<=i)wi++;
+    dReg[i]=wReg[Math.max(0,wi-1)]||'RANGE';
+  }
+  return dReg;
 }
 
 // ═══════════════════════════════════════════════════════
 // DATA FETCH
 // ═══════════════════════════════════════════════════════
 async function fetchData(sym,range){
-  const url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym+'.NS')+'?interval=1d&range='+range;
+  const url='https://query1.finance.yahoo.com/v8/finance/chart/'+
+    encodeURIComponent(sym+'.NS')+'?interval=1d&range='+range;
   const d=await proxyFetch(url);
   const res=d?.chart?.result?.[0];
-  if(!res)throw new Error('No Yahoo data for '+sym+'. Check symbol spelling.');
+  if(!res)throw new Error('No Yahoo Finance data for '+sym+'. Check symbol spelling.');
   const q=res.indicators.quote[0];
-  const ts=res.timestamp;
-  const meta=res.meta;
+  const ts=res.timestamp,meta=res.meta;
   const ok=ts.map((_,i)=>i).filter(i=>q.close[i]!=null&&q.high[i]!=null&&q.low[i]!=null&&q.open[i]!=null);
-  if(ok.length<100)throw new Error('Insufficient data: only '+ok.length+' bars returned.');
+  if(ok.length<60)throw new Error('Insufficient data: only '+ok.length+' bars for '+sym);
   return{
     sym,name:meta.shortName||sym,
-    dates:ok.map(i=>ts[i]),
-    opens:ok.map(i=>q.open[i]),
-    highs:ok.map(i=>q.high[i]),
-    lows:ok.map(i=>q.low[i]),
-    closes:ok.map(i=>q.close[i]),
-    volumes:ok.map(i=>q.volume[i]||0),
+    dates:ok.map(i=>ts[i]),opens:ok.map(i=>q.open[i]),highs:ok.map(i=>q.high[i]),
+    lows:ok.map(i=>q.low[i]),closes:ok.map(i=>q.close[i]),volumes:ok.map(i=>q.volume[i]||0),
   };
 }
 
 // ═══════════════════════════════════════════════════════
-// BACKTEST ENGINE — FIX BUG 1,3,4,5
+// CHANDELIER EXIT — same Pine logic
 // ═══════════════════════════════════════════════════════
-function runEngine(data,params){
+function buildChandelier(H,L,C,ceLen,ceAtrLen,ceMult){
+  const ceAtr=atrF(H,L,C,ceAtrLen);
+  const ceL=Array(C.length).fill(NaN),ceS=Array(C.length).fill(NaN);
+  for(let i=ceLen-1;i<C.length;i++){
+    if(isNaN(ceAtr[i]))continue;
+    let hi=H[i],lo=L[i];
+    for(let j=Math.max(0,i-ceLen+1);j<i;j++){hi=Math.max(hi,H[j]);lo=Math.min(lo,L[j]);}
+    ceL[i]=hi-ceMult*ceAtr[i];ceS[i]=lo+ceMult*ceAtr[i];
+  }
+  // Stateful CE direction (Pine: var ce_dir=1)
+  const ceDir=Array(C.length).fill(1);
+  for(let i=1;i<C.length;i++){
+    if(C[i]>ceS[i-1])ceDir[i]=1;
+    else if(C[i]<ceL[i-1])ceDir[i]=-1;
+    else ceDir[i]=ceDir[i-1];
+  }
+  return ceDir.map((d,i)=>d===1?ceL[i]:ceS[i]);
+}
+
+// ═══════════════════════════════════════════════════════
+// SIMULATION CORE — shared by both modes
+// entrySignals: array of bar indices where entry fires
+// src: 'D' or 'W' tag for trade log
+// ═══════════════════════════════════════════════════════
+function simulate(data,params,entrySignalFn,src){
   const{dates,opens,highs,lows,closes,volumes}=data;
   const n=closes.length;
-
-  // All indicators
-  const e20   = ema(closes,20);
-  const e50   = ema(closes,50);
-  const e200  = ema(closes,200);
-  const rsi14 = rsi(closes,14);
-  const atr14 = atr(highs,lows,closes,14);
-  const vsma  = sma(volumes,20);
-  const adx14 = wilderADX(highs,lows,closes,14);
-  const{ceL,ceS}=chandelier(highs,lows,closes,params.ceLen,params.ceMult);
-
-  // FIX BUG 4: regime computed on daily bars directly — no weekly resampling
-  const strictMode=parseInt(params.strict);
-  const regime=computeRegime(highs,lows,closes,adx14,e50,strictMode);
-
-  // Trend score 0–6
-  function score(i){
-    const s1=!isNaN(e200[i])&&closes[i]>e200[i]?1:0;
-    const s2=!isNaN(e20[i])&&!isNaN(e50[i])&&e20[i]>e50[i]?1:0;
-    const s3=i>=10&&!isNaN(e50[i])&&!isNaN(e50[i-10])&&e50[i]>e50[i-10]?1:0;
-    const s4=!isNaN(rsi14[i])&&rsi14[i]>55?1:0;
-    const s5=!isNaN(vsma[i])&&volumes[i]>vsma[i]?1:0;
-    const s6=regime[i]==='BULL'?1:0;
-    return{t:s1+s2+s3+s4+s5+s6,s1,s2,s3,s4,s5,s6};
-  }
-
-  // FIX BUG 1: Remove hard i<210 guard. Use NaN checks instead.
-  // FIX BUG 3: Also fire on "EMA alignment" (20>50 already aligned, not just on cross day)
-  //            to catch more real entry opportunities — controlled by score gate
-  function isEntry(i){
-    if(i<51)return false; // need at least EMA50 to be valid
-    if(isNaN(e20[i])||isNaN(e50[i])||isNaN(rsi14[i])||isNaN(atr14[i]))return false;
-    // Accept: (a) golden cross day, OR (b) EMA20 already above EMA50 for first time in N bars
-    const crossUp  = e20[i]>e50[i]&&e20[i-1]<=e50[i-1];    // exact cross
-    const aligned  = e20[i]>e50[i]&&(i<2||e20[i-2]<=e50[i-2]); // newly aligned (was below 2 days ago)
-    const entryTrig= crossUp||aligned;
-    if(!entryTrig)return false;
-    const above200 = isNaN(e200[i])||closes[i]>e200[i]; // if EMA200 not yet valid, skip check
-    const rsiOk    = rsi14[i]>params.rsiMin;
-    const volOk    = isNaN(vsma[i])||volumes[i]>vsma[i];
-    const regOk    = regime[i]==='BULL'||regime[i]==='RANGE'; // allow RANGE entry if score high
-    const sc       = score(i);
-    // In RANGE regime, require higher score
-    const minSc    = regime[i]==='BULL' ? params.minScore : params.minScore+1;
-    return above200&&rsiOk&&volOk&&regOk&&sc.t>=minSc;
-  }
-
-  // Counters for debug
-  let dbCross=0,dbScore=0,dbReg=0,dbVol=0,dbRsi=0,dbTotal=0;
-  for(let i=51;i<n;i++){
-    if(isNaN(e20[i])||isNaN(e50[i]))continue;
-    const c=e20[i]>e50[i]&&(e20[i-1]<=e50[i-1]||(i>=2&&e20[i-2]<=e50[i-2]));
-    if(c){
-      dbCross++;
-      if(rsi14[i]>params.rsiMin)dbRsi++;
-      if(isNaN(vsma[i])||volumes[i]>vsma[i])dbVol++;
-      if(regime[i]==='BULL'||regime[i]==='RANGE')dbReg++;
-      const sc=score(i);
-      if(sc.t>=params.minScore)dbScore++;
-      if(isEntry(i))dbTotal++;
-    }
-  }
-
-  // Simulation
-  const trades=[];
-  const equity=[params.capital];
-  const eqDts=[dates[0]];
-  let cap=params.capital;
-  let inTrade=false,tr=null;
+  const e20=ema(closes,20),e50=ema(closes,50),e200=ema(closes,200);
+  const atr14=atrF(highs,lows,closes,14);
+  const ceActive=buildChandelier(highs,lows,closes,params.ceLen,params.ceAtrLen,params.ceMult);
   const commR=params.commission/100;
+
+  const trades=[],equity=[params.capital],eqDts=[dates[0]];
+  let cap=params.capital,inTrade=false,tr=null;
 
   for(let i=1;i<n;i++){
     // Manage open trade
     if(inTrade&&tr){
-      const hi=highs[i],lo=lows[i],cl=closes[i];
-      const days=i-tr.entryBar;
-
-      // Update chandelier trail (ratchet)
-      if(tr.trailOn){
-        if(!isNaN(ceL[i]))tr.ceSL=Math.max(tr.ceSL,ceL[i]);
-      } else if(params.trailFrom==='entry'&&!isNaN(ceL[i])){
-        tr.trailOn=true;tr.ceSL=Math.max(tr.sl,ceL[i]);
-      }
-
-      const activeSL=tr.trailOn?tr.ceSL:tr.sl;
+      const hi=highs[i],lo=lows[i],days=i-tr.entryBar;
+      // Chandelier ratchet
+      if(tr.trailOn){const cn=ceActive[i];if(!isNaN(cn))tr.ceSL=Math.max(tr.ceSL,cn);}
+      else if(params.trailFrom==='entry'&&!isNaN(ceActive[i])){tr.trailOn=true;tr.ceSL=Math.max(tr.sl,ceActive[i]);}
+      const asl=tr.trailOn?tr.ceSL:tr.sl;
       let exitP=null,exitR=null;
-
-      // Exit checks
-      if(!tr.tp2Hit&&hi>=tr.tp2)                    {exitP=tr.tp2;exitR='TP2';}
-      else if(tr.trailOn&&lo<=activeSL)              {exitP=activeSL;exitR='TRAIL';}
-      else if(!tr.trailOn&&lo<=activeSL&&!tr.tp1Hit) {exitP=activeSL;exitR='SL';}
+      if(hi>=tr.tp2)                          {exitP=tr.tp2;exitR='TP2';}
+      else if(tr.trailOn&&lo<=asl)            {exitP=asl;exitR='TRAIL';}
+      else if(!tr.trailOn&&lo<=asl&&!tr.tp1Hit){exitP=asl;exitR='SL';}
       else if(!tr.tp1Hit&&hi>=tr.tp1){
-        // TP1 hit — partial exit
-        tr.tp1Hit=true;tr.trailOn=true;tr.ceSL=Math.max(tr.sl,isNaN(ceL[i])?tr.sl:ceL[i]);
+        tr.tp1Hit=true;tr.trailOn=true;
+        const ci=ceActive[i];tr.ceSL=!isNaN(ci)?Math.max(tr.entryP,ci):tr.entryP;
         if(params.tp1Pct>0){
-          const pQty=Math.floor(tr.qty*params.tp1Pct/100);
-          if(pQty>0){
-            const pPnl=(tr.tp1-tr.entryP)*pQty-(tr.tp1*pQty+tr.entryP*pQty)*commR;
-            cap+=(tr.tp1*pQty)+pPnl;tr.qty-=pQty;tr.pPnl=pPnl;tr.pQty=pQty;
-          }
+          const pq=Math.floor(tr.qty*params.tp1Pct/100);
+          if(pq>0){const pp=(tr.tp1-tr.entryP)*pq-(tr.tp1*pq+tr.entryP*pq)*commR;cap+=(tr.tp1*pq)+pp;tr.qty-=pq;tr.pPnl+=pp;tr.pQty+=pq;}
         }
       }
-      else if(days>=params.timeStop)                  {exitP=cl;exitR='TIME';}
-
+      else if(days>=params.timeStop){exitP=closes[i];exitR='TIME';}
       if(exitP!==null){
-        const pnl=(exitP-tr.entryP)*tr.qty-(exitP*tr.qty+tr.entryP*tr.qty)*commR+(tr.pPnl||0);
+        const pnl=(exitP-tr.entryP)*tr.qty-(exitP*tr.qty+tr.entryP*tr.qty)*commR+tr.pPnl;
         cap+=(exitP*tr.qty);
-        const sc=score(tr.entryBar);
-        trades.push({
-          num:trades.length+1,
+        trades.push({num:trades.length+1,src,
           entryDate:fmtD(dates[tr.entryBar]),exitDate:fmtD(dates[i]),
-          days,entryP:tr.entryP,exitP,
-          qty:tr.qty+(tr.pQty||0),pnl,
-          pnlPct:(exitP/tr.entryP-1)*100,exitR,score:sc.t,
-        });
+          days,entryP:tr.entryP,exitP,qty:tr.qty+(tr.pQty||0),
+          pnl,pnlPct:(exitP/tr.entryP-1)*100,exitR,score:tr.score});
         inTrade=false;tr=null;
       }
     }
-
-    // Check entry (next bar open fill)
-    if(!inTrade&&isEntry(i-1)){
+    // Check entry: signal fires on bar i-1, fill at bar i open
+    if(!inTrade&&entrySignalFn(i-1)){
       const entryP=opens[i]||closes[i];
       const a=atr14[i-1];
       if(isNaN(a)||a===0)continue;
-      const sl=entryP-params.slMult*a;
-      const tp1=entryP+params.tp1Mult*a;
-      const tp2=entryP+params.tp2Mult*a;
+      // Pine SL = min(ATR-based, candle_low - buf)
+      const sl=Math.min(entryP-params.slMult*a, lows[i-1]-a*0.15);
+      const tp1=entryP+params.tp1Mult*a,tp2=entryP+params.tp2Mult*a;
       const riskPx=entryP-sl;
       if(riskPx<=0)continue;
       const qty=Math.floor(cap*params.riskPct/100/riskPx);
-      if(qty<1)continue;
-      const cost=entryP*qty*(1+commR);
-      if(cost>cap)continue;
-      cap-=entryP*qty;
-      inTrade=true;
-      tr={entryBar:i,entryP,sl,tp1,tp2,qty,
+      if(qty<1||entryP*qty*(1+commR)>cap)continue;
+      cap-=entryP*qty;inTrade=true;
+      tr={entryBar:i,entryP,sl,tp1,tp2,qty,score:entrySignalFn.lastScore||0,
           trailOn:params.trailFrom==='entry',
-          ceSL:params.trailFrom==='entry'?(isNaN(ceL[i])?sl:Math.max(sl,ceL[i])):sl,
-          tp1Hit:false,tp2Hit:false,pPnl:0,pQty:0};
+          ceSL:params.trailFrom==='entry'?(isNaN(ceActive[i])?sl:Math.max(sl,ceActive[i])):sl,
+          tp1Hit:false,pPnl:0,pQty:0};
     }
-
-    const mtm=inTrade&&tr?tr.qty*closes[i]:0;
-    equity.push(cap+mtm);
+    equity.push(cap+(inTrade&&tr?tr.qty*closes[i]:0));
     eqDts.push(dates[i]);
   }
-
-  // Close open trade at last bar
+  // Close open trade
   if(inTrade&&tr){
     const ep=closes[n-1];
-    const pnl=(ep-tr.entryP)*tr.qty+(tr.pPnl||0);
-    const sc=score(tr.entryBar);
-    trades.push({
-      num:trades.length+1,entryDate:fmtD(dates[tr.entryBar]),exitDate:fmtD(dates[n-1])+'*',
-      days:n-1-tr.entryBar,entryP:tr.entryP,exitP:ep,
-      qty:tr.qty+(tr.pQty||0),pnl,pnlPct:(ep/tr.entryP-1)*100,exitR:'OPEN',score:sc.t,
-    });
+    trades.push({num:trades.length+1,src,
+      entryDate:fmtD(dates[tr.entryBar]),exitDate:fmtD(dates[n-1])+'*',
+      days:n-1-tr.entryBar,entryP:tr.entryP,exitP:ep,qty:tr.qty+(tr.pQty||0),
+      pnl:(ep-tr.entryP)*tr.qty+tr.pPnl,pnlPct:(ep/tr.entryP-1)*100,exitR:'OPEN',score:tr.score});
+  }
+  return{trades,equity,eqDts};
+}
+
+// ═══════════════════════════════════════════════════════
+// ── MODE A: DAILY ENTRY
+// Entries watched on EVERY DAILY BAR CLOSE
+// Gate: weekly regime BULL + daily EMA20 crossover EMA50
+//       + price > EMA200 + RSI > 50 + volume > SMA
+//       + trend score >= minScore
+// Exactly mirrors DASH-I v1.1 Pine Script
+// ═══════════════════════════════════════════════════════
+function buildDailyEntryFn(data,params){
+  const{dates,highs,lows,closes,volumes}=data;
+  const n=closes.length;
+  const e20=ema(closes,20),e50=ema(closes,50),e200=ema(closes,200);
+  const rsi14=rsi(closes,14),vsma=sma(volumes,20);
+  const wReg=computeWeeklyRegime(dates,highs,lows,closes,params.strict);
+
+  // Score: s1=wkBull, s2=emaStack(20>50>200), s3=above200, s4=rsi>55, s5=vol, s6=0(no Nifty)
+  function sc(i){
+    const s1=wReg[i]==='BULL'?1:0;
+    const s2=!isNaN(e20[i])&&!isNaN(e50[i])&&!isNaN(e200[i])&&e20[i]>e50[i]&&e50[i]>e200[i]?1:0;
+    const s3=!isNaN(e200[i])&&closes[i]>e200[i]?1:0;
+    const s4=!isNaN(rsi14[i])&&rsi14[i]>55?1:0;
+    const s5=!isNaN(vsma[i])&&volumes[i]>vsma[i]?1:0;
+    return s1+s2+s3+s4+s5;  // max 5 (s6=0 without Nifty)
   }
 
-  return{trades,equity,eqDts,debug:{dbCross,dbRsi,dbVol,dbReg,dbScore,dbTotal,bars:n,
-    regBull:regime.filter(r=>r==='BULL').length,regBear:regime.filter(r=>r==='BEAR').length}};
+  let dbCross=0,dbReg=0,dbAbove=0,dbRsi=0,dbVol=0,dbSc=0,dbTotal=0;
+
+  function fn(i){
+    if(i<201||isNaN(e20[i])||isNaN(e50[i])||isNaN(e200[i])||isNaN(rsi14[i]))return false;
+    // Exact crossover only (Pine: ta.crossover)
+    if(!(e20[i]>e50[i]&&e20[i-1]<=e50[i-1]))return false;
+    dbCross++;
+    if(wReg[i]!=='BULL'){return false;}
+    dbReg++;
+    if(closes[i]<=e200[i]){return false;}
+    dbAbove++;
+    if(rsi14[i]<=params.rsiMin){return false;}
+    dbRsi++;
+    if(!isNaN(vsma[i])&&volumes[i]<=vsma[i]){return false;}
+    dbVol++;
+    const s=sc(i);
+    fn.lastScore=s;
+    if(s<params.minScore){return false;}
+    dbSc++;dbTotal++;
+    return true;
+  }
+  fn.debug=()=>({dbCross,dbReg,dbAbove,dbRsi,dbVol,dbSc,dbTotal,
+    regBull:wReg.filter(r=>r==='BULL').length,bars:n});
+  fn.lastScore=0;
+  return fn;
+}
+
+// ═══════════════════════════════════════════════════════
+// ── MODE B: WEEKLY ENTRY
+// Entries watched ONLY ON WEEKLY BAR CLOSES
+// Entry logic runs on weekly bars:
+//   - EMA20 crosses EMA50 on WEEKLY chart
+//   - Price above EMA200 on weekly
+//   - Weekly RSI > 50
+//   - Weekly Volume > 20-week SMA
+//   - Weekly trend score >= minScore
+// No separate regime filter needed — the weekly chart IS the regime
+// ═══════════════════════════════════════════════════════
+function buildWeeklyEntryFn(data,params){
+  const{dates,opens,highs,lows,closes,volumes}=data;
+  const n=closes.length;
+
+  // Build weekly bars from daily data
+  const wks=resampleWeekly(dates,opens,highs,lows,closes,volumes);
+  const nw=wks.length;
+  const wCa=wks.map(w=>w.c),wHa=wks.map(w=>w.h),wLa=wks.map(w=>w.l),wVa=wks.map(w=>w.v);
+
+  // Weekly indicators
+  const wE20=ema(wCa,20),wE50=ema(wCa,50),wE200=ema(wCa,200);
+  const wRsi=rsi(wCa,14),wVsma=sma(wVa,20),wADX=wilderADX(wHa,wLa,wCa,14);
+
+  // Weekly trend score — same 6 components but on weekly bars
+  // s1=weekly EMA stack (20>50>200), s2=above EMA200, s3=RSI>55
+  // s4=vol>sma, s5=ADX>25, s6=HH-HL structure
+  function wScore(wi){
+    const s1=!isNaN(wE20[wi])&&!isNaN(wE50[wi])&&!isNaN(wE200[wi])&&wE20[wi]>wE50[wi]&&wE50[wi]>wE200[wi]?1:0;
+    const s2=!isNaN(wE200[wi])&&wCa[wi]>wE200[wi]?1:0;
+    const s3=!isNaN(wRsi[wi])&&wRsi[wi]>55?1:0;
+    const s4=!isNaN(wVsma[wi])&&wVa[wi]>wVsma[wi]?1:0;
+    const s5=!isNaN(wADX[wi])&&wADX[wi]>25?1:0;
+    const WIN=3;
+    let s6=0;
+    if(wi>=WIN*2){
+      const hiR=Math.max(...wHa.slice(wi-WIN+1,wi+1)),hiP=Math.max(...wHa.slice(wi-WIN*2+1,wi-WIN+1));
+      const loR=Math.min(...wLa.slice(wi-WIN+1,wi+1)),loP=Math.min(...wLa.slice(wi-WIN*2+1,wi-WIN+1));
+      s6=hiR>hiP*0.96&&loR>loP*0.96?1:0;
+    }
+    return s1+s2+s3+s4+s5+s6;
+  }
+
+  // Mark which daily bars are the LAST BAR of a completed weekly bar
+  // Entry fires at the weekly bar close (= last daily close of that week)
+  // Fill at the NEXT daily open (same as Pine's barstate.isconfirmed on weekly)
+  const weeklyEntryBars=new Set();
+  let dbCross=0,dbAbove=0,dbRsi=0,dbVol=0,dbSc=0,dbTotal=0;
+  const entryScores={};
+
+  for(let wi=201;wi<nw;wi++){  // need ~200 weekly bars for EMA200 — but only have ~150 in 3y
+    if(isNaN(wE20[wi])||isNaN(wE50[wi]))continue;
+    // Weekly EMA20 crossover EMA50 (Pine: ta.crossover on weekly)
+    if(!(wE20[wi]>wE50[wi]&&wE20[wi-1]<=wE50[wi-1]))continue;
+    dbCross++;
+    if(isNaN(wE200[wi])||wCa[wi]<=wE200[wi])continue;
+    dbAbove++;
+    if(isNaN(wRsi[wi])||wRsi[wi]<=params.rsiMin)continue;
+    dbRsi++;
+    if(!isNaN(wVsma[wi])&&wVa[wi]<=wVsma[wi])continue;
+    dbVol++;
+    const s=wScore(wi);
+    if(s<params.minScore)continue;
+    dbSc++;dbTotal++;
+    // The entry fires at weekly close = last daily bar of this week (eidx)
+    weeklyEntryBars.add(wks[wi].eidx);
+    entryScores[wks[wi].eidx]=s;
+  }
+
+  // For stocks with less than 200 weekly bars, relax the EMA200 guard
+  // and retry with EMA50 as the trend filter
+  if(dbCross===0){
+    // Try relaxed: just EMA20 cross EMA50 + above EMA50 + RSI
+    for(let wi=51;wi<nw;wi++){
+      if(isNaN(wE20[wi])||isNaN(wE50[wi]))continue;
+      if(!(wE20[wi]>wE50[wi]&&wE20[wi-1]<=wE50[wi-1]))continue;
+      if(wCa[wi]<=wE50[wi])continue;
+      if(isNaN(wRsi[wi])||wRsi[wi]<=params.rsiMin)continue;
+      const s=Math.min(wScore(wi),4); // cap at 4 for relaxed mode
+      if(s<Math.min(params.minScore,3))continue;
+      weeklyEntryBars.add(wks[wi].eidx);
+      entryScores[wks[wi].eidx]=s;
+      dbTotal++;
+    }
+  }
+
+  function fn(i){
+    fn.lastScore=entryScores[i]||0;
+    return weeklyEntryBars.has(i);
+  }
+  fn.debug=()=>({dbCross,dbAbove,dbRsi,dbVol,dbSc,dbTotal,bars:nw,weeklyBars:nw});
+  fn.lastScore=0;
+  return fn;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -676,8 +839,7 @@ function runEngine(data,params){
 // ═══════════════════════════════════════════════════════
 function calcMetrics(trades,equity,eqDts,startCap){
   const closed=trades.filter(t=>t.exitR!=='OPEN');
-  const wins=closed.filter(t=>t.pnl>0);
-  const losses=closed.filter(t=>t.pnl<=0);
+  const wins=closed.filter(t=>t.pnl>0),losses=closed.filter(t=>t.pnl<=0);
   const totalPnl=closed.reduce((s,t)=>s+t.pnl,0);
   const gWin=wins.reduce((s,t)=>s+t.pnl,0);
   const gLoss=Math.abs(losses.reduce((s,t)=>s+t.pnl,0));
@@ -693,8 +855,8 @@ function calcMetrics(trades,equity,eqDts,startCap){
   let peak=startCap,maxDDPct=0,maxDD=0;
   for(const eq of equity){if(eq>peak)peak=eq;const dd=(peak-eq)/peak*100;if(dd>maxDDPct){maxDDPct=dd;maxDD=peak-eq;}}
   const dRet=[];for(let i=1;i<equity.length;i++)dRet.push((equity[i]-equity[i-1])/equity[i-1]);
-  const mR=dRet.reduce((a,b)=>a+b,0)/dRet.length;
-  const stdR=Math.sqrt(dRet.reduce((s,r)=>s+(r-mR)**2,0)/dRet.length);
+  const mR=dRet.reduce((a,b)=>a+b,0)/(dRet.length||1);
+  const stdR=Math.sqrt(dRet.reduce((s,r)=>s+(r-mR)**2,0)/(dRet.length||1));
   const sharpe=stdR>0?(mR*252)/(stdR*Math.sqrt(252)):0;
   let mxCW=0,mxCL=0,cW=0,cL=0;
   for(const t of closed){if(t.pnl>0){cW++;cL=0;mxCW=Math.max(mxCW,cW);}else{cL++;cW=0;mxCL=Math.max(mxCL,cL);}}
@@ -708,6 +870,8 @@ function calcMetrics(trades,equity,eqDts,startCap){
 // ═══════════════════════════════════════════════════════
 // MAIN RUN
 // ═══════════════════════════════════════════════════════
+let lastEquityD=null,lastEquityW=null,lastEqDts=null;
+
 async function runBacktest(){
   const sym=document.getElementById('sym').value.trim().toUpperCase();
   if(!sym){toast('Enter a symbol first');return;}
@@ -722,103 +886,181 @@ async function runBacktest(){
     tp2Mult:parseFloat(document.getElementById('p-tp2').value)||5.0,
     timeStop:parseInt(document.getElementById('p-ts').value)||20,
     ceLen:parseInt(document.getElementById('p-cel').value)||22,
+    ceAtrLen:parseInt(document.getElementById('p-ceal').value)||22,
     ceMult:parseFloat(document.getElementById('p-cem').value)||3.0,
     trailFrom:document.getElementById('p-tf').value,
     tp1Pct:parseFloat(document.getElementById('p-tp1p').value)||50,
     capital:parseFloat(document.getElementById('p-cap').value)||500000,
     riskPct:parseFloat(document.getElementById('p-risk').value)||1.0,
-    maxOpen:parseInt(document.getElementById('p-max').value)||1,
     commission:parseFloat(document.getElementById('p-comm').value)||0.05,
     range:document.getElementById('p-range').value,
   };
 
   document.getElementById('run-btn').disabled=true;
   document.getElementById('results').style.display='none';
-  document.getElementById('debug-panel').style.display='none';
+  document.getElementById('compare-banner').style.display='none';
+  document.getElementById('debug').style.display='none';
   document.getElementById('status-bar').style.display='block';
-  setP(10,'Fetching '+sym+' data from Yahoo Finance...');
+  lastEquityD=null;lastEquityW=null;lastEqDts=null;
 
   try{
+    setP(10,'Fetching '+sym+' data...');
     const data=await fetchData(sym,params.range);
-    setP(40,'Computing indicators on '+data.dates.length+' bars...');
-    await sleep(50); // allow UI repaint
+    setP(35,'Building entry signals...');
+    await sleep(30);
 
-    const{trades,equity,eqDts,debug}=runEngine(data,params);
-    setP(80,'Calculating metrics...');
-    await sleep(50);
+    let dResult=null,wResult=null;
+    let debugTxt='';
 
-    const startCap=params.capital;
-    const m=calcMetrics(trades,equity,eqDts,startCap);
-    setP(100,'Complete');
+    if(currentMode==='daily'||currentMode==='both'){
+      setP(40,'Running DAILY entry backtest...');
+      const dFn=buildDailyEntryFn(data,params);
+      dResult=simulate(data,params,dFn,'D');
+      const dDbg=dFn.debug();
+      debugTxt+='📅 DAILY ENTRY MODE\n';
+      debugTxt+='Timeframe checked: Every DAILY bar close\n';
+      debugTxt+='Total daily bars: '+dDbg.bars+'\n';
+      debugTxt+='Weekly regime BULL bars: '+dDbg.regBull+' / '+dDbg.bars+'\n';
+      debugTxt+='EMA20 crossover EMA50 events: '+dDbg.dbCross+'\n';
+      debugTxt+='  → Weekly regime BULL: '+dDbg.dbReg+'\n';
+      debugTxt+='  → Price above EMA200: '+dDbg.dbAbove+'\n';
+      debugTxt+='  → RSI > '+params.rsiMin+': '+dDbg.dbRsi+'\n';
+      debugTxt+='  → Volume > SMA20: '+dDbg.dbVol+'\n';
+      debugTxt+='  → Score >= '+params.minScore+': '+dDbg.dbSc+'\n';
+      debugTxt+='  → Entries fired: '+dDbg.dbTotal+'\n';
+      debugTxt+='  → Trades: '+dResult.trades.length+'\n';
+      debugTxt+=(dResult.trades.length===0?'⚠️ No daily trades — try: lower score to 3, regime to 2/3, range to 5y\n':'')+'\n';
+      lastEquityD=dResult.equity;lastEqDts=dResult.eqDts;
+    }
 
-    // Show debug panel always so user can see what happened
-    showDebug(debug,trades.length,data.dates.length,data.name);
-    renderResults(m,trades,equity,eqDts,startCap,sym,data.name);
+    if(currentMode==='weekly'||currentMode==='both'){
+      setP(65,'Running WEEKLY entry backtest...');
+      await sleep(30);
+      const wFn=buildWeeklyEntryFn(data,params);
+      wResult=simulate(data,params,wFn,'W');
+      const wDbg=wFn.debug();
+      debugTxt+='📆 WEEKLY ENTRY MODE\n';
+      debugTxt+='Timeframe checked: Only at WEEKLY bar close (~52/yr)\n';
+      debugTxt+='Total weekly bars: '+wDbg.weeklyBars+'\n';
+      debugTxt+='EMA20 crossover EMA50 (weekly): '+wDbg.dbCross+'\n';
+      debugTxt+='  → Price above EMA200: '+wDbg.dbAbove+'\n';
+      debugTxt+='  → RSI > '+params.rsiMin+': '+wDbg.dbRsi+'\n';
+      debugTxt+='  → Volume > 20wk SMA: '+wDbg.dbVol+'\n';
+      debugTxt+='  → Score >= '+params.minScore+': '+wDbg.dbSc+'\n';
+      debugTxt+='  → Entries fired: '+wDbg.dbTotal+'\n';
+      debugTxt+='  → Trades: '+wResult.trades.length+'\n';
+      debugTxt+=(wResult.trades.length===0?'⚠️ No weekly trades — need ~200 weekly bars (4yrs) for EMA200. Try 5y range.\n':'');
+      lastEquityW=wResult.equity;if(!lastEqDts)lastEqDts=wResult.eqDts;
+    }
+
+    setP(90,'Computing metrics...');await sleep(30);
+
+    // Show debug
+    const dp=document.getElementById('debug');
+    dp.innerHTML='<h4>⚙️ SIGNAL DIAGNOSTICS — '+data.name+'</h4>'+debugTxt;
+    dp.style.display='block';
+
+    // Render based on mode
+    if(currentMode==='both'&&dResult&&wResult){
+      const dM=calcMetrics(dResult.trades,dResult.equity,dResult.eqDts,params.capital);
+      const wM=calcMetrics(wResult.trades,wResult.equity,wResult.eqDts,params.capital);
+      renderComparison(dM,wM,sym,data.name);
+      // Combined trade log
+      const allTrades=[...dResult.trades,...wResult.trades].sort((a,b)=>a.entryDate.localeCompare(b.entryDate));
+      allTrades.forEach((t,i)=>t.num=i+1);
+      const combined=dResult.equity.map((v,i)=>{
+        const w=wResult.equity[i]||wResult.equity[wResult.equity.length-1];
+        return(v+w)/2; // average equity for combined chart
+      });
+      renderResults(dM,allTrades,dResult.equity,dResult.eqDts,params.capital,sym,data.name,wResult.equity);
+    } else {
+      const res=dResult||wResult;
+      const m=calcMetrics(res.trades,res.equity,res.eqDts,params.capital);
+      renderResults(m,res.trades,res.equity,res.eqDts,params.capital,sym,data.name,null);
+    }
+
     document.getElementById('scan-time').textContent=sym+' · '+now();
+    setP(100,'Complete — '+((dResult?.trades.length||0)+(wResult?.trades.length||0))+' trades');
 
   }catch(e){
     toast('❌ '+e.message);
-    document.getElementById('debug-panel').innerHTML='<h4>ERROR</h4>'+e.message;
-    document.getElementById('debug-panel').style.display='block';
+    const dp=document.getElementById('debug');
+    dp.innerHTML='<h4>ERROR</h4>'+e.message;dp.style.display='block';
     console.error(e);
   }
-
   document.getElementById('status-bar').style.display='none';
   document.getElementById('run-btn').disabled=false;
 }
 
-function showDebug(d,tradeCount,bars,name){
-  const dp=document.getElementById('debug-panel');
-  dp.style.display='block';
-  dp.innerHTML='<h4>⚙️ SIGNAL DIAGNOSTICS — '+name+'</h4>'
-    +'Total daily bars: '+bars+'\n'
-    +'Regime BULL bars: '+d.regBull+' / BEAR: '+d.regBear+' / RANGE: '+(bars-d.regBull-d.regBear)+'\n'
-    +'EMA cross/align events: '+d.dbCross+'\n'
-    +'  → RSI passed: '+d.dbRsi+'\n'
-    +'  → Volume passed: '+d.dbVol+'\n'
-    +'  → Regime passed: '+d.dbReg+'\n'
-    +'  → Score passed: '+d.dbScore+'\n'
-    +'  → ALL gates passed (entries): '+d.dbTotal+'\n'
-    +'  → Trades simulated: '+tradeCount+'\n'
-    +(tradeCount===0?'\n⚠️ ZERO TRADES — try: lower Min Score to 2, switch Regime to "Daily Only", increase History to 5y':'✅ Signals found');
+// ═══════════════════════════════════════════════════════
+// COMPARISON TABLE
+// ═══════════════════════════════════════════════════════
+function renderComparison(dM,wM,sym,name){
+  document.getElementById('compare-banner').style.display='block';
+  function better(dv,wv,higherBetter=true){
+    const db=higherBetter?dv>wv:dv<wv;
+    const wb=higherBetter?wv>dv:wv<dv;
+    return{d:db?'<span class="winner-badge">BETTER</span>':'',w:wb?'<span class="winner-badge">BETTER</span>':''};
+  }
+  const rows=[
+    ['Total Return',f1(dM.totalReturn)+'%',f1(wM.totalReturn)+'%',better(dM.totalReturn,wM.totalReturn)],
+    ['CAGR',f1(dM.cagr)+'%',f1(wM.cagr)+'%',better(dM.cagr,wM.cagr)],
+    ['Win Rate',f0(dM.wr)+'%',f0(wM.wr)+'%',better(dM.wr,wM.wr)],
+    ['Profit Factor',dM.pf>=999?'∞':f2(dM.pf),wM.pf>=999?'∞':f2(wM.pf),better(dM.pf,wM.pf)],
+    ['Max Drawdown',f1(dM.maxDDPct)+'%',f1(wM.maxDDPct)+'%',better(dM.maxDDPct,wM.maxDDPct,false)],
+    ['Trades',dM.closedTrades,wM.closedTrades,{d:'',w:''}],
+    ['Avg Hold',f1(dM.aHold)+'d',f1(wM.aHold)+'d',{d:'',w:''}],
+    ['Expectancy','₹'+fn(dM.exp),'₹'+fn(wM.exp),better(dM.exp,wM.exp)],
+    ['Sharpe',f2(dM.sharpe),f2(wM.sharpe),better(dM.sharpe,wM.sharpe)],
+  ];
+  document.getElementById('compare-grid').innerHTML=`
+    <div class="compare-col daily-col">
+      <div class="cc-title">📅 DAILY ENTRY — ${sym}</div>
+      ${rows.map(r=>`<div class="cc-row"><span class="cc-label">${r[0]}</span><span class="cc-val">${r[1]} ${r[3].d}</span></div>`).join('')}
+    </div>
+    <div class="compare-col weekly-col">
+      <div class="cc-title">📆 WEEKLY ENTRY — ${sym}</div>
+      ${rows.map(r=>`<div class="cc-row"><span class="cc-label">${r[0]}</span><span class="cc-val">${r[2]} ${r[3].w}</span></div>`).join('')}
+    </div>`;
 }
 
 // ═══════════════════════════════════════════════════════
-// RENDER
+// RENDER RESULTS
 // ═══════════════════════════════════════════════════════
-function renderResults(m,trades,equity,eqDts,startCap,sym,name){
+function renderResults(m,trades,equityD,eqDts,startCap,sym,name,equityW){
   document.getElementById('results').style.display='block';
+  sm('m-ret',f1(m.totalReturn)+'%','₹'+fn(m.totalPnl),m.totalReturn>=0?'pos':'neg');
+  sm('m-cagr',f1(m.cagr)+'%',f1(m.cagr)+'% / year',m.cagr>=12?'pos':m.cagr>=0?'neu':'neg');
+  sm('m-wr',f0(m.wr)+'%',m.wins+'W / '+m.losses+'L',m.wr>=55?'pos':m.wr>=40?'neu':'neg');
+  sm('m-pf',m.pf>=999?'∞':f2(m.pf),'profit factor',m.pf>=1.5?'pos':m.pf>=1?'neu':'neg');
+  sm('m-dd',f1(m.maxDDPct)+'%','₹'+fn(m.maxDD),m.maxDDPct<15?'pos':m.maxDDPct<25?'neu':'neg');
+  sm('m-tr',String(m.closedTrades),trades.length+' total incl open','neu');
+  sm('m-hold',f1(m.aHold),'days average','neu');
+  sm('m-exp','₹'+fn(m.exp),'per closed trade',m.exp>0?'pos':'neg');
 
-  const rPos=m.totalReturn>=0;
-  sm('m-ret', f1(m.totalReturn)+'%', '₹'+fn(m.totalPnl), rPos?'pos':'neg');
-  sm('m-cagr',f1(m.cagr)+'%','per year', m.cagr>=12?'pos':m.cagr>=0?'neu':'neg');
-  sm('m-wr',  f0(m.wr)+'%',m.wins+'W / '+m.losses+'L', m.wr>=55?'pos':m.wr>=40?'neu':'neg');
-  sm('m-pf',  m.pf>=999?'∞':f2(m.pf),'profit factor', m.pf>=1.5?'pos':m.pf>=1?'neu':'neg');
-  sm('m-dd',  f1(m.maxDDPct)+'%','₹'+fn(m.maxDD)+' peak→valley', m.maxDDPct<15?'pos':m.maxDDPct<25?'neu':'neg');
-  sm('m-tr',  String(m.closedTrades),'total incl '+( m.totalTrades-m.closedTrades)+' open', 'neu');
-  sm('m-hold',f1(m.aHold),'days average', 'neu');
-  sm('m-exp', '₹'+fn(m.exp),'per closed trade', m.exp>0?'pos':'neg');
+  // Chart legend
+  const leg=document.getElementById('chart-legend');
+  leg.innerHTML='<div class="leg-item"><div class="leg-dot" style="background:var(--bull)"></div><span>Daily Entry</span></div>'+
+    (equityW?'<div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span>Weekly Entry</span></div>':'');
 
-  document.getElementById('chart-sub').textContent=sym+' · '+f1(m.totalReturn)+'% total · '+f1(m.cagr)+'% CAGR';
-
-  // FIX BUG 6: draw chart after ensuring element is visible and sized
-  requestAnimationFrame(()=>drawChart(equity,eqDts,startCap,trades));
+  requestAnimationFrame(()=>drawChart(equityD,eqDts,startCap,equityW));
 
   // Trade log
   document.getElementById('tbody').innerHTML=[...trades].reverse().map(t=>{
     const pc=t.pnl>0?'tw':t.pnl<0?'tl':'';
     const ps=t.pnl>0?'+':'';
-    return '<tr><td>'+t.num+'</td><td>'+t.entryDate+'</td><td>'+t.exitDate+'</td><td>'+t.days+'</td>'
-      +'<td>₹'+f2(t.entryP)+'</td><td>₹'+f2(t.exitP)+'</td><td>'+t.qty+'</td>'
-      +'<td class="'+pc+'">'+ps+'₹'+fn(Math.abs(t.pnl))+'</td>'
-      +'<td class="'+pc+'">'+ps+f1(t.pnlPct)+'%</td>'
-      +'<td><span class="etag '+t.exitR+'">'+t.exitR+'</span></td>'
-      +'<td>'+t.score+'/6</td></tr>';
+    return '<tr><td>'+t.num+'</td>'+
+      '<td><span class="src-tag '+(t.src||'D')+'">'+(t.src||'D')+'</span></td>'+
+      '<td>'+t.entryDate+'</td><td>'+t.exitDate+'</td><td>'+t.days+'</td>'+
+      '<td>₹'+f2(t.entryP)+'</td><td>₹'+f2(t.exitP)+'</td><td>'+t.qty+'</td>'+
+      '<td class="'+pc+'">'+ps+'₹'+fn(Math.abs(t.pnl))+'</td>'+
+      '<td class="'+pc+'">'+ps+f1(t.pnlPct)+'%</td>'+
+      '<td><span class="etag '+t.exitR+'">'+t.exitR+'</span></td>'+
+      '<td>'+(t.score||0)+'/5</td></tr>';
   }).join('');
 
   renderHeatmap(m.monthly);
   renderStats(m,startCap,sym,name);
-
   document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -829,73 +1071,66 @@ function sm(id,val,sub,cls){
   const s=c.querySelector('.ms');if(s)s.textContent=sub||'';
 }
 
-function drawChart(equity,eqDts,startCap,trades){
+function drawChart(equityD,eqDts,startCap,equityW){
   const canvas=document.getElementById('eq-canvas');
-  // FIX BUG 6: use clientWidth which works even on first render
   const W=canvas.clientWidth||canvas.parentElement.clientWidth||360;
-  const H=200;
-  const dpr=window.devicePixelRatio||1;
+  const H=200,dpr=window.devicePixelRatio||1;
   canvas.width=W*dpr;canvas.height=H*dpr;
-  const ctx=canvas.getContext('2d');
-  ctx.scale(dpr,dpr);
-
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
   const pad={t:12,r:10,b:20,l:54};
   const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
-  const minE=Math.min(...equity)*0.995,maxE=Math.max(...equity)*1.005;
-  const xS=i=>pad.l+(i/(equity.length-1))*cw;
+
+  // Use combined min/max
+  const allEq=[...equityD,...(equityW||[])];
+  const minE=Math.min(...allEq)*0.995,maxE=Math.max(...allEq)*1.005;
+  const xS=i=>pad.l+(i/(equityD.length-1))*cw;
   const yS=v=>pad.t+ch-((v-minE)/(maxE-minE))*ch;
 
   ctx.fillStyle='#111827';ctx.fillRect(0,0,W,H);
-
   // Grid
   for(let g=0;g<=4;g++){
     const y=pad.t+g*(ch/4);
     ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
-    const v=maxE-g*(maxE-minE)/4;
     ctx.fillStyle='#4a6080';ctx.font='9px sans-serif';ctx.textAlign='right';
-    ctx.fillText('₹'+fn(v),pad.l-3,y+3);
+    ctx.fillText('₹'+fn(maxE-g*(maxE-minE)/4),pad.l-3,y+3);
   }
-
   // Start line
   const sY=yS(startCap);
   ctx.strokeStyle='rgba(255,255,255,.15)';ctx.setLineDash([3,3]);ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(pad.l,sY);ctx.lineTo(pad.l+cw,sY);ctx.stroke();
   ctx.setLineDash([]);
 
-  // Drawdown fill
-  ctx.fillStyle='rgba(255,68,68,.07)';
-  ctx.beginPath();ctx.moveTo(xS(0),sY);
-  for(let i=0;i<equity.length;i++)ctx.lineTo(xS(i),Math.max(yS(equity[i]),sY));
-  ctx.lineTo(xS(equity.length-1),sY);ctx.closePath();ctx.fill();
-
-  // Equity fill gradient
-  const g2=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
-  g2.addColorStop(0,'rgba(0,230,118,.25)');g2.addColorStop(1,'rgba(0,230,118,.02)');
-  ctx.fillStyle=g2;ctx.beginPath();ctx.moveTo(xS(0),H-pad.b);
-  for(let i=0;i<equity.length;i++)ctx.lineTo(xS(i),yS(equity[i]));
-  ctx.lineTo(xS(equity.length-1),H-pad.b);ctx.closePath();ctx.fill();
-
-  // Equity line
-  ctx.strokeStyle='#00e676';ctx.lineWidth=2;ctx.beginPath();
-  for(let i=0;i<equity.length;i++)i===0?ctx.moveTo(xS(i),yS(equity[i])):ctx.lineTo(xS(i),yS(equity[i]));
-  ctx.stroke();
+  function drawLine(eq,color,fillColor){
+    if(!eq)return;
+    // Fill
+    const g2=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
+    g2.addColorStop(0,fillColor);g2.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g2;ctx.beginPath();ctx.moveTo(xS(0),H-pad.b);
+    for(let i=0;i<eq.length;i++)ctx.lineTo(xS(i),yS(eq[i]));
+    ctx.lineTo(xS(eq.length-1),H-pad.b);ctx.closePath();ctx.fill();
+    // Line
+    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();
+    for(let i=0;i<eq.length;i++)i===0?ctx.moveTo(xS(i),yS(eq[i])):ctx.lineTo(xS(i),yS(eq[i]));
+    ctx.stroke();
+  }
+  if(equityW)drawLine(equityW,'#ffd600','rgba(255,214,0,.15)');
+  drawLine(equityD,'#00e676','rgba(0,230,118,.2)');
 
   // Year labels
   ctx.fillStyle='#4a6080';ctx.font='9px sans-serif';ctx.textAlign='center';
-  let lastYr='';
+  let ly='';
   for(let i=0;i<eqDts.length;i++){
     const yr=new Date(eqDts[i]*1000).getFullYear().toString();
-    if(yr!==lastYr){ctx.fillText(yr,xS(i),H-pad.b+12);lastYr=yr;}
+    if(yr!==ly){ctx.fillText(yr,xS(i),H-pad.b+12);ly=yr;}
   }
 }
 
 function renderHeatmap(monthly){
   const yrs=[...new Set(Object.keys(monthly).map(k=>k.substring(0,4)))].sort();
-  const mons=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const ms=['J','F','M','A','M','J','J','A','S','O','N','D'];
   const g=document.getElementById('hm-grid');g.innerHTML='';
-  g.appendChild(hc('','hml'));
-  mons.forEach(m=>g.appendChild(hc(m,'hmc hml')));
+  g.appendChild(hc('','hml'));ms.forEach(m=>g.appendChild(hc(m,'hmc hml')));
   yrs.forEach(yr=>{
     g.appendChild(hc(yr,'hmc hml'));
     for(let m=1;m<=12;m++){
@@ -903,48 +1138,32 @@ function renderHeatmap(monthly){
       const v=monthly[k];
       if(v===undefined){g.appendChild(hc('','hmc gz'));return;}
       const cls=v>30000?'gH':v>8000?'gM':v>0?'gL':v<-30000?'rH':v<-8000?'rM':'rL';
-      const cell=hc(fk(v),'hmc '+cls);cell.title=k+': ₹'+fn(v);
-      g.appendChild(cell);
+      const cell=hc(fk(v),'hmc '+cls);cell.title=k+': ₹'+fn(v);g.appendChild(cell);
     }
   });
 }
 function hc(t,cls){const e=document.createElement('div');e.className=cls;e.textContent=t;return e;}
 
 function renderStats(m,startCap,sym,name){
+  const mode=currentMode==='weekly'?'Weekly':'Daily';
   const rows=[
     ['Symbol',sym+' ('+name.substring(0,20)+')'],
+    ['Entry Mode',currentMode==='both'?'Daily + Weekly':mode+' closes'],
     ['History',document.getElementById('p-range').value],
-    ['Start Capital','₹'+fn(startCap)],
-    ['Final Capital','₹'+fn(m.finalEq)],
-    ['Net Profit','₹'+fn(m.totalPnl)],
-    ['Total Return',f1(m.totalReturn)+'%'],
-    ['CAGR',f1(m.cagr)+'%'],
-    ['Max Drawdown',f1(m.maxDDPct)+'% (₹'+fn(m.maxDD)+')'],
-    ['Sharpe Ratio',f2(m.sharpe)],
-    ['Total Trades',m.closedTrades+' closed'],
-    ['Win Rate',f1(m.wr)+'%'],
-    ['Profit Factor',m.pf>=999?'∞':f2(m.pf)],
-    ['Avg Win','₹'+fn(m.aWin)],
-    ['Avg Loss','₹'+fn(m.aLoss)],
+    ['Start Capital','₹'+fn(startCap)],['Final Capital','₹'+fn(m.finalEq)],
+    ['Net Profit','₹'+fn(m.totalPnl)],['Total Return',f1(m.totalReturn)+'%'],
+    ['CAGR',f1(m.cagr)+'%'],['Max Drawdown',f1(m.maxDDPct)+'% (₹'+fn(m.maxDD)+')'],
+    ['Sharpe Ratio',f2(m.sharpe)],['Total Trades',m.closedTrades+' closed'],
+    ['Win Rate',f1(m.wr)+'%'],['Profit Factor',m.pf>=999?'∞':f2(m.pf)],
+    ['Avg Win','₹'+fn(m.aWin)],['Avg Loss','₹'+fn(m.aLoss)],
     ['Win/Loss Ratio',m.aLoss>0?f2(m.aWin/m.aLoss):'∞'],
-    ['Expectancy','₹'+fn(m.exp)],
-    ['Avg Hold Days',f1(m.aHold)],
-    ['Max Con. Wins',m.mxCW],
-    ['Max Con. Losses',m.mxCL],
-    ['Gross Win','₹'+fn(m.gWin)],
-    ['Gross Loss','₹'+fn(m.gLoss)],
+    ['Expectancy','₹'+fn(m.exp)],['Avg Hold Days',f1(m.aHold)],
+    ['Max Con. Wins',m.mxCW],['Max Con. Losses',m.mxCL],
+    ['Gross Win','₹'+fn(m.gWin)],['Gross Loss','₹'+fn(m.gLoss)],
   ];
   document.getElementById('stats-grid').innerHTML=rows.map(([l,v])=>
-    '<div class="sr"><span class="sl">'+l+'</span><span class="sv">'+v+'</span></div>'
+    '<div class="sr"><span class="sl2">'+l+'</span><span class="sv">'+v+'</span></div>'
   ).join('');
-}
-
-function switchTab(n){
-  document.querySelectorAll('.rtab').forEach((t,i)=>t.classList.toggle('active',i===n));
-  document.querySelectorAll('.rpane').forEach((p,i)=>p.classList.toggle('active',i===n));
-  if(n===0&&document.getElementById('results').style.display!=='none'){
-    requestAnimationFrame(()=>{}); // trigger redraw
-  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -962,14 +1181,18 @@ function fn(n){
   if(n===undefined||n===null||isNaN(n))return '—';
   const a=Math.abs(n),s=n<0?'-':'';
   if(a>=10000000)return s+(a/10000000).toFixed(1)+'Cr';
-  if(a>=100000)  return s+(a/100000).toFixed(1)+'L';
-  if(a>=1000)    return s+(a/1000).toFixed(1)+'K';
+  if(a>=100000)return s+(a/100000).toFixed(1)+'L';
+  if(a>=1000)return s+(a/1000).toFixed(1)+'K';
   return s+Math.round(a).toString();
 }
 function fk(n){return Math.abs(n)>=1000?(n/1000).toFixed(0)+'k':Math.round(n).toString();}
 function setP(pct,txt){
   document.getElementById('prog-fill').style.width=pct+'%';
-  document.getElementById('status-text').textContent=txt;
+  document.getElementById('status-txt').textContent=txt;
+}
+function switchTab(n){
+  document.querySelectorAll('.rtab').forEach((t,i)=>t.classList.toggle('active',i===n));
+  document.querySelectorAll('.rpane').forEach((p,i)=>p.classList.toggle('active',i===n));
 }
 function now(){return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});}
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
@@ -985,7 +1208,7 @@ function toast(msg,ms=3500){
 window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('status-bar').style.display='none';
   detectProxy().then(()=>{
-    if(proxyReady)toast('✅ Connected via '+PROXIES[activeProxy].name+' — enter symbol and tap RUN');
+    if(proxyReady)toast('✅ Ready — enter symbol and tap RUN');
   });
 });
 </script>

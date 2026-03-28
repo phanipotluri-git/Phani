@@ -17,163 +17,133 @@
   --dngr-bg:#ffcdd2; --dngr-txt:#b71c1c;
 }
 body { font-family:'Source Sans 3',sans-serif; font-size:10.5px; background:var(--bg); color:#1a1a2e; padding:16px; }
-
-/* CONTROLS */
 .controls { text-align:center; margin-bottom:14px; }
 .btn-row { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
-.btn { border:none; padding:10px 28px; font-family:‘Oswald’,sans-serif; font-size:14px; letter-spacing:1.2px; border-radius:7px; cursor:pointer; transition:transform .15s; }
+.btn { border:none; padding:10px 28px; font-family:'Oswald',sans-serif; font-size:14px; letter-spacing:1.2px; border-radius:7px; cursor:pointer; transition:transform .15s; }
 .btn:hover { transform:translateY(-2px); }
 .btn-print { background:linear-gradient(135deg,#0097a7,#1a237e); color:#fff; box-shadow:0 4px 14px rgba(0,151,167,.4); }
 .btn-ref   { background:linear-gradient(135deg,#2e7d32,#1b5e20); color:#fff; box-shadow:0 4px 14px rgba(46,125,50,.4); }
 .controls p { margin-top:7px; font-size:11px; color:#555; }
-
-/* REPORT */
-.report { background:#fff; border:2px solid var(–border); max-width:1140px; margin:0 auto; border-radius:3px; overflow:hidden; }
-
-/* HEADER */
-.top-header { display:flex; border-bottom:2px solid var(–border); }
-.lab-brand { background:linear-gradient(160deg,#e0f7fa,#b2ebf2); padding:10px 14px; border-right:2px solid var(–border); min-width:268px; }
-.lab-brand h1 { font-family:‘Oswald’,sans-serif; font-size:19px; font-weight:700; color:var(–red); }
+.report { background:#fff; border:2px solid var(--border); max-width:1140px; margin:0 auto; border-radius:3px; overflow:hidden; }
+.top-header { display:flex; border-bottom:2px solid var(--border); }
+.lab-brand { background:linear-gradient(160deg,#e0f7fa,#b2ebf2); padding:10px 14px; border-right:2px solid var(--border); min-width:268px; }
+.lab-brand h1 { font-family:'Oswald',sans-serif; font-size:19px; font-weight:700; color:var(--red); }
 .lab-brand .addr { font-size:9px; color:#333; margin-top:5px; line-height:1.6; }
-.farmer-block { flex:1; padding:8px 14px; display:flex; flex-direction:column; justify-content:center; gap:7px; border-right:2px solid var(–border); }
+.farmer-block { flex:1; padding:8px 14px; display:flex; flex-direction:column; justify-content:center; gap:7px; border-right:2px solid var(--border); }
 .meta-block { padding:8px 14px; display:flex; flex-direction:column; justify-content:center; gap:7px; min-width:220px; }
 .hrow { display:flex; align-items:center; gap:6px; }
 .hrow label { font-weight:600; font-size:10px; white-space:nowrap; min-width:95px; }
-.hrow input[type=text], .hrow input[type=date] {
-flex:1; border:none; border-bottom:1.5px solid var(–border); outline:none;
-font-family:inherit; font-size:10.5px; padding:1px 4px; background:transparent;
-}
-.hrow input:focus { border-bottom-color:var(–teal); background:#f0fbff; }
-
-/* SPECIES BADGE */
-.species-badge { background:linear-gradient(90deg,#e3f2fd,#bbdefb); border-bottom:2px solid var(–border); padding:5px 14px; display:flex; align-items:center; gap:10px; }
-.sp-label { font-family:‘Oswald’,sans-serif; font-size:12px; font-weight:700; color:var(–van); letter-spacing:.8px; }
+.hrow input[type=text], .hrow input[type=date] { flex:1; border:none; border-bottom:1.5px solid var(--border); outline:none; font-family:inherit; font-size:10.5px; padding:1px 4px; background:transparent; }
+.hrow input:focus { border-bottom-color:var(--teal); background:#f0fbff; }
+.species-badge { background:linear-gradient(90deg,#e3f2fd,#bbdefb); border-bottom:2px solid var(--border); padding:5px 14px; display:flex; align-items:center; gap:10px; }
+.sp-label { font-family:'Oswald',sans-serif; font-size:12px; font-weight:700; color:var(--van); letter-spacing:.8px; }
 .sp-sci { font-size:9.5px; color:#555; font-style:italic; }
 .sp-note { font-size:9px; color:#777; margin-left:auto; }
-
-/* SECTION TITLE */
-.section-title { background:var(–navy); color:#fff; text-align:center; font-family:‘Oswald’,sans-serif; font-size:13px; letter-spacing:3px; padding:5px; border-bottom:2px solid var(–border); }
-
-/* SALINITY BANNER */
-.sal-bar { background:linear-gradient(90deg,#e3f2fd,#e8f5e9); border-bottom:2px solid var(–border); padding:7px 14px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
-.sal-bar .sal-label { font-family:‘Oswald’,sans-serif; font-size:11px; font-weight:600; color:var(–navy); white-space:nowrap; }
-.sal-bar input[type=number] { width:64px; border:1.5px solid var(–border); border-radius:4px; text-align:center; font-family:inherit; font-size:11px; padding:3px 6px; outline:none; background:#fff; }
-.sal-bar input:focus { border-color:var(–teal); }
+.section-title { background:var(--navy); color:#fff; text-align:center; font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:3px; padding:5px; border-bottom:2px solid var(--border); }
+.sal-bar { background:linear-gradient(90deg,#e3f2fd,#e8f5e9); border-bottom:2px solid var(--border); padding:7px 14px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.sal-bar .sal-label { font-family:'Oswald',sans-serif; font-size:11px; font-weight:600; color:var(--navy); white-space:nowrap; }
+.sal-bar input[type=number] { width:64px; border:1.5px solid var(--border); border-radius:4px; text-align:center; font-family:inherit; font-size:11px; padding:3px 6px; outline:none; background:#fff; }
+.sal-bar input:focus { border-color:var(--teal); }
 .sal-targets { display:flex; gap:10px; flex-wrap:wrap; }
-.sal-chip { background:#fff; border:1.5px solid var(–border); border-radius:12px; padding:2px 10px; font-size:10px; display:flex; align-items:center; gap:5px; }
-.sal-chip .chip-label { font-weight:600; color:var(–van); }
-.sal-chip .chip-val { color:var(–teal); font-weight:700; }
+.sal-chip { background:#fff; border:1.5px solid var(--border); border-radius:12px; padding:2px 10px; font-size:10px; display:flex; align-items:center; gap:5px; }
+.sal-chip .chip-label { font-weight:600; color:var(--van); }
+.sal-chip .chip-val { color:var(--teal); font-weight:700; }
 .sal-note { font-size:9px; color:#666; font-style:italic; }
-
-/* BODY GRID */
-.body-grid { display:flex; border-bottom:1px solid var(–border); }
-.water-panel { flex:0 0 auto; border-right:2px solid var(–border); }
+.body-grid { display:flex; border-bottom:1px solid var(--border); }
+.water-panel { flex:0 0 auto; border-right:2px solid var(--border); }
 .plankton-panel { flex:1; display:flex; }
-.useful-panel { flex:1; border-right:2px solid var(–border); }
+.useful-panel { flex:1; border-right:2px solid var(--border); }
 .harmful-panel { flex:1; }
-
-/* TABLES */
 table { border-collapse:collapse; width:100%; }
-th, td { border:1px solid var(–border); padding:3px 5px; text-align:center; vertical-align:middle; font-size:10px; }
-th { background:var(–head-blue); font-family:‘Oswald’,sans-serif; font-size:10px; font-weight:600; letter-spacing:.3px; }
-.th-green { background:var(–head-green) !important; color:var(–green) !important; }
-.th-red   { background:var(–head-red)   !important; color:var(–red)   !important; }
-
+th, td { border:1px solid var(--border); padding:3px 5px; text-align:center; vertical-align:middle; font-size:10px; }
+th { background:var(--head-blue); font-family:'Oswald',sans-serif; font-size:10px; font-weight:600; letter-spacing:.3px; }
+.th-green { background:var(--head-green) !important; color:var(--green) !important; }
+.th-red   { background:var(--head-red)   !important; color:var(--red)   !important; }
 .td-param  { text-align:left; font-weight:600; background:#fafafa; min-width:118px; font-size:9.5px; padding-left:7px; }
-.td-opt    { font-size:8.5px; color:var(–van); min-width:110px; padding:3px 6px; line-height:1.5; font-weight:600; background:#e3f2fd; }
-.td-sample { min-width:38px; padding:0; }
-
-/* ── COLOUR CODING APPLIED TO <td> NOT <input> ── */
-td.safe   { background:var(–safe-bg) !important; }
-td.warn   { background:var(–warn-bg) !important; }
-td.danger { background:var(–dngr-bg) !important; }
-
-/* Input sits transparently inside the coloured td */
+.td-opt    { font-size:8.5px; color:var(--van); min-width:110px; padding:3px 6px; line-height:1.5; font-weight:600; background:#e3f2fd; }
+.td-sample { min-width:52px; width:52px; padding:2px 3px; }
+td.safe   { background:var(--safe-bg) !important; }
+td.warn   { background:var(--warn-bg) !important; }
+td.danger { background:var(--dngr-bg) !important; }
 .data-input {
-width:100%; border:none; outline:none;
-text-align:center; font-size:10px; padding:4px 2px;
-background:transparent; font-family:inherit;
-font-weight:700; color:#1a1a2e;
-display:block;
+  width:100%; border:none;
+  border-bottom:1.5px solid #90a4ae;
+  outline:none; text-align:center; font-size:10px;
+  padding:4px 2px; min-height:22px;
+  background:#f9fcff; font-family:inherit;
+  font-weight:600; color:#1a1a2e;
+  display:block; border-radius:2px; cursor:text;
 }
-td.safe   .data-input { color:var(–safe-txt); }
-td.warn   .data-input { color:var(–warn-txt); }
-td.danger .data-input { color:var(–dngr-txt); }
-
-tr:nth-child(even) td         { background:#f5fbff; }
-tr:nth-child(even) .td-param  { background:#f5f5f5; }
-/* keep status colour even on even rows */
-tr:nth-child(even) td.safe   { background:var(–safe-bg) !important; }
-tr:nth-child(even) td.warn   { background:var(–warn-bg) !important; }
-tr:nth-child(even) td.danger { background:var(–dngr-bg) !important; }
-
-/* LEGEND */
-.legend { display:flex; gap:12px; padding:5px 12px; border-bottom:1px solid var(–border); background:#fafafa; align-items:center; flex-wrap:wrap; }
-.legend-title { font-family:‘Oswald’,sans-serif; font-size:10px; letter-spacing:.5px; color:#333; }
+.data-input:focus { background:#e3f2fd; border-bottom:2px solid var(--teal); }
+.data-input::placeholder { color:#b0bec5; font-weight:400; }
+td.safe   .data-input { background:var(--safe-bg); color:var(--safe-txt); border-bottom-color:#66bb6a; }
+td.warn   .data-input { background:var(--warn-bg); color:var(--warn-txt); border-bottom-color:#ffb300; }
+td.danger .data-input { background:var(--dngr-bg); color:var(--dngr-txt); border-bottom-color:#e53935; }
+tr:nth-child(even) td { background:#f5fbff; }
+tr:nth-child(even) .td-param { background:#f5f5f5; }
+tr:nth-child(even) td.safe   { background:var(--safe-bg) !important; }
+tr:nth-child(even) td.warn   { background:var(--warn-bg) !important; }
+tr:nth-child(even) td.danger { background:var(--dngr-bg) !important; }
+tr:nth-child(even) .td-sample .data-input { background:#f0f8ff; }
+tr:nth-child(even) td.safe   .data-input { background:var(--safe-bg); }
+tr:nth-child(even) td.warn   .data-input { background:var(--warn-bg); }
+tr:nth-child(even) td.danger .data-input { background:var(--dngr-bg); }
+.legend { display:flex; gap:12px; padding:5px 12px; border-bottom:1px solid var(--border); background:#fafafa; align-items:center; flex-wrap:wrap; }
+.legend-title { font-family:'Oswald',sans-serif; font-size:10px; letter-spacing:.5px; color:#333; }
 .leg-item { display:flex; align-items:center; gap:5px; font-size:9.5px; font-weight:600; }
-.leg-swatch { width:18px; height:12px; border-radius:3px; border:1px solid var(–border); display:inline-block; flex-shrink:0; }
-.ls-safe  { background:var(–safe-bg); }
-.ls-warn  { background:var(–warn-bg); }
-.ls-dngr  { background:var(–dngr-bg); }
-.leg-item.s { color:var(–safe-txt); }
-.leg-item.w { color:var(–warn-txt); }
-.leg-item.d { color:var(–dngr-txt); }
-
-/* PLANKTON */
-.td-cat { writing-mode:vertical-rl; transform:rotate(180deg); font-family:‘Oswald’,sans-serif; font-size:9px; font-weight:600; letter-spacing:.5px; white-space:nowrap; padding:4px 2px; color:#fff; width:16px; }
+.leg-swatch { width:18px; height:12px; border-radius:3px; border:1px solid var(--border); display:inline-block; flex-shrink:0; }
+.ls-safe  { background:var(--safe-bg); }
+.ls-warn  { background:var(--warn-bg); }
+.ls-dngr  { background:var(--dngr-bg); }
+.leg-item.s { color:var(--safe-txt); }
+.leg-item.w { color:var(--warn-txt); }
+.leg-item.d { color:var(--dngr-txt); }
+.td-cat { writing-mode:vertical-rl; transform:rotate(180deg); font-family:'Oswald',sans-serif; font-size:9px; font-weight:600; letter-spacing:.5px; white-space:nowrap; padding:4px 2px; color:#fff; width:16px; }
 .cat-green{background:#43a047;} .cat-bg{background:#1565c0;} .cat-diat{background:#6d4c41;}
 .cat-zoo{background:#7b1fa2;} .cat-bga{background:#b71c1c;} .cat-df{background:#e65100;}
 .cat-hdiat{background:#4e342e;} .cat-proto{background:#6a1b9a;}
 .td-name { text-align:left !important; font-size:9px; min-width:74px; padding-left:5px; font-style:italic; }
 .td-chk  { min-width:24px; }
-input[type=checkbox] { width:13px; height:13px; cursor:pointer; accent-color:var(–teal); }
-
-/* VIBRIO */
-.vibrio-section { border-top:2px solid var(–border); }
-.vibrio-title { background:#fff9c4; font-family:‘Oswald’,sans-serif; font-size:10px; font-weight:600; letter-spacing:.4px; text-align:center; padding:4px; border-bottom:1px solid var(–border); }
+input[type=checkbox] { width:13px; height:13px; cursor:pointer; accent-color:var(--teal); }
+.vibrio-section { border-top:2px solid var(--border); }
+.vibrio-title { background:#fff9c4; font-family:'Oswald',sans-serif; font-size:10px; font-weight:600; letter-spacing:.4px; text-align:center; padding:4px; border-bottom:1px solid var(--border); }
 .vibrio-grid { display:flex; }
 .vibrio-half { flex:1; padding:6px 10px; }
-.vibrio-half:first-child { border-right:1px solid var(–border); }
+.vibrio-half:first-child { border-right:1px solid var(--border); }
 .vibrio-half > label { display:block; font-weight:600; font-size:9.5px; margin-bottom:4px; }
 .vibrio-samples { display:flex; gap:8px; }
 .vibrio-sample { display:flex; flex-direction:column; align-items:center; gap:2px; }
 .vibrio-sample span { font-size:9px; color:#555; font-weight:600; }
-.vibrio-sample input { width:54px; border:1px solid var(–border); border-radius:3px; font-size:9.5px; text-align:center; padding:2px; outline:none; font-family:inherit; }
-.vibrio-sample input:focus { border-color:var(–teal); background:#f0fbff; }
+.vibrio-sample input { width:54px; border:1px solid var(--border); border-radius:3px; font-size:9.5px; text-align:center; padding:2px; outline:none; font-family:inherit; background:#f9fcff; }
+.vibrio-sample input:focus { border-color:var(--teal); background:#f0fbff; }
 .yellow-dot{color:#c8a000;} .green-dot{color:#2e7d32;}
-
-/* SUGGESTIONS */
-.suggestions-zone { border-top:2px solid var(–border); }
-.suggest-bar { display:flex; align-items:center; gap:10px; padding:7px 12px; background:#f0f4ff; border-bottom:1px solid var(–border); flex-wrap:wrap; }
-.suggest-bar .sb-label { font-family:‘Oswald’,sans-serif; font-size:11px; font-weight:600; color:var(–navy); white-space:nowrap; }
-.btn-suggest { background:linear-gradient(135deg,#1565c0,#1a237e); color:#fff; border:none; padding:7px 20px; font-family:‘Oswald’,sans-serif; font-size:12px; letter-spacing:1px; border-radius:6px; cursor:pointer; box-shadow:0 3px 10px rgba(21,101,192,.35); transition:transform .15s; display:flex; align-items:center; gap:6px; }
+.suggestions-zone { border-top:2px solid var(--border); }
+.suggest-bar { display:flex; align-items:center; gap:10px; padding:7px 12px; background:#f0f4ff; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+.suggest-bar .sb-label { font-family:'Oswald',sans-serif; font-size:11px; font-weight:600; color:var(--navy); white-space:nowrap; }
+.btn-suggest { background:linear-gradient(135deg,#1565c0,#1a237e); color:#fff; border:none; padding:7px 20px; font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:1px; border-radius:6px; cursor:pointer; box-shadow:0 3px 10px rgba(21,101,192,.35); transition:transform .15s; display:flex; align-items:center; gap:6px; }
 .btn-suggest:hover { transform:translateY(-1px); }
 .suggest-hint { font-size:9.5px; color:#666; font-style:italic; }
 .suggestions-box { display:flex; gap:8px; align-items:flex-start; padding:8px 12px; }
-.suggestions-box strong { font-family:‘Oswald’,sans-serif; font-size:11px; white-space:nowrap; padding-top:3px; }
-.suggestions-box textarea { flex:1; min-height:70px; border:1px solid var(–border); border-radius:3px; font-size:10px; padding:5px 7px; resize:vertical; font-family:inherit; outline:none; line-height:1.65; }
-.suggestions-box textarea:focus { border-color:var(–teal); }
-
-/* FOOTER */
-.report-footer { display:flex; justify-content:space-between; align-items:flex-end; padding:5px 12px; border-top:1px solid var(–border); background:#fafafa; }
-.report-footer .note { font-size:8.5px; color:var(–red); font-style:italic; }
+.suggestions-box strong { font-family:'Oswald',sans-serif; font-size:11px; white-space:nowrap; padding-top:3px; }
+.suggestions-box textarea { flex:1; min-height:70px; border:1px solid var(--border); border-radius:3px; font-size:10px; padding:5px 7px; resize:vertical; font-family:inherit; outline:none; line-height:1.65; }
+.suggestions-box textarea:focus { border-color:var(--teal); }
+.report-footer { display:flex; justify-content:space-between; align-items:flex-end; padding:5px 12px; border-top:1px solid var(--border); background:#fafafa; }
+.report-footer .note { font-size:8.5px; color:var(--red); font-style:italic; }
 .report-footer .purpose { font-size:8.5px; color:#555; margin-top:2px; }
-.sign-block { text-align:center; font-family:‘Oswald’,sans-serif; font-size:10px; letter-spacing:.5px; color:#333; }
+.sign-block { text-align:center; font-family:'Oswald',sans-serif; font-size:10px; letter-spacing:.5px; color:#333; }
 .sign-line { width:90px; border-top:1px solid #555; margin:22px auto 2px; }
-
-/* PRINT */
 @media print {
-body { background:#fff; padding:0; }
-.controls, .legend, .suggest-bar { display:none !important; }
-.report { border:1.5px solid #888; max-width:100%; }
-td.safe, td.warn, td.danger { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-.species-badge, th { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-.suggestions-box textarea { border:.5px solid #999 !important; resize:none; }
-.vibrio-sample input { border:.5px solid #999; }
-@page { margin:6mm; size:A4 landscape; }
+  body { background:#fff; padding:0; }
+  .controls, .legend, .suggest-bar { display:none !important; }
+  .report { border:1.5px solid #888; max-width:100%; }
+  td.safe, td.warn, td.danger { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  td.safe .data-input, td.warn .data-input, td.danger .data-input { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .species-badge, th { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .suggestions-box textarea { border:.5px solid #999 !important; resize:none; }
+  .vibrio-sample input { border:.5px solid #999; }
+  @page { margin:6mm; size:A4 landscape; }
 }
 </style>
-
 </head>
 <body>
 
@@ -182,12 +152,10 @@ td.safe, td.warn, td.danger { -webkit-print-color-adjust:exact; print-color-adju
     <button class="btn btn-print" onclick="window.print()">🖨️ &nbsp;Print / Save as PDF</button>
     <button class="btn btn-ref"   onclick="window.open('aqua_reference_guide.html','_blank')">📋 &nbsp;Reference Guide</button>
   </div>
-  <p>Set pond salinity first → enter values → cells colour instantly → click <strong>Generate Suggestions</strong> when done</p>
+  <p>Enter pond salinity first → type sample values → cells colour instantly → click <strong>Generate Suggestions</strong> when done &nbsp;|&nbsp; Print in <strong>Landscape A4</strong></p>
 </div>
 
 <div class="report">
-
-  <!-- HEADER -->
 
   <div class="top-header">
     <div class="lab-brand">
@@ -196,7 +164,7 @@ td.safe, td.warn, td.danger { -webkit-print-color-adjust:exact; print-color-adju
         At : Betalia, P.O.: Durmuth, P.S. : Marishda,<br>
         Contai-III, Dist : Purba Medinipur, W.B. - 721401<br>
         Mobile : 9647700644, 9647704862, 9732161518<br>
-        ☎ 8145416028 &nbsp;✉ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="deb3b7bdacb1b2bfafabbf9eb9b3bfb7b2f0bdb1b3">[email&#160;protected]</a>
+        ☎ 8145416028 &nbsp;✉ microlaqua@gmail.com
       </div>
     </div>
     <div class="farmer-block">
@@ -211,15 +179,11 @@ td.safe, td.warn, td.danger { -webkit-print-color-adjust:exact; print-color-adju
     </div>
   </div>
 
-  <!-- SPECIES BADGE -->
-
   <div class="species-badge">
     <span class="sp-label">🦐 &nbsp;L. VANNAMEI</span>
     <span class="sp-sci">Litopenaeus vannamei — Pacific White Shrimp</span>
     <span class="sp-note">All ranges, colour coding and suggestions are vannamei-specific</span>
   </div>
-
-  <!-- SALINITY BANNER -->
 
   <div class="sal-bar">
     <span class="sal-label">⚗️ SALINITY-BASED ION TARGETS</span>
@@ -243,69 +207,60 @@ td.safe, td.warn, td.danger { -webkit-print-color-adjust:exact; print-color-adju
   <div class="section-title">WATER ANALYSIS</div>
 
   <div class="body-grid">
-
-```
-<!-- Water Parameters -->
-<div class="water-panel">
-  <table>
-    <thead>
-      <tr>
-        <th rowspan="2" class="td-param" style="min-width:118px;">PARTICULARS</th>
-        <th colspan="4">SAMPLE No. &amp; CODE</th>
-        <th>OPTIMUM — <em>L. vannamei</em></th>
-      </tr>
-      <tr>
-        <th class="td-sample" style="min-width:38px;">1</th>
-        <th class="td-sample" style="min-width:38px;">2</th>
-        <th class="td-sample" style="min-width:38px;">3</th>
-        <th class="td-sample" style="min-width:38px;">4</th>
-        <th class="td-opt">Vannamei Range</th>
-      </tr>
-    </thead>
-    <tbody id="water-tbody"></tbody>
-  </table>
-</div>
-
-<!-- Plankton -->
-<div class="plankton-panel">
-  <div class="useful-panel">
-    <table>
-      <thead>
-        <tr><th colspan="6" class="th-green">USEFUL PLANKTON</th></tr>
-        <tr>
-          <th class="th-green" style="width:16px;"></th>
-          <th class="th-green" style="min-width:74px;">Name</th>
-          <th class="th-green" style="width:24px;">1</th>
-          <th class="th-green" style="width:24px;">2</th>
-          <th class="th-green" style="width:24px;">3</th>
-          <th class="th-green" style="width:24px;">4</th>
-        </tr>
-      </thead>
-      <tbody id="useful-tbody"></tbody>
-    </table>
+    <div class="water-panel">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2" class="td-param" style="min-width:118px;">PARTICULARS</th>
+            <th colspan="4">SAMPLE No. &amp; CODE</th>
+            <th>OPTIMUM — <em>L. vannamei</em></th>
+          </tr>
+          <tr>
+            <th style="width:52px;">1</th>
+            <th style="width:52px;">2</th>
+            <th style="width:52px;">3</th>
+            <th style="width:52px;">4</th>
+            <th class="td-opt">Vannamei Range</th>
+          </tr>
+        </thead>
+        <tbody id="water-tbody"></tbody>
+      </table>
+    </div>
+    <div class="plankton-panel">
+      <div class="useful-panel">
+        <table>
+          <thead>
+            <tr><th colspan="6" class="th-green">USEFUL PLANKTON</th></tr>
+            <tr>
+              <th class="th-green" style="width:16px;"></th>
+              <th class="th-green" style="min-width:74px;">Name</th>
+              <th class="th-green" style="width:24px;">1</th>
+              <th class="th-green" style="width:24px;">2</th>
+              <th class="th-green" style="width:24px;">3</th>
+              <th class="th-green" style="width:24px;">4</th>
+            </tr>
+          </thead>
+          <tbody id="useful-tbody"></tbody>
+        </table>
+      </div>
+      <div class="harmful-panel">
+        <table>
+          <thead>
+            <tr><th colspan="6" class="th-red">HARMFUL PLANKTON</th></tr>
+            <tr>
+              <th class="th-red" style="width:16px;"></th>
+              <th class="th-red" style="min-width:74px;">Name</th>
+              <th class="th-red" style="width:24px;">1</th>
+              <th class="th-red" style="width:24px;">2</th>
+              <th class="th-red" style="width:24px;">3</th>
+              <th class="th-red" style="width:24px;">4</th>
+            </tr>
+          </thead>
+          <tbody id="harmful-tbody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
-  <div class="harmful-panel">
-    <table>
-      <thead>
-        <tr><th colspan="6" class="th-red">HARMFUL PLANKTON</th></tr>
-        <tr>
-          <th class="th-red" style="width:16px;"></th>
-          <th class="th-red" style="min-width:74px;">Name</th>
-          <th class="th-red" style="width:24px;">1</th>
-          <th class="th-red" style="width:24px;">2</th>
-          <th class="th-red" style="width:24px;">3</th>
-          <th class="th-red" style="width:24px;">4</th>
-        </tr>
-      </thead>
-      <tbody id="harmful-tbody"></tbody>
-    </table>
-  </div>
-</div>
-```
-
-  </div>
-
-  <!-- LEGEND (screen only) -->
 
   <div class="legend">
     <span class="legend-title">RESULT STATUS :</span>
@@ -313,8 +268,6 @@ td.safe, td.warn, td.danger { -webkit-print-color-adjust:exact; print-color-adju
     <span class="leg-item w"><span class="leg-swatch ls-warn"></span> Warning — borderline, monitor closely</span>
     <span class="leg-item d"><span class="leg-swatch ls-dngr"></span> Danger — out of range, act now</span>
   </div>
-
-  <!-- VIBRIO -->
 
   <div class="vibrio-section">
     <div class="vibrio-title">Microbiology : Total Count of Vibrio Bacteria (CFU / mL)</div>
@@ -340,23 +293,17 @@ td.safe, td.warn, td.danger { -webkit-print-color-adjust:exact; print-color-adju
     </div>
   </div>
 
-  <!-- SUGGESTIONS -->
-
   <div class="suggestions-zone">
     <div class="suggest-bar">
       <span class="sb-label">💡 SUGGESTIONS &amp; TREATMENT</span>
-      <button class="btn-suggest" onclick="generateSuggestions()">
-        ✦ &nbsp;Generate Suggestions
-      </button>
-      <span class="suggest-hint">Analyses all entered values and generates vannamei-specific recommendations — works offline, no internet needed</span>
+      <button class="btn-suggest" onclick="generateSuggestions()">✦ &nbsp;Generate Suggestions</button>
+      <span class="suggest-hint">Analyses all entered values — works offline, no internet needed</span>
     </div>
     <div class="suggestions-box">
       <strong>SUGGESTIONS :</strong>
       <textarea id="suggestions-out" placeholder="Click 'Generate Suggestions' above, or type manually…"></textarea>
     </div>
   </div>
-
-  <!-- FOOTER -->
 
   <div class="report-footer">
     <div>
@@ -371,534 +318,280 @@ td.safe, td.warn, td.danger { -webkit-print-color-adjust:exact; print-color-adju
 
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-
-// ═══════════════════════════════════════════════════════
-// L. VANNAMEI PARAMETER DEFINITIONS
-// check(val, sal) → ‘safe’ | ‘warn’ | ‘danger’ | ‘’
-// ═══════════════════════════════════════════════════════
+<script>
 const PARAMS = [
-{
-id:‘ph’, name:‘P<sup>H</sup>’,
-opt:‘7.8 – 8.5<br><small>Tolerance 7.2–8.8 · swing ≤0.5/day</small>’,
-check(v) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n >= 7.8 && n <= 8.5) return ‘safe’;
-if ((n >= 7.2 && n < 7.8) || (n > 8.5 && n <= 8.8)) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘sal’, name:‘Salinity (ppt)’,
-opt:‘10 – 25 ppt<br><small>Optimal growth 15–25 · tolerance 0.5–45</small>’,
-check(v) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n >= 10 && n <= 25) return ‘safe’;
-if ((n >= 2 && n < 10) || (n > 25 && n <= 35)) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘co2’, name:‘CO₂ (ppm)’,
-opt:’< 10 ppm<br><small>Stress >20 · Toxic >60</small>’,
-check(v) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n <= 10) return ‘safe’;
-if (n <= 20) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘hco3’, name:‘HCO₃ (ppm)’,
-opt:‘100 – 200 ppm<br><small>Min 60 ppm</small>’,
-check(v) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n >= 100 && n <= 200) return ‘safe’;
-if ((n >= 60 && n < 100) || (n > 200 && n <= 300)) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘tAlk’, name:‘T. Alkalinity (ppm)’,
-opt:‘100 – 150 ppm<br><small>>200 may precipitate Ca · min 80</small>’,
-check(v) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n >= 100 && n <= 150) return ‘safe’;
-if ((n >= 80 && n < 100) || (n > 150 && n <= 250)) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘tHard’, name:‘T. Hardness (ppm CaCO₃)’,
-opt:‘200 – 500 ppm<br><small>Brackish >500 normal · min 150</small>’,
-check(v) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n >= 200 && n <= 500) return ‘safe’;
-if ((n >= 150 && n < 200) || (n > 500 && n <= 800)) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘aHard’, name:‘A. Hardness (ppm)’,
-opt:‘150 – 300 ppm<br><small>Must ≥ Total Alkalinity · min 50</small>’,
-check(v) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n >= 150 && n <= 300) return ‘safe’;
-if (n >= 50  && n < 150)  return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘mg’, name:‘Mg²⁺ (ppm)’,
-opt:‘Salinity × 39.1 ppm<br><small>Min 100 ppm at any salinity</small>’,
-check(v, sal) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-const t = sal ? sal * 39.1 : null;
-if (t) {
-if (n >= t * 0.70 && n <= t * 1.30) return ‘safe’;   // within ±30% of target
-if (n > t * 1.30)                    return ‘safe’;   // above target is not harmful
-if (n >= t * 0.50)                   return ‘warn’;   // 50–70% of target: low
-return ‘danger’;                                       // < 50% of target: critical
-}
-if (n >= 100) return ‘safe’;
-if (n >= 50)  return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘ca’, name:‘Ca²⁺ (ppm)’,
-opt:‘Salinity × 11.6 ppm<br><small>Min 30 ppm at any salinity</small>’,
-check(v, sal) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-const t = sal ? sal * 11.6 : null;
-if (t) {
-if (n >= t * 0.70) return ‘safe’;   // at or above 70% of seawater-equivalent is fine
-if (n >= t * 0.50) return ‘warn’;   // 50–70%: low, supplement advised
-return ‘danger’;                     // below 50%: critically deficient
-}
-if (n >= 30) return ‘safe’;
-if (n >= 15) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘k’, name:‘Potassium K⁺ (ppm)’,
-opt:‘Salinity × 11.01 ppm<br><small style="color:#c0392b;font-weight:700">⚠ CRITICAL — #1 missed ion</small>’,
-check(v, sal) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-const t = sal ? sal * 11.01 : null;
-if (t) {
-if (n >= t * 0.70 && n <= t * 1.40) return ‘safe’;
-if (n >= t * 0.40)                   return ‘warn’;
-return ‘danger’;
-}
-return n >= 20 ? ‘safe’ : ‘danger’;
-}
-},
-{
-id:‘tan’, name:‘T. Ammonia (ppm)’,
-opt:‘≤ 0.1 ppm<br><small>0.45 ppm → 50% growth loss</small>’,
-check(v) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n <= 0.10) return ‘safe’;
-if (n <= 0.40) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘uia’, name:‘U. Ammonia (ppm)’,
-opt:’< 0.02 ppm<br><small>FAO max 0.025 · riskier at low salinity</small>’,
-check(v) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n < 0.02)             return ‘safe’;
-if (n >= 0.02 && n <= 0.05) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘no2’, name:‘NO₂ (ppm)’,
-opt:‘Nil – < 0.1 ppm<br><small>Low salinity = less Cl⁻ protection</small>’,
-check(v) {
-const s = String(v).trim().toLowerCase();
-if (s === ‘nil’ || s === ‘0’) return ‘safe’;
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n < 0.10) return ‘safe’;
-if (n <= 0.50) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘iron’, name:‘Iron (ppm)’,
-opt:’< 0.05 ppm<br><small>Max 0.1 ppm · precipitates on gills</small>’,
-check(v) {
-const s = String(v).trim().toLowerCase();
-if (s === ‘nil’ || s === ‘0’) return ‘safe’;
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n <= 0.05) return ‘safe’;
-if (n <= 0.10) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘h2s’, name:‘H₂S (ppm)’,
-opt:‘0 — Zero tolerance<br><small>0.1 ppm → loss of balance · 4 ppm lethal</small>’,
-check(v) {
-const s = String(v).trim().toLowerCase();
-if (s === ‘nil’ || s === ‘0’) return ‘safe’;
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n === 0) return ‘safe’;
-if (n < 0.05) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘do’, name:‘D.O. (ppm)’,
-opt:‘≥ 5 ppm · Ideal 6–9 ppm<br><small>High salinity holds less O₂ → aerate more</small>’,
-check(v) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n >= 5) return ‘safe’;
-if (n >= 3) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘cl2’, name:‘Chlorine CL₂ (ppm)’,
-opt:‘0 — Must be zero<br><small>0.003 ppm damages gill tissue</small>’,
-check(v) {
-const s = String(v).trim().toLowerCase();
-if (s === ‘0’ || s === ‘nil’) return ‘safe’;
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n === 0)   return ‘safe’;
-if (n <= 0.10) return ‘warn’;
-return ‘danger’;
-}
-},
-{
-id:‘redox’, name:‘Redox Potential (mV)’,
-opt:’+200 to +400 mV<br><small><+100 anaerobic · <0 H₂S zone</small>’,
-check(v) {
-const n = parseFloat(v); if (isNaN(n)) return ‘’;
-if (n >= 200 && n <= 400) return ‘safe’;
-if ((n >= 100 && n < 200) || (n > 400 && n <= 500)) return ‘warn’;
-return ‘danger’;
-}
-},
+  { id:'ph', name:'P<sup>H</sup>', opt:'7.8 – 8.5<br><small>Tolerance 7.2–8.8 · swing ≤0.5/day</small>',
+    check(v){ const n=parseFloat(v); if(isNaN(n))return''; if(n>=7.8&&n<=8.5)return'safe'; if((n>=7.2&&n<7.8)||(n>8.5&&n<=8.8))return'warn'; return'danger'; }
+  },
+  { id:'sal', name:'Salinity (ppt)', opt:'10 – 25 ppt<br><small>Optimal 15–25 · tolerance 0.5–45</small>',
+    check(v){ const n=parseFloat(v); if(isNaN(n))return''; if(n>=10&&n<=25)return'safe'; if((n>=2&&n<10)||(n>25&&n<=35))return'warn'; return'danger'; }
+  },
+  { id:'co2', name:'CO₂ (ppm)', opt:'&lt; 10 ppm<br><small>Stress &gt;20 · Toxic &gt;60</small>',
+    check(v){ const n=parseFloat(v); if(isNaN(n))return''; if(n<=10)return'safe'; if(n<=20)return'warn'; return'danger'; }
+  },
+  { id:'hco3', name:'HCO₃ (ppm)', opt:'100 – 200 ppm<br><small>Min 60 ppm</small>',
+    check(v){ const n=parseFloat(v); if(isNaN(n))return''; if(n>=100&&n<=200)return'safe'; if((n>=60&&n<100)||(n>200&&n<=300))return'warn'; return'danger'; }
+  },
+  { id:'tAlk', name:'T. Alkalinity (ppm)', opt:'100 – 150 ppm<br><small>&gt;200 may precipitate Ca · min 80</small>',
+    check(v){ const n=parseFloat(v); if(isNaN(n))return''; if(n>=100&&n<=150)return'safe'; if((n>=80&&n<100)||(n>150&&n<=250))return'warn'; return'danger'; }
+  },
+  { id:'tHard', name:'T. Hardness (ppm CaCO₃)', opt:'200 – 500 ppm<br><small>Brackish &gt;500 normal · min 150</small>',
+    check(v){ const n=parseFloat(v); if(isNaN(n))return''; if(n>=200&&n<=500)return'safe'; if((n>=150&&n<200)||(n>500&&n<=800))return'warn'; return'danger'; }
+  },
+  { id:'aHard', name:'A. Hardness (ppm)', opt:'150 – 300 ppm<br><small>Must ≥ Total Alkalinity · min 50</small>',
+    check(v){ const n=parseFloat(v); if(isNaN(n))return''; if(n>=150&&n<=300)return'safe'; if(n>=50&&n<150)return'warn'; return'danger'; }
+  },
+  { id:'mg', name:'Mg²⁺ (ppm)', opt:'Salinity × 39.1 ppm<br><small>Min 100 ppm at any salinity</small>',
+    check(v,sal){ const n=parseFloat(v); if(isNaN(n))return''; const t=sal?sal*39.1:null; if(t){if(n>=t*0.70)return'safe'; if(n>=t*0.50)return'warn'; return'danger';} return n>=100?'safe':n>=50?'warn':'danger'; }
+  },
+  { id:'ca', name:'Ca²⁺ (ppm)', opt:'Salinity × 11.6 ppm<br><small>Min 30 ppm at any salinity</small>',
+    check(v,sal){ const n=parseFloat(v); if(isNaN(n))return''; const t=sal?sal*11.6:null; if(t){if(n>=t*0.70)return'safe'; if(n>=t*0.50)return'warn'; return'danger';} return n>=30?'safe':n>=15?'warn':'danger'; }
+  },
+  { id:'k', name:'Potassium K⁺ (ppm)', opt:'Salinity × 11.01 ppm<br><small style="color:#c0392b;font-weight:700">⚠ CRITICAL — #1 missed ion</small>',
+    check(v,sal){ const n=parseFloat(v); if(isNaN(n))return''; const t=sal?sal*11.01:null; if(t){if(n>=t*0.70)return'safe'; if(n>=t*0.40)return'warn'; return'danger';} return n>=20?'safe':n>=8?'warn':'danger'; }
+  },
+  { id:'tan', name:'T. Ammonia (ppm)', opt:'≤ 0.1 ppm<br><small>0.45 ppm → 50% growth loss</small>',
+    check(v){ const n=parseFloat(v); if(isNaN(n))return''; if(n<=0.10)return'safe'; if(n<=0.40)return'warn'; return'danger'; }
+  },
+  { id:'uia', name:'U. Ammonia (ppm)', opt:'&lt; 0.02 ppm<br><small>FAO max 0.025 · riskier at low salinity</small>',
+    check(v){ const n=parseFloat(v); if(isNaN(n))return''; if(n<0.02)return'safe'; if(n>=0.02&&n<=0.05)return'warn'; return'danger'; }
+  },
+  { id:'no2', name:'NO₂ (ppm)', opt:'Nil – &lt; 0.1 ppm<br><small>Low salinity = less Cl⁻ protection</small>',
+    check(v){ const s=String(v).trim().toLowerCase(); if(s==='nil'||s==='0')return'safe'; const n=parseFloat(v); if(isNaN(n))return''; if(n<0.10)return'safe'; if(n<=0.50)return'warn'; return'danger'; }
+  },
+  { id:'iron', name:'Iron (ppm)', opt:'&lt; 0.05 ppm<br><small>Max 0.1 ppm · precipitates on gills</small>',
+    check(v){ const s=String(v).trim().toLowerCase(); if(s==='nil'||s==='0')return'safe'; const n=parseFloat(v); if(isNaN(n))return''; if(n<=0.05)return'safe'; if(n<=0.10)return'warn'; return'danger'; }
+  },
+  { id:'h2s', name:'H₂S (ppm)', opt:'0 — Zero tolerance<br><small>0.1 ppm → loss of balance · 4 ppm lethal</small>',
+    check(v){ const s=String(v).trim().toLowerCase(); if(s==='nil'||s==='0')return'safe'; const n=parseFloat(v); if(isNaN(n))return''; if(n===0)return'safe'; if(n<0.05)return'warn'; return'danger'; }
+  },
+  { id:'do', name:'D.O. (ppm)', opt:'≥ 5 ppm · Ideal 6–9 ppm<br><small>High salinity holds less O₂ → aerate more</small>',
+    check(v){ const n=parseFloat(v); if(isNaN(n))return''; if(n>=5)return'safe'; if(n>=3)return'warn'; return'danger'; }
+  },
+  { id:'cl2', name:'Chlorine CL₂ (ppm)', opt:'0 — Must be zero<br><small>0.003 ppm damages gill tissue</small>',
+    check(v){ const s=String(v).trim().toLowerCase(); if(s==='0'||s==='nil')return'safe'; const n=parseFloat(v); if(isNaN(n))return''; if(n===0)return'safe'; if(n<=0.10)return'warn'; return'danger'; }
+  },
+  { id:'redox', name:'Redox Potential (mV)', opt:'+200 to +400 mV<br><small>&lt;+100 anaerobic · &lt;0 H₂S zone</small>',
+    check(v){ const n=parseFloat(v); if(isNaN(n))return''; if(n>=200&&n<=400)return'safe'; if((n>=100&&n<200)||(n>400&&n<=500))return'warn'; return'danger'; }
+  },
 ];
 
-// ── Build table — store td references ──
-const tdRefs = {};   // tdRefs[‘pi-s’] = <td> element
-const wtb = document.getElementById(‘water-tbody’);
+const tdRefs = {};
+const wtb = document.getElementById('water-tbody');
 PARAMS.forEach((p, pi) => {
-const tr = document.createElement(‘tr’);
-let cells = ‘’;
-for (let s = 1; s <= 4; s++) {
-cells += `<td class="td-sample" id="td-${pi}-${s}"> <input class="data-input" type="text" placeholder="—" oninput="onValueInput(this,${pi},${s})"> </td>`;
-}
-tr.innerHTML = `<td class="td-param">${p.name}</td>${cells}<td class="td-opt">${p.opt}</td>`;
-wtb.appendChild(tr);
-for (let s = 1; s <= 4; s++) {
-tdRefs[`${pi}-${s}`] = document.getElementById(`td-${pi}-${s}`);
-}
+  const tr = document.createElement('tr');
+  let cells = '';
+  for (let s = 1; s <= 4; s++) {
+    cells += `<td class="td-sample" id="td-${pi}-${s}"><input class="data-input" type="text" placeholder="—" oninput="onValueInput(this,${pi},${s})"></td>`;
+  }
+  tr.innerHTML = `<td class="td-param">${p.name}</td>${cells}<td class="td-opt">${p.opt}</td>`;
+  wtb.appendChild(tr);
+  for (let s = 1; s <= 4; s++) tdRefs[`${pi}-${s}`] = document.getElementById(`td-${pi}-${s}`);
 });
 
-// ── Colour coding — applied to the <td> ──
 function getSal() {
-const v = parseFloat(document.getElementById(‘sal-input’).value);
-return isNaN(v) ? null : v;
+  // Primary: average of salinity values in table row (pi=1)
+  const salVals = [];
+  for (let s = 1; s <= 4; s++) {
+    const td = tdRefs['1-' + s];
+    const inp = td ? td.querySelector('input') : null;
+    if (inp) { const n = parseFloat(inp.value); if (!isNaN(n) && n > 0) salVals.push(n); }
+  }
+  if (salVals.length > 0) return salVals.reduce((a,b)=>a+b,0) / salVals.length;
+  // Fallback: manual banner entry
+  const v = parseFloat(document.getElementById('sal-input').value);
+  return isNaN(v) ? null : v;
 }
 
 function onValueInput(input, pi, s) {
-const td = tdRefs[`${pi}-${s}`];
-td.classList.remove(‘safe’,‘warn’,‘danger’);
-const val = input.value.trim();
-if (!val || val === ‘—’) return;
-const st = PARAMS[pi].check(val, getSal());
-if (st) td.classList.add(st);
+  const td = tdRefs[`${pi}-${s}`];
+  td.classList.remove('safe','warn','danger');
+  const val = input.value.trim();
+  if (!val || val === '—') return;
+  const st = PARAMS[pi].check(val, getSal());
+  if (st) td.classList.add(st);
 }
 
 function onSalinityChange() {
-const sal = parseFloat(document.getElementById(‘sal-input’).value);
-if (isNaN(sal) || sal <= 0) {
-document.getElementById(‘mg-target’).textContent = ‘—’;
-document.getElementById(‘ca-target’).textContent = ‘—’;
-document.getElementById(‘k-target’).textContent  = ‘—’;
-} else {
-document.getElementById(‘mg-target’).textContent = (sal * 39.1 ).toFixed(0);
-document.getElementById(‘ca-target’).textContent = (sal * 11.6 ).toFixed(0);
-document.getElementById(‘k-target’ ).textContent = (sal * 11.01).toFixed(0);
-}
-// Re-check all entered values against new salinity
-PARAMS.forEach((p, pi) => {
-for (let s = 1; s <= 4; s++) {
-const td = tdRefs[`${pi}-${s}`];
-const input = td.querySelector(‘input’);
-if (input) onValueInput(input, pi, s);
-}
-});
+  const sal = parseFloat(document.getElementById('sal-input').value);
+  if (isNaN(sal) || sal <= 0) {
+    document.getElementById('mg-target').textContent = '—';
+    document.getElementById('ca-target').textContent = '—';
+    document.getElementById('k-target').textContent  = '—';
+  } else {
+    document.getElementById('mg-target').textContent = (sal * 39.1 ).toFixed(0);
+    document.getElementById('ca-target').textContent = (sal * 11.6 ).toFixed(0);
+    document.getElementById('k-target' ).textContent = (sal * 11.01).toFixed(0);
+  }
+  PARAMS.forEach((p, pi) => {
+    for (let s = 1; s <= 4; s++) {
+      const td = tdRefs[`${pi}-${s}`];
+      const input = td.querySelector('input');
+      if (input) onValueInput(input, pi, s);
+    }
+  });
 }
 
-// ── Plankton builder ──
 function buildPlankton(groups, tbodyId) {
-const tb = document.getElementById(tbodyId);
-groups.forEach(g => {
-g.rows.forEach((name, ri) => {
-const tr = document.createElement(‘tr’);
-const cat = ri === 0
-? `<td class="td-cat ${g.cls}" rowspan="${g.rows.length}">${g.cat}</td>` : ‘’;
-tr.innerHTML = `${cat} <td class="td-name">${name}</td> <td class="td-chk"><input type="checkbox" data-pool="${tbodyId}" data-name="${name}"></td> <td class="td-chk"><input type="checkbox" data-pool="${tbodyId}" data-name="${name}"></td> <td class="td-chk"><input type="checkbox" data-pool="${tbodyId}" data-name="${name}"></td> <td class="td-chk"><input type="checkbox" data-pool="${tbodyId}" data-name="${name}"></td>`;
-tb.appendChild(tr);
-});
-});
+  const tb = document.getElementById(tbodyId);
+  groups.forEach(g => {
+    g.rows.forEach((name, ri) => {
+      const tr = document.createElement('tr');
+      const cat = ri === 0 ? `<td class="td-cat ${g.cls}" rowspan="${g.rows.length}">${g.cat}</td>` : '';
+      tr.innerHTML = `${cat}<td class="td-name">${name}</td>
+        <td class="td-chk"><input type="checkbox" data-pool="${tbodyId}" data-name="${name}"></td>
+        <td class="td-chk"><input type="checkbox" data-pool="${tbodyId}" data-name="${name}"></td>
+        <td class="td-chk"><input type="checkbox" data-pool="${tbodyId}" data-name="${name}"></td>
+        <td class="td-chk"><input type="checkbox" data-pool="${tbodyId}" data-name="${name}"></td>`;
+      tb.appendChild(tr);
+    });
+  });
 }
 buildPlankton([
-{cat:‘Green Algae’, cls:‘cat-green’, rows:[‘Chlorella’,‘Oocystis’,‘Eudorina’]},
-{cat:‘BG Algae’,    cls:‘cat-bg’,    rows:[‘Spirulina’]},
-{cat:‘Diatom’,      cls:‘cat-diat’,  rows:[‘Chaetoceros’,‘Skeletonema’,‘Rhizosolenia’]},
-{cat:‘Zooplankton’, cls:‘cat-zoo’,   rows:[‘Copepod’,‘Rotifer’,‘Nauplius’]},
-], ‘useful-tbody’);
+  {cat:'Green Algae',cls:'cat-green',rows:['Chlorella','Oocystis','Eudorina']},
+  {cat:'BG Algae',cls:'cat-bg',rows:['Spirulina']},
+  {cat:'Diatom',cls:'cat-diat',rows:['Chaetoceros','Skeletonema','Rhizosolenia']},
+  {cat:'Zooplankton',cls:'cat-zoo',rows:['Copepod','Rotifer','Nauplius']},
+],'useful-tbody');
 buildPlankton([
-{cat:‘Blue Green’,  cls:‘cat-bga’,   rows:[‘Anabaena’,‘Oscillatoria’,‘Microcystis’]},
-{cat:‘DF’,          cls:‘cat-df’,    rows:[‘Noctiluca’]},
-{cat:‘Diatom’,      cls:‘cat-hdiat’, rows:[‘Coscinodiscus’,‘Nitzchia’,‘Navicula’]},
-{cat:‘Protozoa’,    cls:‘cat-proto’, rows:[‘Zoothamnium’,‘Favella’,‘Vorticella’]},
-], ‘harmful-tbody’);
+  {cat:'Blue Green',cls:'cat-bga',rows:['Anabaena','Oscillatoria','Microcystis']},
+  {cat:'DF',cls:'cat-df',rows:['Noctiluca']},
+  {cat:'Diatom',cls:'cat-hdiat',rows:['Coscinodiscus','Nitzchia','Navicula']},
+  {cat:'Protozoa',cls:'cat-proto',rows:['Zoothamnium','Favella','Vorticella']},
+],'harmful-tbody');
 
-document.getElementById(‘rdate’).valueAsDate = new Date();
+document.getElementById('rdate').valueAsDate = new Date();
 
-// ═══════════════════════════════════════════════════════════════
-// OFFLINE RULE-BASED SUGGESTIONS ENGINE — no API, no internet
-// Generates vannamei-specific recommendations from entered data
-// ═══════════════════════════════════════════════════════════════
 function generateSuggestions() {
-const sal = parseFloat(document.getElementById(‘sal-input’).value);
-const lines = [];
-let num = 1;
+  const sal = parseFloat(document.getElementById('sal-input').value);
+  const lines = []; let num = 1;
+  function getWorstVal(pi) {
+    let worst=null,worstSt='';
+    const order=['danger','warn','safe'];
+    for(let s=1;s<=4;s++){
+      const td=tdRefs[`${pi}-${s}`];
+      const input=td?td.querySelector('input'):null;
+      if(!input||!input.value.trim()||input.value.trim()==='—')continue;
+      const v=input.value.trim();
+      const st=PARAMS[pi].check(v,isNaN(sal)?null:sal);
+      if(worst===null||order.indexOf(st)<order.indexOf(worstSt)){worst=v;worstSt=st;}
+    }
+    return{val:worst,status:worstSt};
+  }
+  const data={};
+  PARAMS.forEach((p,pi)=>{data[p.id]=getWorstVal(pi);});
+  if(!Object.values(data).some(d=>d.val!==null)){
+    document.getElementById('suggestions-out').value='Please enter sample values first.';return;
+  }
+  const salOK=!isNaN(sal)&&sal>0;
+  // Warn user if ionic parameters (Mg/Ca/K) have issues but salinity is unknown
+  const ionicFlagged = ['mg','ca','k'].some(id=>data[id].val!==null&&data[id].status!=='safe'&&data[id].status!=='');
+  if(ionicFlagged&&!salOK) lines.push(`${num++}. ⚠ SALINITY NOT ENTERED — Ion targets for Mg²⁺, Ca²⁺ and K⁺ cannot be calculated without salinity. Enter pond salinity in the banner above to get accurate Boyd-formula targets (Mg×39.1 · Ca×11.6 · K×11.01 per ppt). Suggestions for these ions are using minimum absolute thresholds only.`);
+  if(data.h2s.status==='danger'||data.h2s.status==='warn')
+    lines.push(`${num++}. H₂S DETECTED (${data.h2s.val} ppm) — EMERGENCY. Stop feeding. Run all aerators. Apply quicklime CaO at 10–15 kg/ha. Add zeolite 15–20 kg/ha. Do not resume feeding until H₂S reads zero. Check pond sediment redox.`);
+  if(data.do.status==='danger')
+    lines.push(`${num++}. D.O. CRITICALLY LOW (${data.do.val} ppm). Start all aerators immediately. Stop feeding. 20–30% water exchange. Run aerators all night — DO lowest before sunrise.`);
+  else if(data.do.status==='warn')
+    lines.push(`${num++}. D.O. LOW (${data.do.val} ppm). Run aerators 4–6 extra hours midnight–6 AM. Reduce feed 30% until DO above 5 ppm.`);
+  if(data.ph.status==='danger'){
+    const n=parseFloat(data.ph.val);
+    if(n<7.2) lines.push(`${num++}. pH CRITICALLY LOW (${data.ph.val}). Apply CaCO₃ lime 30–50 kg/ha evening. Rapid fix: Ca(OH)₂ 5–10 kg/ha at dawn. Raise alkalinity to 100–150 ppm.`);
+    else lines.push(`${num++}. pH CRITICALLY HIGH (${data.ph.val}). Increase aeration. Reduce fertiliser. Partial exchange 20–30%.`);
+  } else if(data.ph.status==='warn'){
+    const n=parseFloat(data.ph.val);
+    if(n<7.8) lines.push(`${num++}. pH LOW (${data.ph.val}). Apply lime 10–20 kg/ha. Monitor dawn and 2 PM — swing must not exceed 0.5 units.`);
+    else lines.push(`${num++}. pH HIGH (${data.ph.val}). Increase afternoon aeration. Monitor — if above 9.0 do partial exchange.`);
+  }
+  if(data.tan.status==='danger')
+    lines.push(`${num++}. AMMONIA CRITICAL (${data.tan.val} ppm). Partial exchange 25–30%. Cut feed 50% for 48 h. Apply Bacillus probiotic 1–2 ppm. Add zeolite 10–15 kg/ha.`);
+  else if(data.tan.status==='warn')
+    lines.push(`${num++}. AMMONIA ELEVATED (${data.tan.val} ppm). Reduce feed 30%. Apply Bacillus 1 ppm. Increase aeration. 20% exchange if no improvement in 48 h.`);
+  if(data.uia.status==='danger'||data.uia.status==='warn')
+    lines.push(`${num++}. UN-IONIZED AMMONIA HIGH (${data.uia.val} ppm). Safe limit <0.02 ppm. Lower pH toward 7.8–8.0. Increase aeration. Partial exchange 20%.`);
+  if(data.no2.status==='danger')
+    lines.push(`${num++}. NITRITE CRITICAL (${data.no2.val} ppm). Apply NaCl 10 kg/ha. Stop feeding 24 h. Partial exchange 25%.`);
+  else if(data.no2.status==='warn')
+    lines.push(`${num++}. NITRITE ELEVATED (${data.no2.val} ppm). Add NaCl 5 kg/ha. Reduce feed 20%. Monitor daily.`);
+  if(data.k.status==='danger'){
+    const tgt=salOK?(sal*11.01).toFixed(0):'unknown';
+    lines.push(`${num++}. K⁺ CRITICALLY LOW (${data.k.val} ppm, target: ${tgt} ppm). #1 cause of unexplained mass mortality in low-salinity vannamei. Apply KCl (Muriate of Potash) immediately. Dose: deficit × pond volume m³ = grams KCl.`);
+  } else if(data.k.status==='warn'){
+    const tgt=salOK?(sal*11.01).toFixed(0):'unknown';
+    lines.push(`${num++}. K⁺ LOW (${data.k.val} ppm, target: ${tgt} ppm). Apply KCl at calculated dose. Monitor weekly.`);
+  }
+  if(data.mg.status==='danger'||data.mg.status==='warn'){
+    const tgt=salOK?(sal*39.1).toFixed(0):'>100';
+    lines.push(`${num++}. Mg²⁺ LOW (${data.mg.val} ppm, target: ${tgt} ppm). Apply MgSO₄ (Epsom salt) or MgCl₂. Dose: deficit × pond m³ = grams.`);
+  }
+  if(data.tHard.status==='danger'){
+    const n=parseFloat(data.tHard.val);
+    if(n<150) lines.push(`${num++}. TOTAL HARDNESS CRITICALLY LOW (${data.tHard.val} ppm). Below 150 ppm impairs pH buffering and molting. Apply dolomite lime (CaMg(CO₃)₂) at 20–40 kg/ha to raise both Ca and Mg simultaneously.`);
+    else lines.push(`${num++}. TOTAL HARDNESS VERY HIGH (${data.tHard.val} ppm). Above 800 ppm can stress vannamei. Dilute with fresh water exchange of 20–25%.`);
+  } else if(data.tHard.status==='warn'){
+    const n=parseFloat(data.tHard.val);
+    if(n<200) lines.push(`${num++}. TOTAL HARDNESS LOW (${data.tHard.val} ppm). Apply agricultural lime CaCO₃ at 10–20 kg/ha. Target 200–500 ppm for stable buffering.`);
+    // >500 in brackish is normal — no action needed
+  }
+  if(data.aHard.status==='danger'){
+    lines.push(`${num++}. Ca HARDNESS CRITICALLY LOW (${data.aHard.val} ppm). Ca Hardness must always be ≥ Total Alkalinity. Below 50 ppm causes exoskeleton problems. Apply CaCl₂ or CaSO₄ (Gypsum) at 15–30 kg/ha.`);
+  } else if(data.aHard.status==='warn'){
+    lines.push(`${num++}. Ca HARDNESS LOW (${data.aHard.val} ppm). Target 150–300 ppm. Ensure Ca Hardness ≥ Total Alkalinity to prevent calcium precipitation. Apply CaCl₂ at calculated dose.`);
+  }
+  if(data.ca.status==='danger'||data.ca.status==='warn'){
+    const tgt=salOK?(sal*11.6).toFixed(0):'>30';
+    lines.push(`${num++}. Ca²⁺ LOW (${data.ca.val} ppm, target: ${tgt} ppm). Low Ca causes soft shell and failed molts. Apply CaCl₂ or Gypsum (CaSO₄). Dose: deficit × pond volume m³ = grams required.`);
+  }
+  if(data.tAlk.status!==''&&data.tAlk.status!=='safe'){
+    const an=parseFloat(data.tAlk.val);
+    if(an<100) lines.push(`${num++}. ALKALINITY LOW (${data.tAlk.val} ppm). Apply NaHCO₃ 5–10 kg/ha/day until 100–150 ppm. Low alkalinity causes pH swings and poor molting.`);
+    else lines.push(`${num++}. ALKALINITY HIGH (${data.tAlk.val} ppm). Above 150 ppm is outside optimal range; above 200 ppm risks CaCO₃ precipitation reducing Ca availability. Do NOT add lime or NaHCO₃. Partial water exchange 15–20% to bring toward 100–150 ppm.`);
+  }
+  if(data.hco3.status!==''&&data.hco3.status!=='safe'){
+    const hn=parseFloat(data.hco3.val);
+    if(hn<100) lines.push(`${num++}. HCO₃ LOW (${data.hco3.val} ppm). Apply NaHCO₃ 3–5 kg/ha. Common in low-salinity ponds during monsoon — test weekly.`);
+    else lines.push(`${num++}. HCO₃ HIGH (${data.hco3.val} ppm). Do not add lime. Monitor and partial exchange if still rising.`);
+  }
+  if(data.co2.status==='danger')
+    lines.push(`${num++}. CO₂ HIGH (${data.co2.val} ppm). Stress >20 ppm, toxic >60 ppm. Aerate 6–8 h vigorously. Reduce fertiliser. CO₂ peaks at dawn — check 5–6 AM.`);
+  else if(data.co2.status==='warn')
+    lines.push(`${num++}. CO₂ ELEVATED (${data.co2.val} ppm). Increase aeration. Target below 10 ppm.`);
+  if(data.iron.status==='danger'||data.iron.status==='warn')
+    lines.push(`${num++}. IRON ELEVATED (${data.iron.val} ppm). Precipitates on gills → respiratory distress. Aerate intake water. Raise pH above 7.5. Sand-filter intake.`);
+  if(data.cl2.status==='danger'||data.cl2.status==='warn')
+    lines.push(`${num++}. CHLORINE DETECTED (${data.cl2.val} ppm). Apply sodium thiosulphate. Do not stock until confirmed zero.`);
+  if(data.redox.status==='danger')
+    lines.push(`${num++}. REDOX CRITICALLY LOW (${data.redox.val} mV). Active H₂S production. Apply Bacillus 2 ppm. Install bottom aeration.`);
+  else if(data.redox.status==='warn')
+    lines.push(`${num++}. REDOX LOW (${data.redox.val} mV). Apply Bacillus 1 ppm weekly. Increase bottom aeration.`);
+  const harmful=[],useful=[];
+  document.querySelectorAll('input[data-pool="harmful-tbody"]:checked').forEach(cb=>{if(!harmful.includes(cb.dataset.name))harmful.push(cb.dataset.name);});
+  document.querySelectorAll('input[data-pool="useful-tbody"]:checked').forEach(cb=>{if(!useful.includes(cb.dataset.name))useful.push(cb.dataset.name);});
+  const cyano=['Microcystis','Anabaena','Oscillatoria'].filter(x=>harmful.includes(x));
+  if(cyano.length) lines.push(`${num++}. BLUE-GREEN ALGAE (${cyano.join(', ')}). Do NOT use copper sulphate. Partial exchange 20–30% at dawn. Apply citric acid 1 ppm. Use Bacillus. Reduce N and P inputs.`);
+  if(harmful.includes('Noctiluca')) lines.push(`${num++}. NOCTILUCA. No chemicals. Partial exchange at dawn. Aerators all night. Reduce feed and fertiliser.`);
+  const proto=['Zoothamnium','Vorticella','Favella'].filter(x=>harmful.includes(x));
+  if(proto.length) lines.push(`${num++}. PROTOZOA (${proto.join(', ')}). Increase aeration. Reduce feed. Apply KMnO₄ 2–3 ppm.`);
+  const others=harmful.filter(x=>!cyano.includes(x)&&x!=='Noctiluca'&&!proto.includes(x));
+  if(others.length) lines.push(`${num++}. HARMFUL PLANKTON (${others.join(', ')}). Monitor daily. Reduce nutrients. 15–20% partial exchange if worsens.`);
+  // Only flag no useful plankton if the technician engaged with plankton section
+  const planktonSectionUsed = harmful.length > 0 || useful.length > 0;
+  if(planktonSectionUsed && useful.length===0) lines.push(`${num++}. NO USEFUL PLANKTON DETECTED. Good plankton (Chlorella, Chaetoceros, Skeletonema) is essential for water quality and natural shrimp feeding. Fertilise with Urea + TSP 2:1 (2 kg urea + 1 kg TSP per 100 m² of pond). Inoculate with Chlorella or diatom culture if available.`);
+  const gv=Array.from(document.querySelectorAll('.v-green')).map(i=>parseFloat(i.value)).filter(x=>!isNaN(x));
+  const yv=Array.from(document.querySelectorAll('.v-yellow')).map(i=>parseFloat(i.value)).filter(x=>!isNaN(x));
+  const maxG=gv.length?Math.max(...gv):null,maxY=yv.length?Math.max(...yv):null;
+  if(maxG!==null&&maxG>1000) lines.push(`${num++}. VIBRIO GREEN (V. harveyi) HIGH — ${maxG.toLocaleString()} CFU/mL. High risk of Bright Disease. Apply Bacillus 2 ppm. Partial exchange 25%. No antibiotics without antibiogram. If shrimp glow at night — prepare emergency harvest.`);
+  else if(maxG!==null&&maxG>100) lines.push(`${num++}. VIBRIO GREEN ELEVATED (${maxG.toLocaleString()} CFU/mL). Apply Bacillus 1 ppm. Reduce feed 20%. Improve aeration.`);
+  if(maxY!==null&&maxY>10000) lines.push(`${num++}. VIBRIO YELLOW HIGH (${maxY.toLocaleString()} CFU/mL). Apply Bacillus 1–2 ppm. Reduce feed. Improve DO.`);
+  const hasIssues = lines.length > 0;
+  if(!hasIssues) lines.push(`${num++}. ALL PARAMETERS IN SAFE RANGE for L. vannamei. No corrective action required. Continue current pond management.`);
+  lines.push(`${num++}. DAILY MONITORING: Measure D.O. before 6 AM and pH at both dawn and 2 PM. These change fastest and give earliest warning of problems.`);
+  lines.push(`${num++}. IONIC CHECK every 2 weeks${salOK?` — at ${sal.toFixed(1)} ppt: K⁺ target ${(sal*11.01).toFixed(0)} ppm · Mg²⁺ target ${(sal*39.1).toFixed(0)} ppm · Ca²⁺ target ${(sal*11.6).toFixed(0)} ppm`:' — enter salinity (in banner or salinity row) to see K⁺/Mg²⁺/Ca²⁺ targets'}. Apply KCl/MgSO₄/CaCl₂ if below 70% of salinity-based target. Apply Bacillus 1 ppm weekly for pond bottom health.`);
+  const output=document.getElementById('suggestions-out');
+  output.value=lines.join('\n\n');
+  output.style.height='auto';
+  output.style.height=(output.scrollHeight+4)+'px';
+}
+</script>
 
-// Helper: get representative value across samples (worst case)
-function getWorstVal(pi) {
-let worst = null; let worstSt = ‘’;
-const order = [‘danger’,‘warn’,‘safe’];
-for (let s = 1; s <= 4; s++) {
-const td = tdRefs[`${pi}-${s}`];
-const input = td ? td.querySelector(‘input’) : null;
-if (!input || !input.value.trim() || input.value.trim() === ‘—’) continue;
-const v = input.value.trim();
-const st = PARAMS[pi].check(v, isNaN(sal) ? null : sal);
-if (worst === null || order.indexOf(st) < order.indexOf(worstSt)) {
-worst = v; worstSt = st;
-}
-}
-return { val: worst, status: worstSt };
-}
-
-// Collect all statuses
-const data = {};
-PARAMS.forEach((p, pi) => { data[p.id] = getWorstVal(pi); });
-
-// Check if anything was entered at all
-const anyEntered = Object.values(data).some(d => d.val !== null);
-if (!anyEntered) {
-document.getElementById(‘suggestions-out’).value =
-‘Please enter sample values in the report before generating suggestions.’;
-return;
-}
-
-// ── PRIORITY 1: Immediate danger parameters ──
-
-// H2S
-if (data.h2s.status === ‘danger’ || data.h2s.status === ‘warn’) {
-const v = parseFloat(data.h2s.val);
-lines.push(`${num++}. H₂S DETECTED (${data.h2s.val} ppm) — EMERGENCY ACTION REQUIRED. H₂S above 0.05 ppm causes gill damage and rapid mortality in vannamei. Run all aerators immediately. Apply CaO (quicklime) at 10–15 kg/ha to pond bottom. Add zeolite at 15–20 kg/ha to absorb hydrogen sulphide. Stop feeding until H₂S returns to zero. Check redox potential of pond sediment — if below 0 mV, probiotics (Bacillus spp.) are needed at next water change.`);
-}
-
-// DO
-if (data.do.status === ‘danger’) {
-lines.push(`${num++}. LOW DISSOLVED OXYGEN (${data.do.val} ppm) — CRITICAL. Vannamei require ≥5 ppm. Below 3 ppm causes immune suppression and mass mortality. Start all aerators immediately. Stop all feeding. Do a 20–30% water exchange with oxygenated water. Check for algal crash (sudden drop in water color). Run aerators throughout the night — DO is lowest before sunrise.`);
-} else if (data.do.status === ‘warn’) {
-lines.push(`${num++}. D.O. BORDERLINE (${data.do.val} ppm). Run aerators for an additional 4–6 hours, especially from midnight to 6 AM when DO is lowest. Reduce feed by 30% until DO recovers to above 5 ppm.`);
-}
-
-// pH
-if (data.ph.status === ‘danger’) {
-const n = parseFloat(data.ph.val);
-if (n < 7.2) {
-lines.push(`${num++}. pH CRITICALLY LOW (${data.ph.val}). Vannamei suffer shell softening and feeding stops below 7.5. Apply agricultural lime (CaCO₃) at 30–50 kg/ha in the evening. If rapid correction needed, use hydrated lime Ca(OH)₂ at 5–10 kg/ha — apply at dawn only. Check and raise Total Alkalinity to 100–150 ppm, which will buffer pH.`);
-} else {
-lines.push(`${num++}. pH CRITICALLY HIGH (${data.ph.val}). Above 9.0 vannamei stop feeding and suffer gill damage. Increase aeration to drive off CO₂. Reduce photosynthesis by lowering fertilizer inputs. If algal bloom is causing the rise, partial water exchange of 20–30%.`);
-}
-} else if (data.ph.status === ‘warn’) {
-const n = parseFloat(data.ph.val);
-if (n < 7.8) {
-lines.push(`${num++}. pH LOW-BORDERLINE (${data.ph.val}). Target is 7.8–8.5 for vannamei. Apply lime at 10–20 kg/ha and monitor twice daily (dawn minimum, 2 PM maximum). Daily swing should not exceed 0.5 units.`);
-} else {
-lines.push(`${num++}. pH HIGH-BORDERLINE (${data.ph.val}). Monitor closely — increase aeration during afternoon bloom period to prevent further rise.`);
-}
-}
-
-// Ammonia
-if (data.tan.status === ‘danger’) {
-lines.push(`${num++}. TOTAL AMMONIA CRITICAL (${data.tan.val} ppm). Vannamei experience 50% growth loss at 0.45 ppm TAN. Do a 25–30% partial water exchange immediately. Reduce feed by 50% for 48 hours. Apply Bacillus probiotic at 1–2 ppm. Add zeolite at 10–15 kg/ha to adsorb ammonia. Identify the cause — overfeeding, dead algae, or insufficient aeration.`);
-} else if (data.tan.status === ‘warn’) {
-lines.push(`${num++}. AMMONIA ELEVATED (${data.tan.val} ppm). Reduce feed by 30%. Apply probiotics (Bacillus subtilis/licheniformis) at 1 ppm. Increase aeration. If no improvement in 48 hours, do a 20% water exchange.`);
-}
-
-if (data.uia.status === ‘danger’ || data.uia.status === ‘warn’) {
-lines.push(`${num++}. UN-IONIZED AMMONIA (UIA) HIGH (${data.uia.val} ppm). UIA is the toxic fraction of total ammonia — safe limit for vannamei is <0.02 ppm. At low salinity, a higher proportion of TAN converts to toxic UIA. Lower pH slightly (target 7.8–8.0) and increase aeration to reduce UIA. Partial water exchange of 20%.`);
-}
-
-// NO2
-if (data.no2.status === ‘danger’) {
-lines.push(`${num++}. NITRITE CRITICAL (${data.no2.val} ppm). At low salinity, vannamei have no chloride protection against NO₂. Apply NaCl at 10 kg/ha to raise chloride ion concentration — Cl⁻ competes with NO₂ at gill surfaces. Stop feeding for 24 hours. Partial water exchange of 25%.`);
-} else if (data.no2.status === ‘warn’) {
-lines.push(`${num++}. NITRITE ELEVATED (${data.no2.val} ppm). Add NaCl at 5 kg/ha as a precaution. Reduce feed by 20%. Monitor daily.`);
-}
-
-// ── PRIORITY 2: Ionic parameters ──
-const salOK = !isNaN(sal) && sal > 0;
-
-// K+
-if (data.k.status === ‘danger’) {
-const target = salOK ? (sal * 11.01).toFixed(0) : ‘unknown’;
-lines.push(`${num++}. POTASSIUM K⁺ CRITICALLY LOW (${data.k.val} ppm, target: ${target} ppm). K⁺ deficiency is the single most common cause of unexplained mass mortality in low-salinity vannamei farming — shrimp cannot complete molting without adequate K⁺. Apply Potassium Chloride (KCl / Muriate of Potash) immediately. Dose: multiply the deficit in ppm by pond volume in m³ to get grams of KCl needed. Raise salinity if possible above 10 ppt to restore natural ionic balance.`);
-} else if (data.k.status === ‘warn’) {
-const target = salOK ? (sal * 11.01).toFixed(0) : ‘unknown’;
-lines.push(`${num++}. POTASSIUM K⁺ LOW (${data.k.val} ppm, target: ${target} ppm). Apply KCl (Muriate of Potash) at a calculated dose to bring K⁺ to target. Monitor weekly — K⁺ depletes fast in intensive ponds.`);
-}
-
-// Mg
-if (data.mg.status === ‘danger’ || data.mg.status === ‘warn’) {
-const n   = parseFloat(data.mg.val);
-const target = salOK ? (sal * 39.1).toFixed(0) : ‘>100’;
-const tNum   = salOK ? sal * 39.1 : 100;
-if (n < tNum) {
-lines.push(`${num++}. MAGNESIUM Mg²⁺ LOW (${data.mg.val} ppm, target: ${target} ppm). Mg is essential for osmoregulation and exoskeleton hardening in vannamei. Apply MgSO₄ (Epsom salt) or MgCl₂. Dose calculation: deficit (ppm) × pond volume (m³) = grams of MgSO₄ needed.`);
-}
-// If above target — safe, no action needed (handled by check returning safe)
-}
-
-// Ca
-if (data.ca.status === ‘danger’ || data.ca.status === ‘warn’) {
-const n   = parseFloat(data.ca.val);
-const target = salOK ? (sal * 11.6).toFixed(0) : ‘>30’;
-const tNum   = salOK ? sal * 11.6 : 30;
-if (n < tNum * 0.70) {
-lines.push(`${num++}. CALCIUM Ca²⁺ LOW (${data.ca.val} ppm, target: ${target} ppm). Low Ca causes soft shell and failed molts in vannamei. Apply CaCl₂ or Gypsum (CaSO₄). Dose: deficit (ppm) × pond volume (m³) = grams required. Ensure Total Alkalinity stays above 75 ppm alongside Ca correction.`);
-}
-// Ca above target is safe — no action needed
-}
-
-// Alkalinity
-if (data.tAlk.status === ‘danger’) {
-const n = parseFloat(data.tAlk.val);
-if (n < 80) {
-lines.push(`${num++}. TOTAL ALKALINITY CRITICALLY LOW (${data.tAlk.val} ppm). Minimum is 80 ppm for vannamei. Apply NaHCO₃ (baking soda) at 5–10 kg/ha per day until alkalinity reaches 100–150 ppm. Low alkalinity causes pH instability and impairs molting.`);
-} else {
-lines.push(`${num++}. TOTAL ALKALINITY VERY HIGH (${data.tAlk.val} ppm). Above 250 ppm risks calcium carbonate precipitation, reducing Ca bioavailability. Avoid any further liming. Do a 20–25% partial water exchange to dilute alkalinity. Do not add NaHCO₃ or lime until alkalinity drops below 150 ppm.`);
-}
-} else if (data.tAlk.status === ‘warn’) {
-const n = parseFloat(data.tAlk.val);
-if (n < 100) {
-lines.push(`${num++}. ALKALINITY LOW-BORDERLINE (${data.tAlk.val} ppm). Target is 100–150 ppm. Apply NaHCO₃ at 3–5 kg/ha. Monitor daily — alkalinity drops quickly after rain or heavy algal growth.`);
-} else {
-lines.push(`${num++}. ALKALINITY ELEVATED (${data.tAlk.val} ppm). Above 150 ppm it may begin precipitating calcium. Do not add any lime or NaHCO₃. Monitor — if it exceeds 200 ppm, do a 15% partial water exchange to bring it down toward the 100–150 ppm target.`);
-}
-}
-
-// HCO3
-if (data.hco3.status === ‘danger’ || data.hco3.status === ‘warn’) {
-const n = parseFloat(data.hco3.val);
-if (n < 100) {
-lines.push(`${num++}. BICARBONATE HCO₃ LOW (${data.hco3.val} ppm). Minimum 60 ppm required. Apply NaHCO₃ at 3–5 kg/ha. Low bicarbonate in low-salinity ponds is especially common during monsoon season — test weekly and correct proactively.`);
-} else {
-lines.push(`${num++}. BICARBONATE HCO₃ ELEVATED (${data.hco3.val} ppm). Above 200 ppm, bicarbonate can drive pH too high and co-precipitate with calcium. Do not add lime or NaHCO₃. Monitor and do a partial water exchange if it continues to rise.`);
-}
-}
-
-// CO2
-if (data.co2.status === ‘danger’) {
-lines.push(`${num++}. CO₂ CRITICALLY HIGH (${data.co2.val} ppm). Above 20 ppm causes chronic stress; above 60 ppm is acutely toxic. Run aerators vigorously for 6–8 hours. Check phytoplankton density — excessive bloom at night produces CO₂. Reduce fertilizer inputs. CO₂ is highest at dawn — check at 5–6 AM.`);
-} else if (data.co2.status === ‘warn’) {
-lines.push(`${num++}. CO₂ ELEVATED (${data.co2.val} ppm). Increase aeration duration. Check and manage phytoplankton bloom. CO₂ should be below 10 ppm for healthy vannamei.`);
-}
-
-// Iron
-if (data.iron.status === ‘danger’ || data.iron.status === ‘warn’) {
-lines.push(`${num++}. IRON ELEVATED (${data.iron.val} ppm). Iron precipitates on vannamei gills causing respiratory distress and brown gill disease. Aerate intake water thoroughly before adding to pond. Raise pH above 7.5 — iron precipitates out at higher pH. Apply lime. Filter intake through sand filter if possible.`);
-}
-
-// Chlorine
-if (data.cl2.status === ‘danger’ || data.cl2.status === ‘warn’) {
-lines.push(`${num++}. CHLORINE DETECTED (${data.cl2.val} ppm). Any detectable Cl₂ is harmful — 0.003 ppm damages gill tissue. Apply sodium thiosulphate immediately at 5–10 ppm per 1 ppm Cl₂ present. Do not stock or feed until Cl₂ is confirmed zero.`);
-}
-
-// Redox
-if (data.redox.status === ‘danger’) {
-lines.push(`${num++}. REDOX POTENTIAL DANGEROUSLY LOW (${data.redox.val} mV). Values below 0 mV indicate active H₂S production in pond sediment. Apply probiotics (Bacillus spp.) at 2 ppm. Use a pond bottom aerator or diffuser. Partial sediment removal if chronic. Check H₂S separately in bottom water.`);
-} else if (data.redox.status === ‘warn’) {
-lines.push(`${num++}. REDOX LOW (${data.redox.val} mV). Borderline anaerobic conditions. Apply Bacillus probiotics at 1 ppm weekly. Increase bottom aeration.`);
-}
-
-// ── PRIORITY 3: Plankton ──
-const harmful = [];
-document.querySelectorAll(‘input[data-pool=“harmful-tbody”]:checked’).forEach(cb => {
-if (!harmful.includes(cb.dataset.name)) harmful.push(cb.dataset.name);
-});
-const useful = [];
-document.querySelectorAll(‘input[data-pool=“useful-tbody”]:checked’).forEach(cb => {
-if (!useful.includes(cb.dataset.name)) useful.push(cb.dataset.name);
-});
-
-if (harmful.includes(‘Microcystis’) || harmful.includes(‘Anabaena’) || harmful.includes(‘Oscillatoria’)) {
-const found = [‘Microcystis’,‘Anabaena’,‘Oscillatoria’].filter(n => harmful.includes(n));
-lines.push(`${num++}. BLUE-GREEN ALGAE BLOOM DETECTED (${found.join(', ')}). These cyanobacteria produce toxins that damage vannamei gill tissue and suppress immune response. Do NOT use copper sulphate in shrimp ponds. Apply partial water exchange 20–30% at dawn. Add organic acids (citric acid 1 ppm) to lower pH slightly. Apply beneficial bacteria (Bacillus) to outcompete the bloom. Reduce nitrogen and phosphorus inputs immediately.`);
-}
-
-if (harmful.includes(‘Noctiluca’)) {
-lines.push(`${num++}. NOCTILUCA BLOOM DETECTED (Dinoflagellate). Noctiluca causes oxygen depletion at night and releases ammonia on death. Do not apply any chemical — this will worsen the die-off. Do a partial water exchange at dawn. Run aerators continuously through the night. Reduce fertilizer and feeding inputs.`);
-}
-
-if (harmful.includes(‘Zoothamnium’) || harmful.includes(‘Vorticella’) || harmful.includes(‘Favella’)) {
-const found = [‘Zoothamnium’,‘Vorticella’,‘Favella’].filter(n => harmful.includes(n));
-lines.push(`${num++}. PROTOZOAN FOULING DETECTED (${found.join(', ')}). These attach to shrimp gills and antennae, causing fouling syndrome and reduced growth. Primary cause is low DO and high organic load. Improve aeration and reduce feed. Apply potassium permanganate (KMnO₄) at 2–3 ppm as a pond treatment — it will oxidise protozoa and improve water quality simultaneously.`);
-}
-
-if (harmful.length > 0 && ![‘Microcystis’,‘Anabaena’,‘Oscillatoria’,‘Noctiluca’,‘Zoothamnium’,‘Vorticella’,‘Favella’].some(n => harmful.includes(n))) {
-lines.push(`${num++}. HARMFUL PLANKTON DETECTED (${harmful.join(', ')}). Monitor density daily with microscope. Reduce nutrient inputs. Consider partial water exchange of 15–20% if bloom worsens.`);
-}
-
-if (useful.length === 0) {
-lines.push(`${num++}. NO BENEFICIAL PHYTOPLANKTON DETECTED. Good plankton (Chlorella, Chaetoceros, Skeletonema) is essential for water quality and natural shrimp feeding. Fertilise with urea + Triple Super Phosphate (TSP) at 2:1 ratio — 2 kg urea + 1 kg TSP per 100 m² of pond surface. Inoculate with a Chlorella or diatom culture if available.`);
-}
-
-// ── PRIORITY 4: Vibrio ──
-const greenVals = [];
-document.querySelectorAll(’.v-green’).forEach(inp => {
-const v = inp.value.trim();
-if (v && v !== ‘—’ && !isNaN(parseFloat(v))) greenVals.push(parseFloat(v));
-});
-const yellowVals = [];
-document.querySelectorAll(’.v-yellow’).forEach(inp => {
-const v = inp.value.trim();
-if (v && v !== ‘—’ && !isNaN(parseFloat(v))) yellowVals.push(parseFloat(v));
-});
-
-const maxGreen  = greenVals.length  ? Math.max(…greenVals)  : null;
-const maxYellow = yellowVals.length ? Math.max(…yellowVals) : null;
-
-if (maxGreen !== null && maxGreen > 1000) {
-lines.push(`${num++}. VIBRIO (GREEN COLONIES / V. harveyi) HIGH — ${maxGreen.toLocaleString()} CFU/mL. V. harveyi is the primary cause of Luminescent Vibriosis (Bright Disease) in vannamei. This is the more dangerous Vibrio species. Reduce organic load in pond immediately. Apply probiotics (Bacillus spp.) at 2 ppm to suppress Vibrio. Partial water exchange 25%. Do NOT use antibiotics without antibiogram. If shrimp show luminescence at night, prepare for emergency harvest.`);
-} else if (maxGreen !== null && maxGreen > 100) {
-lines.push(`${num++}. VIBRIO GREEN COLONIES ELEVATED (${maxGreen.toLocaleString()} CFU/mL). Monitor daily. Apply Bacillus probiotic at 1 ppm. Reduce feeding by 20% and improve aeration to lower organic load.`);
-}
-
-if (maxYellow !== null && maxYellow > 10000) {
-lines.push(`${num++}. VIBRIO YELLOW COLONIES HIGH (${maxYellow.toLocaleString()} CFU/mL). Elevated yellow Vibrio (V. parahaemolyticus / V. alginolyticus) indicates high organic load and bacterial pressure. Apply Bacillus probiotic at 1–2 ppm. Reduce feeding. Improve DO with increased aeration. Partial water exchange if count exceeds 100,000 CFU/mL.`);
-}
-
-// ── PREVENTIVE TIPS ──
-if (lines.length > 0) {
-lines.push(`${num++}. PREVENTIVE MAINTENANCE: Measure D.O. and pH every morning before 6 AM — these are the most time-sensitive parameters. Check K⁺, Mg²⁺ and Ca²⁺ every two weeks and supplement based on salinity targets (K×11.01, Mg×39.1, Ca×11.6 per ppt).`);
-lines.push(`${num++}. POND BOTTOM HEALTH: Apply Bacillus probiotic at 1 ppm weekly to maintain aerobic conditions in sediment. A healthy pond bottom prevents H₂S build-up, stabilises redox potential, and reduces disease pressure on vannamei.`);
-} else {
-lines.push(‘All measured parameters are within the safe range for L. vannamei. Continue current pond management practices.’);
-lines.push(`${num++}. PREVENTIVE MAINTENANCE: Continue measuring D.O. and pH daily (before 6 AM and at 2 PM). Check K⁺, Mg²⁺ and Ca²⁺ every two weeks. Apply Bacillus probiotic at 1 ppm weekly. Maintain Secchi disk transparency at 25–40 cm for a healthy phytoplankton
+</body>
+</html>

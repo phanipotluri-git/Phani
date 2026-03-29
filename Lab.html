@@ -7,7 +7,6 @@
 <title>Microl Aqua Lab – Water Analysis Report</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-/* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --red:#c0392b;--teal:#0097a7;--navy:#1a237e;--van:#1565c0;--green:#2e7d32;
@@ -21,7 +20,7 @@ body{font-family:'Source Sans 3',sans-serif;font-size:11px;background:var(--bg);
 
 /* ── TOOLBAR ── */
 .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(–bdr);border-radius:6px;padding:8px 14px;margin-bottom:10px;max-width:1400px;margin-left:auto;margin-right:auto;}
-.btn{border:none;padding:8px 22px;font-family:‘Oswald’,sans-serif;font-size:13px;letter-spacing:.8px;border-radius:5px;cursor:pointer;font-weight:600;}
+.btn{border:none;padding:8px 20px;font-family:‘Oswald’,sans-serif;font-size:13px;letter-spacing:.8px;border-radius:5px;cursor:pointer;font-weight:600;}
 .btn:hover{opacity:.88;}
 .btn-print{background:linear-gradient(135deg,#0097a7,#1a237e);color:#fff;}
 .btn-ref  {background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff;}
@@ -33,10 +32,10 @@ body{font-family:'Source Sans 3',sans-serif;font-size:11px;background:var(--bg);
 .ls-w{background:var(–warn);} .leg.w{color:var(–warn-t);}
 .ls-d{background:var(–dngr);} .leg.d{color:var(–dngr-t);}
 
-/* ── REPORT CARD ── */
+/* ── REPORT ── */
 .report{max-width:1400px;margin:0 auto;border:2px solid #555;background:#fff;overflow:hidden;}
 
-/* ── HEADER ── */
+/* HEADER */
 .rpt-head{display:grid;grid-template-columns:265px 1fr auto;border-bottom:2px solid #555;}
 .lab-brand{background:linear-gradient(150deg,#e0f7fa,#b2ebf2);padding:9px 12px;border-right:2px solid #555;}
 .lab-brand h1{font-family:‘Oswald’,sans-serif;font-size:18px;font-weight:700;color:var(–red);line-height:1.2;}
@@ -48,63 +47,54 @@ body{font-family:'Source Sans 3',sans-serif;font-size:11px;background:var(--bg);
 .frow input{flex:1;border:none;border-bottom:1.5px solid var(–bdr);font-family:inherit;font-size:10.5px;padding:2px 4px;background:transparent;outline:none;}
 .frow input:focus{border-bottom-color:var(–teal);background:#e0f7fa;}
 
-/* ── SPECIES STRIP ── */
+/* SPECIES STRIP */
 .sp-strip{background:linear-gradient(90deg,#e3f2fd,#bbdefb);border-bottom:2px solid #555;padding:4px 14px;display:flex;align-items:center;gap:10px;}
 .sp-name{font-family:‘Oswald’,sans-serif;font-size:12px;font-weight:700;color:var(–van);}
 .sp-sci{font-size:9px;color:#555;font-style:italic;}
 .sp-note{font-size:9px;color:#888;margin-left:auto;}
 
-/* ── SALINITY BANNER ── */
+/* SALINITY BANNER */
 .sal-bar{background:linear-gradient(90deg,#e3f2fd,#e8f5e9);border-bottom:2px solid #555;padding:6px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .sal-lbl{font-family:‘Oswald’,sans-serif;font-size:11px;font-weight:700;color:var(–navy);white-space:nowrap;}
 .sal-bar input[type=number]{width:62px;border:1.5px solid var(–bdr);border-radius:4px;text-align:center;font-family:inherit;font-size:11px;padding:3px 5px;outline:none;background:#fff;}
 .sal-bar input:focus{border-color:var(–teal);}
 .sal-chips{display:flex;gap:8px;flex-wrap:wrap;}
 .chip{background:#fff;border:1.5px solid var(–bdr);border-radius:12px;padding:2px 9px;font-size:10px;display:flex;align-items:center;gap:4px;}
-.chip b{color:var(–van);}  .chip span{color:var(–teal);font-weight:700;}
-.chip.k-chip{border-color:#e53935;} .chip.k-chip b{color:#c62828;}
+.chip b{color:var(–van);} .chip span{color:var(–teal);font-weight:700;}
+.chip.kc{border-color:#e53935;} .chip.kc b{color:#c62828;}
 .sal-note{font-size:8.5px;color:#777;font-style:italic;}
 
-/* ── SECTION TITLE ── */
+/* SECTION TITLE */
 .sec-title{background:var(–navy);color:#fff;text-align:center;font-family:‘Oswald’,sans-serif;font-size:13px;letter-spacing:3px;padding:5px;border-bottom:2px solid #555;}
 
 /* ══════════════════════════════════════
-THE ONE UNIFIED TABLE
+SINGLE UNIFIED TABLE
 ══════════════════════════════════════ */
 .main-wrap{overflow-x:auto;}
 table.main{border-collapse:collapse;width:100%;table-layout:fixed;}
 table.main th,table.main td{
-border:1px solid var(–bdr);
-text-align:center;
-vertical-align:middle;
-font-size:9.5px;
-padding:2px 3px;
-overflow:hidden;
+border:1px solid var(–bdr);text-align:center;
+vertical-align:middle;font-size:9.5px;padding:2px 3px;overflow:hidden;
 }
-table.main th{
-font-family:‘Oswald’,sans-serif;font-size:9.5px;font-weight:700;
-letter-spacing:.3px;padding:3px 4px;
-}
-/* Column widths */
-.c-param {width:112px;min-width:112px;}
-.c-s     {width:46px; min-width:46px;}
-.c-opt   {width:102px;min-width:102px;}
-.c-cat   {width:14px; min-width:14px;}
-.c-pname {width:72px; min-width:72px;}
-.c-chk   {width:20px; min-width:20px;}
+table.main th{font-family:‘Oswald’,sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.3px;padding:3px 4px;}
 
-/* Header colours */
+/* Column widths — screen */
+.c-param{width:112px;min-width:112px;}
+.c-s    {width:46px; min-width:46px;}
+.c-opt  {width:102px;min-width:102px;}
+.c-cat  {width:14px; min-width:14px;}
+.c-pname{width:72px; min-width:72px;}
+.c-chk  {width:20px; min-width:20px;}
+
 .h-main {background:var(–hblue);}
 .h-green{background:var(–hgreen)!important;color:var(–green)!important;}
 .h-red  {background:var(–hred)!important;  color:var(–red)!important;}
 
-/* Parameter name cell */
 .td-param{text-align:left!important;font-weight:700;font-size:9.5px;background:#fafafa;padding-left:7px!important;}
-/* Optimum cell */
 .td-opt{font-size:8px;color:var(–van);font-weight:600;background:#e3f2fd;text-align:left!important;padding:2px 4px!important;line-height:1.4;}
 .td-opt small{font-size:7px;color:#888;font-weight:400;display:block;}
 
-/* ── DATA ENTRY INPUT ── */
+/* DATA ENTRY */
 .td-entry{padding:2px 3px;}
 .td-entry input{
 display:block;width:100%;height:22px;
@@ -115,45 +105,49 @@ color:#111;outline:none;padding:0 2px;
 }
 .td-entry input:focus{border-color:var(–teal);background:#e0f7fa;}
 .td-entry input::placeholder{color:#ccc;font-weight:400;}
-
-/* STATUS on td-entry */
-.td-entry.safe input{background:var(–safe);color:var(–safe-t);border-color:#66bb6a;}
-.td-entry.warn input{background:var(–warn);color:var(–warn-t);border-color:#f9a825;}
+.td-entry.safe   input{background:var(–safe);color:var(–safe-t);border-color:#66bb6a;}
+.td-entry.warn   input{background:var(–warn);color:var(–warn-t);border-color:#f9a825;}
 .td-entry.danger input{background:var(–dngr);color:var(–dngr-t);border-color:#ef5350;}
 
-/* Row alternating */
+/* Alternating rows */
 tbody tr:nth-child(even) .td-param{background:#f5f5f5;}
 tbody tr:nth-child(even) .td-entry input{background:#f0f8ff;}
 tbody tr:nth-child(even) .td-entry.safe   input{background:var(–safe);}
 tbody tr:nth-child(even) .td-entry.warn   input{background:var(–warn);}
 tbody tr:nth-child(even) .td-entry.danger input{background:var(–dngr);}
 
-/* Plankton category rotated */
+/* Plankton category */
 .td-cat{writing-mode:vertical-rl;transform:rotate(180deg);font-family:‘Oswald’,sans-serif;font-size:8px;font-weight:700;letter-spacing:.4px;white-space:nowrap;padding:3px 1px;color:#fff;}
-.ga  {background:#2e7d32;}.bga_u{background:#1565c0;}.dia {background:#6d4c41;}
-.zoo {background:#6a1b9a;}.cbga {background:#b71c1c;}.df  {background:#e65100;}
-.diah{background:#4e342e;}.pro  {background:#4a148c;}
+.ga   {background:#2e7d32;} .bga_u{background:#1565c0;} .dia {background:#6d4c41;}
+.zoo  {background:#6a1b9a;} .cbga {background:#b71c1c;} .df  {background:#e65100;}
+.diah {background:#4e342e;} .pro  {background:#4a148c;}
 
 .td-pname{text-align:left!important;font-size:8.5px;font-style:italic;padding-left:4px!important;}
 input[type=checkbox]{width:12px;height:12px;cursor:pointer;accent-color:var(–teal);display:block;margin:auto;}
 
-/* Divider between water and plankton sections */
-.sep-left {border-left:2px solid #555!important;}
-.sep-right{border-right:2px solid #555!important;}
+.sep-l{border-left:2px solid #555!important;}
 
-/* ── VIBRIO ── */
-.vibrio-row{border-top:2px solid #555;}
-.v-title{background:#fff9c4;font-family:‘Oswald’,sans-serif;font-size:9.5px;font-weight:700;text-align:center;padding:4px;border-bottom:1px solid var(–bdr);letter-spacing:.4px;}
-.v-body{display:flex;}
-.v-half{flex:1;padding:5px 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.v-half:first-child{border-right:1px solid var(–bdr);}
-.v-label{font-weight:700;font-size:9.5px;white-space:nowrap;}
-.v-samples{display:flex;gap:8px;}
-.vs{display:flex;flex-direction:column;align-items:center;gap:2px;}
-.vs span{font-size:8.5px;color:#607d8b;font-weight:700;}
-.vs input{width:52px;height:22px;border:1.5px solid var(–bdr);border-radius:3px;text-align:center;font-family:inherit;font-size:10px;background:#f5f9ff;outline:none;}
-.vs input:focus{border-color:var(–teal);background:#e0f7fa;}
-.yd{color:#c8a000;} .gd{color:#2e7d32;}
+/* ── VIBRIO CELLS (embedded in table) ── */
+.td-vibrio-title{
+background:#fff9c4;font-family:‘Oswald’,sans-serif;font-size:9px;
+font-weight:700;letter-spacing:.5px;text-align:center!important;
+padding:3px 5px!important;border-top:1.5px solid #aaa!important;
+color:#5d4037;
+}
+.td-vibrio-label{
+text-align:left!important;font-size:8.5px;font-weight:700;
+padding-left:5px!important;white-space:nowrap;background:#fffde7;
+}
+.td-vibrio-inp{padding:2px 3px;background:#fffde7;}
+.td-vibrio-inp input{
+display:block;width:100%;height:20px;
+border:1.5px solid var(–bdr);border-radius:3px;
+background:#fff;text-align:center;
+font-family:inherit;font-size:9px;font-weight:600;
+color:#111;outline:none;padding:0 2px;
+}
+.td-vibrio-inp input:focus{border-color:var(–teal);background:#e0f7fa;}
+.yd{color:#c8a000;font-size:11px;} .gd{color:#2e7d32;font-size:11px;}
 
 /* ── SUGGESTIONS ── */
 .sug-bar{display:flex;align-items:center;gap:10px;padding:6px 12px;background:#f0f4ff;border-top:2px solid #555;border-bottom:1px solid var(–bdr);flex-wrap:wrap;}
@@ -164,7 +158,7 @@ input[type=checkbox]{width:12px;height:12px;cursor:pointer;accent-color:var(–t
 #sug-out{flex:1;min-height:60px;border:1.5px solid var(–bdr);border-radius:3px;padding:5px 7px;font-family:inherit;font-size:10px;line-height:1.65;resize:vertical;outline:none;}
 #sug-out:focus{border-color:var(–teal);}
 
-/* ── FOOTER ── */
+/* FOOTER */
 .rpt-foot{display:flex;justify-content:space-between;align-items:flex-end;padding:5px 12px;border-top:1px solid var(–bdr);background:#fafafa;}
 .rpt-foot .note{font-size:8px;color:var(–red);font-style:italic;}
 .rpt-foot .purp{font-size:8px;color:#555;margin-top:2px;}
@@ -172,83 +166,98 @@ input[type=checkbox]{width:12px;height:12px;cursor:pointer;accent-color:var(–t
 .sign-line{width:90px;border-top:1px solid #333;margin:18px auto 2px;}
 
 /* ══════════════════════════════════════
-PRINT — A4 LANDSCAPE SINGLE PAGE
+PRINT — A4 PORTRAIT
 ══════════════════════════════════════ */
-@media print{
-@page{size:A4 landscape;margin:4mm;}
+@media print {
+@page{size:A4 portrait;margin:5mm;}
 *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-body{background:#fff!important;padding:0!important;margin:0!important;}
-.toolbar,.leg-bar,.sal-bar,.sp-strip,.sug-bar{display:none!important;}
-.report{border:1.5px solid #555!important;max-width:100%!important;}
 
-/* Header */
-.rpt-head{border-bottom:1.5px solid #555!important;}
-.lab-brand{padding:5px 8px!important;min-width:190px!important;border-right:1.5px solid #555!important;}
-.lab-brand h1{font-size:13px!important;}
-.lab-brand p{font-size:7px!important;line-height:1.5!important;margin-top:2px!important;}
-.farmer-block{padding:4px 10px!important;gap:3px!important;border-right:1.5px solid #555!important;}
-.meta-block{padding:4px 10px!important;gap:3px!important;min-width:170px!important;}
+body{background:#fff!important;padding:0!important;margin:0!important;font-size:7px!important;}
+.toolbar{display:none!important;}
+.report{border:1.5px solid #555!important;max-width:100%!important;width:100%!important;}
+
+/* ── HEADER compact ── */
+.rpt-head{grid-template-columns:175px 1fr auto!important;border-bottom:1.5px solid #555!important;}
+.lab-brand{min-width:175px!important;padding:4px 8px!important;border-right:1.5px solid #555!important;}
+.lab-brand h1{font-size:12px!important;}
+.lab-brand p{font-size:6.5px!important;margin-top:2px!important;line-height:1.5!important;}
+.farmer-block{padding:3px 9px!important;gap:3px!important;border-right:1.5px solid #555!important;}
+.meta-block{padding:3px 9px!important;gap:3px!important;min-width:155px!important;}
 .frow label{font-size:7px!important;min-width:72px!important;}
-.frow input{font-size:7px!important;border-bottom:0.5px solid #999!important;}
+.frow input{font-size:7px!important;border-bottom:0.5px solid #aaa!important;}
 
-/* Section title */
+/* ── STRIPS compact ── */
+.sp-strip{padding:3px 10px!important;border-bottom:1px solid #555!important;}
+.sp-name{font-size:10px!important;}
+.sp-sci,.sp-note{font-size:7px!important;}
+.sal-bar,.sal-note{display:none!important;}  /* hide salinity banner — saves space */
 .sec-title{font-size:9px!important;padding:2px!important;letter-spacing:2px!important;border-bottom:1.5px solid #555!important;}
 
-/* Main table */
-table.main th,table.main td{border:0.5px solid #90a4ae!important;padding:1px 2px!important;font-size:7px!important;}
-table.main th{font-size:7px!important;padding:1px 2px!important;}
+/* ── MAIN TABLE — portrait A4 ≈ 200mm printable width ── */
+table.main{table-layout:fixed!important;width:100%!important;}
+table.main th,table.main td{
+border:0.5px solid #90a4ae!important;
+padding:1px 2px!important;
+font-size:6.5px!important;
+vertical-align:middle!important;
+}
+table.main th{font-size:6.5px!important;padding:1px 2px!important;font-weight:700!important;}
 
-/* Column widths — scaled to fit A4 landscape ~285mm printable */
-.c-param{width:84px!important;min-width:84px!important;}
-.c-s    {width:30px!important;min-width:30px!important;}
-.c-opt  {width:80px!important;min-width:80px!important;}
-.c-cat  {width:11px!important;min-width:11px!important;}
-.c-pname{width:56px!important;min-width:56px!important;}
-.c-chk  {width:16px!important;min-width:16px!important;}
+/* Portrait column widths — total must fit ~200mm */
+/* param(70)+4×s(26=104)+opt(72)+sep+cat(10)+pname(48)+4×chk(13=52)+sep+cat(10)+pname(48)+4×chk(13=52) = 470 → ok */
+.c-param{width:70px!important;min-width:70px!important;}
+.c-s    {width:26px!important;min-width:26px!important;}
+.c-opt  {width:72px!important;min-width:72px!important;}
+.c-cat  {width:10px!important;min-width:10px!important;}
+.c-pname{width:48px!important;min-width:48px!important;}
+.c-chk  {width:13px!important;min-width:13px!important;}
 
-.td-param{font-size:7px!important;padding-left:4px!important;}
-.td-opt{font-size:6.5px!important;padding:1px 3px!important;line-height:1.3!important;}
-.td-opt small{font-size:6px!important;}
-.td-cat{font-size:6.5px!important;padding:2px 1px!important;}
-.td-pname{font-size:7px!important;padding-left:3px!important;}
+.td-param{font-size:6.5px!important;padding-left:3px!important;font-weight:700!important;}
+.td-opt{font-size:6px!important;padding:1px 2px!important;line-height:1.3!important;}
+.td-opt small{font-size:5.5px!important;}
+.td-cat{font-size:6px!important;padding:2px 1px!important;letter-spacing:0!important;}
+.td-pname{font-size:6.5px!important;padding-left:2px!important;}
 
-/* Inputs */
+/* Data inputs */
 .td-entry{padding:1px 2px!important;}
-.td-entry input{height:13px!important;font-size:7.5px!important;border:0.5px solid #90a4ae!important;border-radius:1px!important;}
-.td-entry.safe  input{background:var(–safe)!important;color:var(–safe-t)!important;border-color:#66bb6a!important;}
-.td-entry.warn  input{background:var(–warn)!important;color:var(–warn-t)!important;border-color:#f9a825!important;}
+.td-entry input{height:12px!important;font-size:7px!important;border:0.5px solid #90a4ae!important;border-radius:1px!important;}
+.td-entry.safe   input{background:var(–safe)!important;color:var(–safe-t)!important;border-color:#66bb6a!important;}
+.td-entry.warn   input{background:var(–warn)!important;color:var(–warn-t)!important;border-color:#f9a825!important;}
 .td-entry.danger input{background:var(–dngr)!important;color:var(–dngr-t)!important;border-color:#ef5350!important;}
-input[type=checkbox]{width:9px!important;height:9px!important;}
 
-/* Vibrio */
-.vibrio-row{border-top:1.5px solid #555!important;}
-.v-title{font-size:7.5px!important;padding:2px!important;}
-.v-half{padding:2px 8px!important;gap:6px!important;}
-.v-label{font-size:7.5px!important;}
-.v-samples{gap:5px!important;}
-.vs span{font-size:6.5px!important;}
-.vs input{width:36px!important;height:14px!important;font-size:7.5px!important;border:0.5px solid #999!important;}
+/* Checkboxes */
+input[type=checkbox]{width:8px!important;height:8px!important;}
 
-/* Suggestions */
-.sug-box{padding:3px 10px!important;gap:6px!important;border-top:1.5px solid #555!important;}
-.sug-box strong{font-size:7.5px!important;min-width:65px!important;}
-#sug-out{min-height:36px!important;max-height:48px!important;height:48px!important;font-size:6.5px!important;line-height:1.4!important;padding:2px 5px!important;border:0.5px solid #999!important;resize:none!important;overflow:hidden!important;}
+/* Vibrio embedded cells */
+.td-vibrio-title{font-size:6.5px!important;padding:2px 3px!important;}
+.td-vibrio-label{font-size:6.5px!important;}
+.td-vibrio-inp{padding:1px 2px!important;}
+.td-vibrio-inp input{height:12px!important;font-size:6.5px!important;border:0.5px solid #aaa!important;}
 
-/* Footer */
-.rpt-foot{padding:2px 10px!important;border-top:0.5px solid #999!important;}
-.rpt-foot .note,.rpt-foot .purp{font-size:6.5px!important;}
-.sign{font-size:7.5px!important;}
-.sign-line{margin:12px auto 2px!important;width:60px!important;}
+/* Separators */
+.sep-l{border-left:1.5px solid #555!important;}
 
-.sep-left{border-left:1.5px solid #555!important;}
-.sep-right{border-right:1.5px solid #555!important;}
+/* ── SUGGESTIONS ── */
+.sug-bar{display:none!important;}
+.sug-box{padding:3px 10px!important;gap:5px!important;border-top:1.5px solid #555!important;}
+.sug-box strong{font-size:7px!important;min-width:60px!important;}
+#sug-out{min-height:30px!important;max-height:44px!important;height:44px!important;font-size:6px!important;line-height:1.4!important;padding:2px 4px!important;border:0.5px solid #999!important;resize:none!important;overflow:hidden!important;}
+
+/* ── FOOTER ── */
+.rpt-foot{padding:2px 10px!important;border-top:0.5px solid #aaa!important;}
+.rpt-foot .note,.rpt-foot .purp{font-size:6px!important;}
+.sign{font-size:7px!important;} .sign-line{margin:10px auto 2px!important;width:55px!important;}
+
+/* Alternating rows preserve */
+tbody tr:nth-child(even) .td-param{background:#f5f5f5!important;}
+tbody tr:nth-child(even) td.safe  {background:var(–safe)!important;}
+tbody tr:nth-child(even) td.warn  {background:var(–warn)!important;}
+tbody tr:nth-child(even) td.danger{background:var(–dngr)!important;}
 }
 </style>
 
 </head>
 <body>
-
-<!-- TOOLBAR -->
 
 <div class="toolbar">
   <button class="btn btn-print" onclick="window.print()">🖨️ Print / PDF</button>
@@ -258,15 +267,11 @@ input[type=checkbox]{width:9px!important;height:9px!important;}
     <span class="leg s"><span class="ls ls-s"></span>Safe</span>
     <span class="leg w"><span class="ls ls-w"></span>Warning</span>
     <span class="leg d"><span class="ls ls-d"></span>Danger</span>
-    <span style="font-size:9px;color:#777">(L. vannamei ranges)</span>
+    <span style="font-size:9px;color:#777;">(L. vannamei ranges)</span>
   </div>
 </div>
 
-<!-- REPORT -->
-
 <div class="report">
-
-  <!-- HEADER -->
 
   <div class="rpt-head">
     <div class="lab-brand">
@@ -282,21 +287,17 @@ input[type=checkbox]{width:9px!important;height:9px!important;}
       <div class="frow"><label>Ph. No. :</label>      <input type="text" id="f-phone" placeholder="Phone number"></div>
     </div>
     <div class="meta-block">
-      <div class="frow"><label>Date :</label>            <input type="date" id="f-date"></div>
-      <div class="frow"><label>S.No. :</label>           <input type="text" placeholder="03" style="max-width:55px"></div>
-      <div class="frow"><label>No. of Samples :</label>  <input type="text" placeholder="04" style="max-width:40px"></div>
+      <div class="frow"><label>Date :</label>           <input type="date" id="f-date"></div>
+      <div class="frow"><label>S.No. :</label>          <input type="text" placeholder="03" style="max-width:55px"></div>
+      <div class="frow"><label>No. of Samples :</label> <input type="text" placeholder="04" style="max-width:40px"></div>
     </div>
   </div>
-
-  <!-- SPECIES STRIP -->
 
   <div class="sp-strip">
     <span class="sp-name">🦐 L. VANNAMEI</span>
     <span class="sp-sci">Litopenaeus vannamei — Pacific White Shrimp</span>
     <span class="sp-note">All ranges, colour coding and suggestions are vannamei-specific</span>
   </div>
-
-  <!-- SALINITY BANNER -->
 
   <div class="sal-bar">
     <span class="sal-lbl">⚗️ SALINITY-BASED ION TARGETS</span>
@@ -308,25 +309,21 @@ input[type=checkbox]{width:9px!important;height:9px!important;}
     <div class="sal-chips">
       <div class="chip"><b>Mg²⁺ :</b><span id="mg-t">—</span><span style="font-size:8.5px;color:#777">ppm</span></div>
       <div class="chip"><b>Ca²⁺ :</b><span id="ca-t">—</span><span style="font-size:8.5px;color:#777">ppm</span></div>
-      <div class="chip k-chip"><b>K⁺ ⚠ :</b><span id="k-t">—</span><span style="font-size:8.5px;color:#777">ppm</span></div>
+      <div class="chip kc"><b>K⁺ ⚠ :</b><span id="k-t">—</span><span style="font-size:8.5px;color:#777">ppm</span></div>
     </div>
     <span class="sal-note">Boyd (2002): Mg×39.1 · Ca×11.6 · K×11.01 per ppt &nbsp;|&nbsp; K⁺ is the #1 missed ion in low-salinity vannamei ponds</span>
   </div>
 
   <div class="sec-title">WATER ANALYSIS</div>
 
-  <!-- ══ ONE UNIFIED TABLE ══ -->
-
   <div class="main-wrap">
   <table class="main" id="main-tbl">
     <colgroup>
-      <col class="c-param"><!-- Parameter name -->
-      <col class="c-s"><col class="c-s"><col class="c-s"><col class="c-s"><!-- S1-S4 -->
-      <col class="c-opt"><!-- Optimum -->
-      <!-- Useful plankton: cat, name, 4 checks -->
+      <col class="c-param">
+      <col class="c-s"><col class="c-s"><col class="c-s"><col class="c-s">
+      <col class="c-opt">
       <col class="c-cat"><col class="c-pname">
       <col class="c-chk"><col class="c-chk"><col class="c-chk"><col class="c-chk">
-      <!-- Harmful plankton: cat, name, 4 checks -->
       <col class="c-cat"><col class="c-pname">
       <col class="c-chk"><col class="c-chk"><col class="c-chk"><col class="c-chk">
     </colgroup>
@@ -335,61 +332,25 @@ input[type=checkbox]{width:9px!important;height:9px!important;}
         <th rowspan="2" class="c-param h-main" style="text-align:left;padding-left:6px;">PARTICULARS</th>
         <th colspan="4" class="h-main">SAMPLE No. &amp; CODE</th>
         <th rowspan="2" class="c-opt" style="background:#e3f2fd;color:var(--van);font-size:8.5px;">OPTIMUM<br><em style="font-weight:400">L. vannamei</em></th>
-        <th colspan="6" class="h-green sep-left">USEFUL PLANKTON</th>
-        <th colspan="6" class="h-red sep-left">HARMFUL PLANKTON</th>
+        <th colspan="6" class="h-green sep-l">USEFUL PLANKTON</th>
+        <th colspan="6" class="h-red sep-l">HARMFUL PLANKTON</th>
       </tr>
       <tr>
-        <th class="c-s h-main">1</th>
-        <th class="c-s h-main">2</th>
-        <th class="c-s h-main">3</th>
-        <th class="c-s h-main">4</th>
-        <!-- useful sub-headers -->
-        <th class="c-cat h-green sep-left"></th>
+        <th class="c-s h-main">1</th><th class="c-s h-main">2</th>
+        <th class="c-s h-main">3</th><th class="c-s h-main">4</th>
+        <th class="c-cat h-green sep-l"></th>
         <th class="c-pname h-green" style="text-align:left;padding-left:4px;">Name</th>
-        <th class="c-chk h-green">1</th>
-        <th class="c-chk h-green">2</th>
-        <th class="c-chk h-green">3</th>
-        <th class="c-chk h-green">4</th>
-        <!-- harmful sub-headers -->
-        <th class="c-cat h-red sep-left"></th>
+        <th class="c-chk h-green">1</th><th class="c-chk h-green">2</th>
+        <th class="c-chk h-green">3</th><th class="c-chk h-green">4</th>
+        <th class="c-cat h-red sep-l"></th>
         <th class="c-pname h-red" style="text-align:left;padding-left:4px;">Name</th>
-        <th class="c-chk h-red">1</th>
-        <th class="c-chk h-red">2</th>
-        <th class="c-chk h-red">3</th>
-        <th class="c-chk h-red">4</th>
+        <th class="c-chk h-red">1</th><th class="c-chk h-red">2</th>
+        <th class="c-chk h-red">3</th><th class="c-chk h-red">4</th>
       </tr>
     </thead>
     <tbody id="main-body"></tbody>
   </table>
   </div>
-
-  <!-- VIBRIO -->
-
-  <div class="vibrio-row">
-    <div class="v-title">Microbiology : Total Count of Vibrio Bacteria (CFU / mL)</div>
-    <div class="v-body">
-      <div class="v-half">
-        <span class="v-label"><span class="yd">●</span> Yellow Colonies</span>
-        <div class="v-samples">
-          <div class="vs"><span>S1</span><input type="text" class="v-yellow" placeholder="—"></div>
-          <div class="vs"><span>S2</span><input type="text" class="v-yellow" placeholder="—"></div>
-          <div class="vs"><span>S3</span><input type="text" class="v-yellow" placeholder="—"></div>
-          <div class="vs"><span>S4</span><input type="text" class="v-yellow" placeholder="—"></div>
-        </div>
-      </div>
-      <div class="v-half">
-        <span class="v-label"><span class="gd">●</span> Green Colonies <span style="font-size:8.5px;color:#c62828;font-weight:700">(V. harveyi — higher risk)</span></span>
-        <div class="v-samples">
-          <div class="vs"><span>S1</span><input type="text" class="v-green" placeholder="—"></div>
-          <div class="vs"><span>S2</span><input type="text" class="v-green" placeholder="—"></div>
-          <div class="vs"><span>S3</span><input type="text" class="v-green" placeholder="—"></div>
-          <div class="vs"><span>S4</span><input type="text" class="v-green" placeholder="—"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SUGGESTIONS -->
 
   <div class="sug-bar">
     <span class="sug-lbl">💡 SUGGESTIONS &amp; TREATMENT</span>
@@ -401,8 +362,6 @@ input[type=checkbox]{width:9px!important;height:9px!important;}
     <textarea id="sug-out" placeholder="Click 'Generate Suggestions' above, or type manually…"></textarea>
   </div>
 
-  <!-- FOOTER -->
-
   <div class="rpt-foot">
     <div>
       <div class="note">Results are specific to the sample analysed</div>
@@ -411,14 +370,11 @@ input[type=checkbox]{width:9px!important;height:9px!important;}
     <div class="sign"><div class="sign-line"></div>LAB INCHARGE</div>
   </div>
 
-</div><!-- /report -->
+</div>
 
 <script>
 'use strict';
 
-/* ═══════════════════════════
-   PARAMS — 18 parameters
-═══════════════════════════ */
 const PARAMS = [
   {id:'ph',   label:'P<sup>H</sup>',
    opt:'7.8 – 8.5<br><small>Tolerance 7.2–8.8 · swing ≤0.5/day</small>',
@@ -442,13 +398,13 @@ const PARAMS = [
    opt:'150 – 300 ppm<br><small>Must ≥ T.Alkalinity · min 50</small>',
    check(v,s){const n=+v;if(isNaN(n))return'';if(n>=150&&n<=300)return'safe';if(n>=50&&n<150)return'warn';return'danger';}},
   {id:'mg',   label:'Mg²⁺ (ppm)',
-   opt:'Salinity × 39.1 ppm<br><small>Min 100 ppm at any salinity</small>',
+   opt:'Sal × 39.1 ppm<br><small>Min 100 ppm at any salinity</small>',
    check(v,sal){const n=+v;if(isNaN(n))return'';const t=sal>0?sal*39.1:null;if(t){if(n>=t*.7)return'safe';if(n>=t*.5)return'warn';return'danger';}return n>=100?'safe':n>=50?'warn':'danger';}},
   {id:'ca',   label:'Ca²⁺ (ppm)',
-   opt:'Salinity × 11.6 ppm<br><small>Min 30 ppm at any salinity</small>',
+   opt:'Sal × 11.6 ppm<br><small>Min 30 ppm at any salinity</small>',
    check(v,sal){const n=+v;if(isNaN(n))return'';const t=sal>0?sal*11.6:null;if(t){if(n>=t*.7)return'safe';if(n>=t*.5)return'warn';return'danger';}return n>=30?'safe':n>=15?'warn':'danger';}},
   {id:'k',    label:'Potassium K⁺ (ppm)',
-   opt:'Salinity × 11.01 ppm<br><small style="color:#c62828;font-weight:700">⚠ CRITICAL — #1 missed ion</small>',
+   opt:'Sal × 11.01 ppm<br><small style="color:#c62828;font-weight:700">⚠ CRITICAL — #1 missed ion</small>',
    check(v,sal){const n=+v;if(isNaN(n))return'';const t=sal>0?sal*11.01:null;if(t){if(n>=t*.7)return'safe';if(n>=t*.4)return'warn';return'danger';}return n>=20?'safe':n>=8?'warn':'danger';}},
   {id:'tan',  label:'T. Ammonia (ppm)',
    opt:'≤ 0.1 ppm<br><small>0.45 ppm → 50% growth loss</small>',
@@ -457,7 +413,7 @@ const PARAMS = [
    opt:'&lt; 0.02 ppm<br><small>FAO max 0.025 · riskier at low sal.</small>',
    check(v,s){const n=+v;if(isNaN(n))return'';if(n<0.02)return'safe';if(n<=0.05)return'warn';return'danger';}},
   {id:'no2',  label:'NO₂ (ppm)',
-   opt:'Nil – &lt; 0.1 ppm<br><small>Low salinity = less Cl⁻ protection</small>',
+   opt:'Nil – &lt;0.1 ppm<br><small>Low sal. = less Cl⁻ protection</small>',
    check(v,s){const w=String(v).trim().toLowerCase();if(w==='nil'||w==='0')return'safe';const n=+v;if(isNaN(n))return'';if(n<0.1)return'safe';if(n<=0.5)return'warn';return'danger';}},
   {id:'iron', label:'Iron (ppm)',
    opt:'&lt; 0.05 ppm<br><small>Max 0.1 ppm · precipitates on gills</small>',
@@ -466,7 +422,7 @@ const PARAMS = [
    opt:'0 — Zero tolerance<br><small>0.1 ppm → balance loss · 4 ppm lethal</small>',
    check(v,s){const w=String(v).trim().toLowerCase();if(w==='nil'||w==='0')return'safe';const n=+v;if(isNaN(n))return'';if(n===0)return'safe';if(n<0.05)return'warn';return'danger';}},
   {id:'do',   label:'D.O. (ppm)',
-   opt:'≥ 5 ppm · Ideal 6–9 ppm<br><small>High salinity holds less O₂ → aerate more</small>',
+   opt:'≥ 5 ppm · Ideal 6–9<br><small>High sal. holds less O₂ → aerate more</small>',
    check(v,s){const n=+v;if(isNaN(n))return'';if(n>=5)return'safe';if(n>=3)return'warn';return'danger';}},
   {id:'cl2',  label:'Chlorine CL₂ (ppm)',
    opt:'0 — Must be zero<br><small>0.003 ppm damages gill tissue</small>',
@@ -476,7 +432,6 @@ const PARAMS = [
    check(v,s){const n=+v;if(isNaN(n))return'';if(n>=200&&n<=400)return'safe';if((n>=100&&n<200)||(n>400&&n<=500))return'warn';return'danger';}},
 ];
 
-/* Plankton groups */
 const USEFUL = [
   {cat:'Green Algae',cls:'ga',   rows:['Chlorella','Oocystis','Eudorina']},
   {cat:'BG Algae',   cls:'bga_u',rows:['Spirulina']},
@@ -490,25 +445,27 @@ const HARMFUL = [
   {cat:'Protozoa',   cls:'pro',  rows:['Zoothamnium','Favella','Vorticella']},
 ];
 
-/* Flatten plankton to row list */
 function flatten(groups, pool) {
   const rows = [];
-  groups.forEach(g => {
-    g.rows.forEach((name, ri) => {
-      rows.push({name, firstInGroup: ri===0, groupRows: g.rows.length, cat: g.cat, cls: g.cls, pool});
-    });
-  });
+  groups.forEach(g => g.rows.forEach((name, ri) => rows.push({
+    name, firstInGroup: ri===0, groupRows: g.rows.length, cat: g.cat, cls: g.cls, pool
+  })));
   return rows;
 }
 const U_ROWS = flatten(USEFUL, 'useful');
 const H_ROWS = flatten(HARMFUL, 'harmful');
 
-/* State */
-const INP = {};   // INP[pi][s] → <input>
+// PLANKTON count: 10 rows. PARAMS: 18. Empty plankton rows: 8 (indices 10–17).
+// We use rows 10, 11, 12 for Vibrio (title + yellow + green).
+const VIBRIO_TITLE_ROW  = U_ROWS.length;       // row index 10
+const VIBRIO_YELLOW_ROW = U_ROWS.length + 1;   // row index 11
+const VIBRIO_GREEN_ROW  = U_ROWS.length + 2;   // row index 12
 
-/* ── Get salinity ── */
+const INP = {};
+// Vibrio inputs stored separately
+const VIBRIO_INP = { yellow: {}, green: {} };
+
 function getSal() {
-  // Read from salinity table row (pi=1) — average of entered values
   if (INP[1]) {
     const vals = [];
     for (let s=1;s<=4;s++){const n=parseFloat(INP[1][s]?.value);if(!isNaN(n)&&n>0)vals.push(n);}
@@ -518,7 +475,6 @@ function getSal() {
   return isNaN(v) ? 0 : v;
 }
 
-/* ── Colour one entry cell ── */
 function colourCell(pi, s) {
   const inp = INP[pi]?.[s]; if (!inp) return;
   const td = inp.parentElement;
@@ -533,11 +489,9 @@ function reColourAll() {
   PARAMS.forEach((_,pi)=>{for(let s=1;s<=4;s++) colourCell(pi,s);});
 }
 
-/* ── Input handler ── */
 function onInput(e) {
   const pi = +e.target.dataset.pi;
   const s  = +e.target.dataset.s;
-  // Salinity changed → update banner targets + recolour all ionic rows
   if (pi === 1) {
     const sal = getSal();
     if (sal > 0) {
@@ -546,125 +500,121 @@ function onInput(e) {
       document.getElementById('ca-t').textContent = (sal*11.6).toFixed(0);
       document.getElementById('k-t' ).textContent = (sal*11.01).toFixed(0);
     }
-    reColourAll();
-    return;
+    reColourAll(); return;
   }
   colourCell(pi, s);
 }
 
-/* ── Banner salinity manual override ── */
 function onSalChange() {
   const sal = parseFloat(document.getElementById('sal-input').value);
-  if (!isNaN(sal) && sal>0) {
-    document.getElementById('mg-t').textContent = (sal*39.1).toFixed(0);
-    document.getElementById('ca-t').textContent = (sal*11.6).toFixed(0);
-    document.getElementById('k-t' ).textContent = (sal*11.01).toFixed(0);
+  if (!isNaN(sal)&&sal>0) {
+    document.getElementById('mg-t').textContent=(sal*39.1).toFixed(0);
+    document.getElementById('ca-t').textContent=(sal*11.6).toFixed(0);
+    document.getElementById('k-t' ).textContent=(sal*11.01).toFixed(0);
   } else {
-    document.getElementById('mg-t').textContent = '—';
-    document.getElementById('ca-t').textContent = '—';
-    document.getElementById('k-t' ).textContent = '—';
+    ['mg-t','ca-t','k-t'].forEach(id=>document.getElementById(id).textContent='—');
   }
   reColourAll();
 }
 
-/* ── BUILD THE UNIFIED TABLE ── */
+/* ─── Build plankton cells for a row ─── */
+function buildPlanktonCells(tr, rowArr, row, pool, sepClass) {
+  const pr = rowArr[row];
+  if (pr) {
+    if (pr.firstInGroup) {
+      const tdC = document.createElement('td');
+      tdC.className = `td-cat c-cat ${pr.cls} ${sepClass}`;
+      tdC.rowSpan = pr.groupRows;
+      tdC.textContent = pr.cat;
+      tr.appendChild(tdC);
+    }
+    const tdN = document.createElement('td'); tdN.className='td-pname c-pname'; tdN.textContent=pr.name; tr.appendChild(tdN);
+    for (let s=1;s<=4;s++){
+      const td=document.createElement('td');td.className='c-chk';
+      const cb=document.createElement('input');cb.type='checkbox';cb.dataset.pool=pool;cb.dataset.name=pr.name;
+      td.appendChild(cb);tr.appendChild(td);
+    }
+  } else if (row === VIBRIO_TITLE_ROW) {
+    // Vibrio title spanning both plankton sections
+    const td = document.createElement('td');
+    td.className = `td-vibrio-title ${sepClass}`;
+    td.colSpan = 12;
+    td.textContent = 'Microbiology : Total Count of Vibrio Bacteria (CFU / mL)';
+    tr.appendChild(td);
+    return 'vibrio-title'; // signal to skip harmful cells
+  } else if (row === VIBRIO_YELLOW_ROW) {
+    // Yellow colony row
+    const tdL = document.createElement('td');
+    tdL.className = `td-vibrio-label ${sepClass}`;
+    tdL.colSpan = 2;
+    tdL.innerHTML = '<span style="color:#c8a000">●</span> Yellow Colonies';
+    tr.appendChild(tdL);
+    for (let s=1;s<=4;s++){
+      const td=document.createElement('td');td.className='td-vibrio-inp c-chk';
+      const inp=document.createElement('input');inp.type='text';inp.placeholder='—';
+      inp.dataset.vtype='yellow';inp.dataset.s=s;
+      td.appendChild(inp);tr.appendChild(td);
+      VIBRIO_INP.yellow[s]=inp;
+    }
+    // Harmful side — green colonies
+    const tdL2=document.createElement('td');
+    tdL2.className='td-vibrio-label sep-l';
+    tdL2.colSpan=2;
+    tdL2.innerHTML='<span style="color:#2e7d32">●</span> Green Colonies <small style="color:#c62828">(V.harveyi)</small>';
+    tr.appendChild(tdL2);
+    for (let s=1;s<=4;s++){
+      const td=document.createElement('td');td.className='td-vibrio-inp c-chk';
+      const inp=document.createElement('input');inp.type='text';inp.placeholder='—';
+      inp.dataset.vtype='green';inp.dataset.s=s;
+      td.appendChild(inp);tr.appendChild(td);
+      VIBRIO_INP.green[s]=inp;
+    }
+    return 'vibrio-data';
+  } else {
+    // Empty plankton cells
+    const tdC=document.createElement('td');tdC.className=`c-cat ${sepClass}`;tr.appendChild(tdC);
+    const tdN=document.createElement('td');tdN.className='c-pname';tr.appendChild(tdN);
+    for(let s=1;s<=4;s++){const td=document.createElement('td');td.className='c-chk';tr.appendChild(td);}
+  }
+  return null;
+}
+
+/* ─── BUILD TABLE ─── */
 function buildTable() {
   const tbody = document.getElementById('main-body');
   tbody.innerHTML = '';
-  const totalRows = Math.max(PARAMS.length, U_ROWS.length, H_ROWS.length);
+  const totalRows = PARAMS.length; // 18 — always driven by params
 
   for (let row = 0; row < totalRows; row++) {
     const tr = document.createElement('tr');
-    const pi = row;
-    INP[pi] = INP[pi] || {};
+    INP[row] = INP[row] || {};
 
-    /* ── Water parameter cells ── */
-    if (pi < PARAMS.length) {
-      const p = PARAMS[pi];
-      // Name
-      const tdN = document.createElement('td');
-      tdN.className = 'td-param c-param';
-      tdN.innerHTML = p.label;
-      tr.appendChild(tdN);
-      // S1–S4 entry cells
-      for (let s=1; s<=4; s++) {
-        const td = document.createElement('td');
-        td.className = 'td-entry c-s';
-        const inp = document.createElement('input');
-        inp.type = 'text'; inp.placeholder = '—';
-        inp.dataset.pi = pi; inp.dataset.s = s;
-        inp.addEventListener('input', onInput);
-        td.appendChild(inp);
-        tr.appendChild(td);
-        INP[pi][s] = inp;
-      }
-      // Optimum
-      const tdO = document.createElement('td');
-      tdO.className = 'td-opt c-opt';
-      tdO.innerHTML = p.opt;
-      tr.appendChild(tdO);
-    } else {
-      // Empty water cells for rows with no param
-      const tdE = document.createElement('td'); tdE.className='td-param c-param'; tr.appendChild(tdE);
-      for (let s=1;s<=4;s++){const td=document.createElement('td');td.className='c-s';tr.appendChild(td);}
-      const tdO=document.createElement('td');tdO.className='c-opt';tr.appendChild(tdO);
+    /* Water param cells */
+    const p = PARAMS[row];
+    const tdN = document.createElement('td'); tdN.className='td-param c-param'; tdN.innerHTML=p.label; tr.appendChild(tdN);
+    for (let s=1;s<=4;s++){
+      const td=document.createElement('td'); td.className='td-entry c-s';
+      const inp=document.createElement('input'); inp.type='text'; inp.placeholder='—';
+      inp.dataset.pi=row; inp.dataset.s=s;
+      inp.addEventListener('input',onInput);
+      td.appendChild(inp); tr.appendChild(td); INP[row][s]=inp;
     }
+    const tdO=document.createElement('td'); tdO.className='td-opt c-opt'; tdO.innerHTML=p.opt; tr.appendChild(tdO);
 
-    /* ── Useful plankton cells ── */
-    const ur = U_ROWS[row];
-    if (ur) {
-      // Category (rowspan on first row of group)
-      if (ur.firstInGroup) {
-        const tdC = document.createElement('td');
-        tdC.className = `td-cat c-cat ${ur.cls} sep-left`;
-        tdC.rowSpan = ur.groupRows;
-        tdC.textContent = ur.cat;
-        tr.appendChild(tdC);
-      }
-      // Name
-      const tdN = document.createElement('td'); tdN.className='td-pname c-pname'; tdN.textContent=ur.name; tr.appendChild(tdN);
-      // 4 checkboxes
-      for (let s=1;s<=4;s++){
-        const td=document.createElement('td');td.className='c-chk';
-        const cb=document.createElement('input');cb.type='checkbox';cb.dataset.pool=ur.pool;cb.dataset.name=ur.name;
-        td.appendChild(cb);tr.appendChild(td);
-      }
-    } else {
-      // Empty plankton cells
-      const tdC=document.createElement('td');tdC.className='c-cat sep-left';tr.appendChild(tdC);
-      const tdN=document.createElement('td');tdN.className='c-pname';tr.appendChild(tdN);
-      for(let s=1;s<=4;s++){const td=document.createElement('td');td.className='c-chk';tr.appendChild(td);}
-    }
-
-    /* ── Harmful plankton cells ── */
-    const hr = H_ROWS[row];
-    if (hr) {
-      if (hr.firstInGroup) {
-        const tdC = document.createElement('td');
-        tdC.className = `td-cat c-cat ${hr.cls} sep-left`;
-        tdC.rowSpan = hr.groupRows;
-        tdC.textContent = hr.cat;
-        tr.appendChild(tdC);
-      }
-      const tdN=document.createElement('td');tdN.className='td-pname c-pname';tdN.textContent=hr.name;tr.appendChild(tdN);
-      for(let s=1;s<=4;s++){
-        const td=document.createElement('td');td.className='c-chk';
-        const cb=document.createElement('input');cb.type='checkbox';cb.dataset.pool=hr.pool;cb.dataset.name=hr.name;
-        td.appendChild(cb);tr.appendChild(td);
-      }
-    } else {
-      const tdC=document.createElement('td');tdC.className='c-cat sep-left';tr.appendChild(tdC);
-      const tdN=document.createElement('td');tdN.className='c-pname';tr.appendChild(tdN);
-      for(let s=1;s<=4;s++){const td=document.createElement('td');td.className='c-chk';tr.appendChild(td);}
+    /* Useful plankton / vibrio */
+    const sig = buildPlanktonCells(tr, U_ROWS, row, 'useful', 'sep-l');
+    /* Harmful plankton — only if not already handled by vibrio */
+    if (sig !== 'vibrio-title' && sig !== 'vibrio-data') {
+      buildPlanktonCells(tr, H_ROWS, row, 'harmful', 'sep-l');
     }
 
     tbody.appendChild(tr);
   }
 }
 
-/* ══════════════════════════════════════════════
-   OFFLINE SUGGESTIONS ENGINE
-══════════════════════════════════════════════ */
+/* ══════════════════════════
+   SUGGESTIONS ENGINE
+══════════════════════════ */
 function getWorst(pi) {
   const ord={danger:0,warn:1,safe:2,'':3};
   let best={val:null,status:''};
@@ -679,35 +629,32 @@ function getWorst(pi) {
 }
 
 function generateSuggestions(){
-  const sal=getSal();
-  const salOK=sal>0;
+  const sal=getSal(), salOK=sal>0;
   const lines=[];let n=1;
-  const add=txt=>lines.push(`${n++}. ${txt}`);
+  const add=t=>lines.push(`${n++}. ${t}`);
   const d={};PARAMS.forEach((_,pi)=>{d[PARAMS[pi].id]=getWorst(pi);});
 
   if(!Object.values(d).some(x=>x.val!==null)){
     document.getElementById('sug-out').value='Please enter sample values first.';return;
   }
 
-  // Warn if ionic params flagged but salinity unknown
   const ionicFlagged=['mg','ca','k'].some(id=>d[id].val!==null&&d[id].status!==''&&d[id].status!=='safe');
-  if(ionicFlagged&&!salOK) add('⚠ SALINITY NOT ENTERED — Mg²⁺/Ca²⁺/K⁺ targets need salinity (Boyd formula). Enter ppt in the banner or salinity row for accurate ionic analysis.');
+  if(ionicFlagged&&!salOK) add('⚠ SALINITY NOT ENTERED — Mg²⁺/Ca²⁺/K⁺ targets need salinity. Enter ppt in the banner or salinity row for accurate ionic targets.');
 
-  // P1: Immediate dangers
   if(d.h2s.status==='danger'||d.h2s.status==='warn')
     add(`H₂S DETECTED (${d.h2s.val} ppm) — EMERGENCY. Stop feeding. Run all aerators. Apply quicklime CaO 10–15 kg/ha. Add zeolite 15–20 kg/ha. No feeding until H₂S=zero.`);
   if(d.do.status==='danger')
-    add(`D.O. CRITICALLY LOW (${d.do.val} ppm). Start all aerators now. Stop feeding. 20–30% water exchange. Run aerators all night — DO lowest before sunrise.`);
+    add(`D.O. CRITICALLY LOW (${d.do.val} ppm). All aerators on now. Stop feeding. 20–30% water exchange. Run aerators all night.`);
   else if(d.do.status==='warn')
     add(`D.O. LOW (${d.do.val} ppm). Extra aeration midnight–6 AM. Reduce feed 30%.`);
   if(d.ph.status==='danger'){
     const pn=+d.ph.val;
-    if(pn<7.2) add(`pH CRITICALLY LOW (${d.ph.val}). Apply CaCO₃ lime 30–50 kg/ha evening. Rapid fix: Ca(OH)₂ 5–10 kg/ha at dawn. Raise alkalinity to 100–150 ppm.`);
-    else        add(`pH CRITICALLY HIGH (${d.ph.val}). Increase aeration. Reduce fertiliser. Partial exchange 20–30%.`);
+    if(pn<7.2) add(`pH CRITICALLY LOW (${d.ph.val}). Apply CaCO₃ lime 30–50 kg/ha evening. Rapid: Ca(OH)₂ 5–10 kg/ha at dawn. Raise alkalinity to 100–150 ppm.`);
+    else add(`pH CRITICALLY HIGH (${d.ph.val}). Increase aeration. Reduce fertiliser. Partial exchange 20–30%.`);
   } else if(d.ph.status==='warn'){
     const pn=+d.ph.val;
-    if(pn<7.8) add(`pH LOW (${d.ph.val}). Apply lime 10–20 kg/ha. Monitor dawn and 2 PM — swing ≤ 0.5 units/day.`);
-    else        add(`pH HIGH (${d.ph.val}). Increase afternoon aeration. If above 9.0 do partial exchange.`);
+    if(pn<7.8) add(`pH LOW (${d.ph.val}). Apply lime 10–20 kg/ha. Monitor dawn and 2 PM — swing ≤0.5 units/day.`);
+    else add(`pH HIGH (${d.ph.val}). Increase afternoon aeration. If above 9.0 do partial exchange.`);
   }
   if(d.tan.status==='danger')
     add(`AMMONIA CRITICAL (${d.tan.val} ppm). Partial exchange 25–30%. Cut feed 50% for 48 h. Apply Bacillus 1–2 ppm. Add zeolite 10–15 kg/ha.`);
@@ -720,37 +667,31 @@ function generateSuggestions(){
   else if(d.no2.status==='warn')
     add(`NITRITE ELEVATED (${d.no2.val} ppm). Add NaCl 5 kg/ha. Reduce feed 20%. Monitor daily.`);
 
-  // P2: Ionic
-  if(d.k.status==='danger'){const tgt=salOK?(sal*11.01).toFixed(0):'?';
-    add(`K⁺ CRITICALLY LOW (${d.k.val} ppm, target ${tgt} ppm). #1 cause of mass mortality in low-salinity vannamei. Apply KCl (Muriate of Potash) immediately. Dose: deficit × pond m³ = grams KCl.`);
-  } else if(d.k.status==='warn'){const tgt=salOK?(sal*11.01).toFixed(0):'?';
-    add(`K⁺ LOW (${d.k.val} ppm, target ${tgt} ppm). Apply KCl at calculated dose. Monitor weekly.`);
-  }
-  if(d.mg.status==='danger'||d.mg.status==='warn'){const tgt=salOK?(sal*39.1).toFixed(0):'>100';
-    add(`Mg²⁺ LOW (${d.mg.val} ppm, target ${tgt} ppm). Apply MgSO₄ (Epsom salt) or MgCl₂. Dose: deficit × pond m³ = grams.`);
-  }
-  if(d.ca.status==='danger'||d.ca.status==='warn'){const tgt=salOK?(sal*11.6).toFixed(0):'>30';
-    add(`Ca²⁺ LOW (${d.ca.val} ppm, target ${tgt} ppm). Apply CaCl₂ or Gypsum (CaSO₄). Dose: deficit × pond m³ = grams.`);
-  }
+  if(d.k.status==='danger'){const t=salOK?(sal*11.01).toFixed(0):'?';
+    add(`K⁺ CRITICALLY LOW (${d.k.val} ppm, target ${t} ppm). #1 cause of mass mortality in low-salinity vannamei. Apply KCl immediately. Dose: deficit × pond m³ = grams.`);}
+  else if(d.k.status==='warn'){const t=salOK?(sal*11.01).toFixed(0):'?';
+    add(`K⁺ LOW (${d.k.val} ppm, target ${t} ppm). Apply KCl at calculated dose. Monitor weekly.`);}
+  if(d.mg.status==='danger'||d.mg.status==='warn'){const t=salOK?(sal*39.1).toFixed(0):'>100';
+    add(`Mg²⁺ LOW (${d.mg.val} ppm, target ${t} ppm). Apply MgSO₄ (Epsom salt) or MgCl₂. Dose: deficit × pond m³ = grams.`);}
+  if(d.ca.status==='danger'||d.ca.status==='warn'){const t=salOK?(sal*11.6).toFixed(0):'>30';
+    add(`Ca²⁺ LOW (${d.ca.val} ppm, target ${t} ppm). Apply CaCl₂ or Gypsum (CaSO₄). Dose: deficit × pond m³ = grams.`);}
   if(d.tAlk.status!==''&&d.tAlk.status!=='safe'){const an=+d.tAlk.val;
     if(an<100) add(`ALKALINITY LOW (${d.tAlk.val} ppm). Apply NaHCO₃ 5–10 kg/ha/day to reach 100–150 ppm. Low alkalinity → pH swings + poor molting.`);
-    else        add(`ALKALINITY HIGH (${d.tAlk.val} ppm). Above 150 ppm outside optimal; >200 risks CaCO₃ precipitation. Do NOT add lime. Partial exchange 15–20%.`);
-  }
+    else add(`ALKALINITY HIGH (${d.tAlk.val} ppm). Above 150 outside optimal; >200 risks CaCO₃ precipitation. Do NOT add lime. Partial exchange 15–20%.`);}
   if(d.hco3.status!==''&&d.hco3.status!=='safe'){const hn=+d.hco3.val;
     if(hn<100) add(`HCO₃ LOW (${d.hco3.val} ppm). Apply NaHCO₃ 3–5 kg/ha. Common in low-salinity ponds during monsoon.`);
-    else        add(`HCO₃ HIGH (${d.hco3.val} ppm). Do not add lime. Monitor — partial exchange if rising.`);
-  }
+    else add(`HCO₃ HIGH (${d.hco3.val} ppm). Do not add lime. Monitor — partial exchange if rising.`);}
   if(d.tHard.status==='danger'){const hn=+d.tHard.val;
     if(hn<150) add(`TOTAL HARDNESS VERY LOW (${d.tHard.val} ppm). Apply dolomite lime CaMg(CO₃)₂ 20–40 kg/ha.`);
-    else        add(`TOTAL HARDNESS VERY HIGH (${d.tHard.val} ppm). Dilute with 20–25% fresh water exchange.`);
-  } else if(d.tHard.status==='warn'&&+d.tHard.val<200)
-    add(`TOTAL HARDNESS LOW (${d.tHard.val} ppm). Apply agricultural lime CaCO₃ 10–20 kg/ha.`);
+    else add(`TOTAL HARDNESS VERY HIGH (${d.tHard.val} ppm). Dilute with 20–25% fresh water exchange.`);}
+  else if(d.tHard.status==='warn'&&+d.tHard.val<200)
+    add(`TOTAL HARDNESS LOW (${d.tHard.val} ppm). Apply CaCO₃ lime 10–20 kg/ha.`);
   if(d.aHard.status==='danger')
-    add(`Ca HARDNESS CRITICALLY LOW (${d.aHard.val} ppm). Ca Hardness must ≥ Total Alkalinity. Apply CaCl₂ or CaSO₄ 15–30 kg/ha.`);
+    add(`Ca HARDNESS CRITICALLY LOW (${d.aHard.val} ppm). Must ≥ Total Alkalinity. Apply CaCl₂ or CaSO₄ 15–30 kg/ha.`);
   else if(d.aHard.status==='warn')
     add(`Ca HARDNESS LOW (${d.aHard.val} ppm). Target 150–300 ppm. Apply CaCl₂ at calculated dose.`);
   if(d.co2.status==='danger')
-    add(`CO₂ HIGH (${d.co2.val} ppm). Stress >20, toxic >60 ppm. Aerate 6–8 h vigorously. Reduce fertiliser. CO₂ peaks at dawn 5–6 AM.`);
+    add(`CO₂ HIGH (${d.co2.val} ppm). Stress >20, toxic >60 ppm. Aerate 6–8 h vigorously. CO₂ peaks at dawn 5–6 AM.`);
   else if(d.co2.status==='warn')
     add(`CO₂ ELEVATED (${d.co2.val} ppm). Increase aeration. Target <10 ppm.`);
   if(d.iron.status==='danger'||d.iron.status==='warn')
@@ -762,7 +703,6 @@ function generateSuggestions(){
   else if(d.redox.status==='warn')
     add(`REDOX LOW (${d.redox.val} mV). Apply Bacillus 1 ppm weekly. Increase bottom aeration.`);
 
-  // P3: Plankton
   const harmful=[],useful=[];
   document.querySelectorAll('input[data-pool="harmful"]:checked').forEach(cb=>{if(!harmful.includes(cb.dataset.name))harmful.push(cb.dataset.name);});
   document.querySelectorAll('input[data-pool="useful"]:checked').forEach(cb=>{if(!useful.includes(cb.dataset.name))useful.push(cb.dataset.name);});
@@ -776,19 +716,17 @@ function generateSuggestions(){
   const planktonUsed=harmful.length>0||useful.length>0;
   if(planktonUsed&&useful.length===0) add('NO USEFUL PLANKTON. Fertilise with Urea + TSP 2:1 (2 kg urea + 1 kg TSP per 100 m²). Inoculate with Chlorella or diatom culture.');
 
-  // P4: Vibrio
-  const gv=Array.from(document.querySelectorAll('.v-green')).map(i=>parseFloat(i.value)).filter(x=>!isNaN(x));
-  const yv=Array.from(document.querySelectorAll('.v-yellow')).map(i=>parseFloat(i.value)).filter(x=>!isNaN(x));
-  const maxG=gv.length?Math.max(...gv):null,maxY=yv.length?Math.max(...yv):null;
-  if(maxG!==null&&maxG>1000) add(`VIBRIO GREEN HIGH — ${maxG.toLocaleString()} CFU/mL. Risk of Bright Disease. Apply Bacillus 2 ppm. Partial exchange 25%. No antibiotics without antibiogram. Shrimp glowing at night → emergency harvest.`);
+  // Vibrio
+  const gv=Object.values(VIBRIO_INP.green).map(i=>parseFloat(i.value)).filter(x=>!isNaN(x));
+  const yv=Object.values(VIBRIO_INP.yellow).map(i=>parseFloat(i.value)).filter(x=>!isNaN(x));
+  const maxG=gv.length?Math.max(...gv):null, maxY=yv.length?Math.max(...yv):null;
+  if(maxG!==null&&maxG>1000) add(`VIBRIO GREEN (V. harveyi) HIGH — ${maxG.toLocaleString()} CFU/mL. Risk of Bright Disease. Apply Bacillus 2 ppm. Partial exchange 25%. No antibiotics without antibiogram. Shrimp glowing at night → emergency harvest.`);
   else if(maxG!==null&&maxG>100) add(`VIBRIO GREEN ELEVATED (${maxG.toLocaleString()} CFU/mL). Apply Bacillus 1 ppm. Reduce feed 20%. Improve aeration.`);
   if(maxY!==null&&maxY>10000) add(`VIBRIO YELLOW HIGH (${maxY.toLocaleString()} CFU/mL). Apply Bacillus 1–2 ppm. Reduce feed. Improve DO.`);
 
-  // Tips always appended
-  const hasIssues=lines.length>0;
-  if(!hasIssues) add('ALL PARAMETERS IN SAFE RANGE for L. vannamei. No corrective action required. Continue current management.');
-  add('DAILY: Measure D.O. before 6 AM and pH at dawn + 2 PM — these change fastest.');
-  add(`IONIC CHECK every 2 weeks${salOK?` — at ${sal.toFixed(1)} ppt: K⁺ target ${(sal*11.01).toFixed(0)} · Mg²⁺ target ${(sal*39.1).toFixed(0)} · Ca²⁺ target ${(sal*11.6).toFixed(0)} ppm`:' — enter salinity to see ionic targets'}. Apply KCl/MgSO₄/CaCl₂ if below 70% of target. Apply Bacillus 1 ppm weekly.`);
+  if(lines.length===0) add('ALL PARAMETERS IN SAFE RANGE for L. vannamei. No corrective action required. Continue current management.');
+  add('DAILY: Measure D.O. before 6 AM and pH at dawn + 2 PM.');
+  add(`IONIC CHECK every 2 weeks${salOK?` — at ${sal.toFixed(1)} ppt: K⁺ ${(sal*11.01).toFixed(0)} · Mg²⁺ ${(sal*39.1).toFixed(0)} · Ca²⁺ ${(sal*11.6).toFixed(0)} ppm`:' — enter salinity to see ionic targets'}. Apply KCl/MgSO₄/CaCl₂ if <70% of target. Apply Bacillus 1 ppm weekly.`);
 
   const out=document.getElementById('sug-out');
   out.value=lines.join('\n\n');
@@ -796,7 +734,6 @@ function generateSuggestions(){
   out.style.height=(out.scrollHeight+4)+'px';
 }
 
-/* ── INIT ── */
 buildTable();
 document.getElementById('f-date').valueAsDate = new Date();
 </script>

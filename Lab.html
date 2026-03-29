@@ -287,6 +287,61 @@ color:#111;outline:none;padding:0;
 .td-vib-inp input:focus{border-color:var(–teal);background:#e0f7fa;}
 
 /* ─────────────────────────────────────────
+POND HEALTH INDICATOR (screen only)
+───────────────────────────────────────── */
+.health-bar{
+display:flex;
+align-items:center;
+gap:10px;
+padding:5px 10px;
+background:#f8f9ff;
+border-left:1.5px solid #555;
+border-right:1.5px solid #555;
+border-bottom:1px solid var(–bdr);
+flex-shrink:0;
+}
+.health-label{
+font-family:‘Oswald’,sans-serif;
+font-size:9px;font-weight:700;
+color:#37474f;white-space:nowrap;
+}
+.health-gauge-wrap{
+flex:1;
+height:12px;
+background:#e0e0e0;
+border-radius:6px;
+overflow:hidden;
+position:relative;
+}
+.health-gauge-fill{
+height:100%;
+border-radius:6px;
+transition:width .4s ease, background-color .4s ease;
+width:0%;
+background:#9e9e9e;
+}
+.health-score{
+font-family:‘Oswald’,sans-serif;
+font-size:12px;font-weight:700;
+min-width:38px;text-align:right;
+}
+.health-counts{
+display:flex;gap:8px;font-size:8.5px;font-weight:600;white-space:nowrap;
+}
+.hc-s{color:#2e7d32;} .hc-w{color:#e65100;} .hc-d{color:#c62828;}
+.health-verdict{
+font-family:‘Oswald’,sans-serif;
+font-size:9px;font-weight:700;
+letter-spacing:.4px;
+white-space:nowrap;
+padding:2px 8px;
+border-radius:10px;
+color:#fff;
+background:#9e9e9e;
+transition:background .4s;
+}
+
+/* ─────────────────────────────────────────
 SUGGESTIONS ROW
 ───────────────────────────────────────── */
 .sug-section{
@@ -331,6 +386,7 @@ PRINT — mirrors screen exactly
 body{background:#fff!important;padding:0!important;display:block!important;}
 .toolbar{display:none!important;}
 .sal-bar{display:none!important;}
+.health-bar{display:none!important;}
 
 .page{
 width:210mm!important;height:297mm!important;
@@ -417,6 +473,22 @@ border-color:#90a4ae!important;
     <span class="sal-note">Boyd (2002): Mg×39.1 · Ca×11.6 · K×11.01 per ppt</span>
   </div>
 
+  <!-- POND HEALTH INDICATOR — screen only, not printed -->
+
+  <div class="health-bar" id="health-bar">
+    <span class="health-label">🐠 POND HEALTH</span>
+    <div class="health-gauge-wrap">
+      <div class="health-gauge-fill" id="health-fill"></div>
+    </div>
+    <span class="health-score" id="health-score" style="color:#9e9e9e">—</span>
+    <div class="health-counts">
+      <span class="hc-s" id="hc-safe">— safe</span>
+      <span class="hc-w" id="hc-warn">— warn</span>
+      <span class="hc-d" id="hc-dngr">— danger</span>
+    </div>
+    <span class="health-verdict" id="health-verdict">No data</span>
+  </div>
+
   <div class="sec-title">WATER ANALYSIS</div>
 
   <!-- UNIFIED TABLE WRAPPER -->
@@ -478,61 +550,135 @@ border-color:#90a4ae!important;
 
 ‘use strict’;
 
+// ±10% tolerance applied to all safe-zone boundaries
+// Safe band is expanded ±10% from the optimum edge before warn kicks in
 const PARAMS = [
 {id:‘ph’,   label:‘P<sup>H</sup>’,
-opt:‘7.8 – 8.5<br><small>Tolerance 7.2–8.8 · swing ≤0.5/day</small>’,
-check(v,s){const n=+v;if(isNaN(n))return’’;if(n>=7.8&&n<=8.5)return’safe’;if((n>=7.2&&n<7.8)||(n>8.5&&n<=8.8))return’warn’;return’danger’;}},
+opt:‘7.8 – 8.5<br><small>±10% tol · swing ≤0.5/day</small>’,
+// safe: 7.8-8.5 ±10% → 7.02–9.35 but capped at biological reality
+// Effectively: safe 7.0–8.9, warn 6.5–7.0 or 8.9–9.5, danger outside
+check(v,s){const n=+v;if(isNaN(n))return’’;
+if(n>=7.0&&n<=8.9)return’safe’;
+if((n>=6.5&&n<7.0)||(n>8.9&&n<=9.5))return’warn’;
+return’danger’;}},
 {id:‘sal’,  label:‘Salinity (ppt)’,
-opt:‘10 – 25 ppt<br><small>Optimal 15–25 · tolerance 0.5–45</small>’,
-check(v,s){const n=+v;if(isNaN(n))return’’;if(n>=10&&n<=25)return’safe’;if((n>=2&&n<10)||(n>25&&n<=35))return’warn’;return’danger’;}},
+opt:‘10 – 25 ppt<br><small>±10% tol · optimal 15–25</small>’,
+// safe: 10–25 ±10% → 9–27.5
+check(v,s){const n=+v;if(isNaN(n))return’’;
+if(n>=9&&n<=27.5)return’safe’;
+if((n>=1.5&&n<9)||(n>27.5&&n<=38))return’warn’;
+return’danger’;}},
 {id:‘co2’,  label:‘CO₂ (ppm)’,
-opt:’<10 ppm<br><small>Stress >20 · Toxic >60</small>’,
-check(v,s){const n=+v;if(isNaN(n))return’’;if(n<=10)return’safe’;if(n<=20)return’warn’;return’danger’;}},
+opt:’<10 ppm<br><small>±10% tol · stress >22 · toxic >60</small>’,
+// safe: ≤10 +10% → ≤11
+check(v,s){const n=+v;if(isNaN(n))return’’;
+if(n<=11)return’safe’;
+if(n<=22)return’warn’;
+return’danger’;}},
 {id:‘hco3’, label:‘HCO₃ (ppm)’,
-opt:‘100–200 ppm<br><small>Min 60 ppm</small>’,
-check(v,s){const n=+v;if(isNaN(n))return’’;if(n>=100&&n<=200)return’safe’;if((n>=60&&n<100)||(n>200&&n<=300))return’warn’;return’danger’;}},
+opt:‘100–200 ppm<br><small>±10% tol · min 54 ppm</small>’,
+// safe: 100–200 ±10% → 90–220
+check(v,s){const n=+v;if(isNaN(n))return’’;
+if(n>=90&&n<=220)return’safe’;
+if((n>=54&&n<90)||(n>220&&n<=330))return’warn’;
+return’danger’;}},
 {id:‘tAlk’, label:‘T. Alkalinity (ppm)’,
-opt:‘100–150 ppm<br><small>>200 precipitates Ca · min 80</small>’,
-check(v,s){const n=+v;if(isNaN(n))return’’;if(n>=100&&n<=150)return’safe’;if((n>=80&&n<100)||(n>150&&n<=250))return’warn’;return’danger’;}},
+opt:‘100–150 ppm<br><small>±10% tol · >220 risk · min 72</small>’,
+// safe: 100–150 ±10% → 90–165
+check(v,s){const n=+v;if(isNaN(n))return’’;
+if(n>=90&&n<=165)return’safe’;
+if((n>=72&&n<90)||(n>165&&n<=275))return’warn’;
+return’danger’;}},
 {id:‘tHard’,label:‘T. Hardness (ppm CaCO₃)’,
-opt:‘200–500 ppm<br><small>Brackish >500 normal · min 150</small>’,
-check(v,s){const n=+v;if(isNaN(n))return’’;if(n>=200&&n<=500)return’safe’;if((n>=150&&n<200)||(n>500&&n<=800))return’warn’;return’danger’;}},
+opt:‘200–500 ppm<br><small>±10% tol · brackish >500 ok</small>’,
+// safe: 200–500 ±10% → 180–550
+check(v,s){const n=+v;if(isNaN(n))return’’;
+if(n>=180&&n<=550)return’safe’;
+if((n>=135&&n<180)||(n>550&&n<=880))return’warn’;
+return’danger’;}},
 {id:‘aHard’,label:‘A. Hardness (ppm)’,
-opt:‘150–300 ppm<br><small>Must ≥ T.Alkalinity · min 50</small>’,
-check(v,s){const n=+v;if(isNaN(n))return’’;if(n>=150&&n<=300)return’safe’;if(n>=50&&n<150)return’warn’;return’danger’;}},
+opt:‘150–300 ppm<br><small>±10% tol · must ≥ T.Alk · min 45</small>’,
+// safe: 150–300 ±10% → 135–330
+check(v,s){const n=+v;if(isNaN(n))return’’;
+if(n>=135&&n<=330)return’safe’;
+if(n>=45&&n<135)return’warn’;
+return’danger’;}},
 {id:‘mg’,   label:‘Mg²⁺ (ppm)’,
-opt:‘Sal×39.1 ppm<br><small>Min 100 ppm</small>’,
-check(v,sal){const n=+v;if(isNaN(n))return’’;const t=sal>0?sal*39.1:null;if(t){if(n>=t*.7)return’safe’;if(n>=t*.5)return’warn’;return’danger’;}return n>=100?‘safe’:n>=50?‘warn’:‘danger’;}},
+opt:‘Sal×39.1 ppm<br><small>±10% tol · min 90 ppm</small>’,
+// ±10% already generous — use t*0.63 as safe (was 0.7), t*0.45 as warn
+check(v,sal){const n=+v;if(isNaN(n))return’’;
+const t=sal>0?sal*39.1:null;
+if(t){if(n>=t*0.63)return’safe’;if(n>=t*0.45)return’warn’;return’danger’;}
+return n>=90?‘safe’:n>=45?‘warn’:‘danger’;}},
 {id:‘ca’,   label:‘Ca²⁺ (ppm)’,
-opt:‘Sal×11.6 ppm<br><small>Min 30 ppm</small>’,
-check(v,sal){const n=+v;if(isNaN(n))return’’;const t=sal>0?sal*11.6:null;if(t){if(n>=t*.7)return’safe’;if(n>=t*.5)return’warn’;return’danger’;}return n>=30?‘safe’:n>=15?‘warn’:‘danger’;}},
+opt:‘Sal×11.6 ppm<br><small>±10% tol · min 27 ppm</small>’,
+check(v,sal){const n=+v;if(isNaN(n))return’’;
+const t=sal>0?sal*11.6:null;
+if(t){if(n>=t*0.63)return’safe’;if(n>=t*0.45)return’warn’;return’danger’;}
+return n>=27?‘safe’:n>=14?‘warn’:‘danger’;}},
 {id:‘k’,    label:‘Potassium K⁺ (ppm)’,
 opt:‘Sal×11.01 ppm<br><small style="color:#c62828;font-weight:700">⚠ CRITICAL #1 missed ion</small>’,
-check(v,sal){const n=+v;if(isNaN(n))return’’;const t=sal>0?sal*11.01:null;if(t){if(n>=t*.7)return’safe’;if(n>=t*.4)return’warn’;return’danger’;}return n>=20?‘safe’:n>=8?‘warn’:‘danger’;}},
+check(v,sal){const n=+v;if(isNaN(n))return’’;
+const t=sal>0?sal*11.01:null;
+if(t){if(n>=t*0.63)return’safe’;if(n>=t*0.36)return’warn’;return’danger’;}
+return n>=18?‘safe’:n>=7?‘warn’:‘danger’;}},
 {id:‘tan’,  label:‘T. Ammonia (ppm)’,
-opt:‘≤0.1 ppm<br><small>0.45 ppm → 50% growth loss</small>’,
-check(v,s){const n=+v;if(isNaN(n))return’’;if(n<=0.1)return’safe’;if(n<=0.4)return’warn’;return’danger’;}},
+opt:‘≤0.1 ppm<br><small>±10% tol · ≤0.11 safe</small>’,
+// safe: ≤0.1 +10% → ≤0.11
+check(v,s){const n=+v;if(isNaN(n))return’’;
+if(n<=0.11)return’safe’;
+if(n<=0.44)return’warn’;
+return’danger’;}},
 {id:‘uia’,  label:‘U. Ammonia (ppm)’,
-opt:’<0.02 ppm<br><small>FAO max 0.025</small>’,
-check(v,s){const n=+v;if(isNaN(n))return’’;if(n<0.02)return’safe’;if(n<=0.05)return’warn’;return’danger’;}},
+opt:’<0.02 ppm<br><small>±10% tol · ≤0.022 safe</small>’,
+check(v,s){const n=+v;if(isNaN(n))return’’;
+if(n<=0.022)return’safe’;
+if(n<=0.055)return’warn’;
+return’danger’;}},
 {id:‘no2’,  label:‘NO₂ (ppm)’,
-opt:‘Nil–<0.1 ppm<br><small>Low sal.=less Cl⁻ protection</small>’,
-check(v,s){const w=String(v).trim().toLowerCase();if(w===‘nil’||w===‘0’)return’safe’;const n=+v;if(isNaN(n))return’’;if(n<0.1)return’safe’;if(n<=0.5)return’warn’;return’danger’;}},
+opt:‘Nil–<0.1 ppm<br><small>±10% tol · ≤0.11 safe</small>’,
+check(v,s){const w=String(v).trim().toLowerCase();if(w===‘nil’||w===‘0’)return’safe’;
+const n=+v;if(isNaN(n))return’’;
+if(n<=0.11)return’safe’;
+if(n<=0.55)return’warn’;
+return’danger’;}},
 {id:‘iron’, label:‘Iron (ppm)’,
-opt:’<0.05 ppm<br><small>Max 0.1 · precipitates on gills</small>’,
-check(v,s){const w=String(v).trim().toLowerCase();if(w===‘nil’||w===‘0’)return’safe’;const n=+v;if(isNaN(n))return’’;if(n<=0.05)return’safe’;if(n<=0.1)return’warn’;return’danger’;}},
+opt:’<0.05 ppm<br><small>±10% tol · ≤0.055 safe</small>’,
+check(v,s){const w=String(v).trim().toLowerCase();if(w===‘nil’||w===‘0’)return’safe’;
+const n=+v;if(isNaN(n))return’’;
+if(n<=0.055)return’safe’;
+if(n<=0.11)return’warn’;
+return’danger’;}},
 {id:‘h2s’,  label:‘H₂S (ppm)’,
-opt:‘0 — Zero tolerance<br><small>0.1 ppm balance loss · 4 ppm lethal</small>’,
-check(v,s){const w=String(v).trim().toLowerCase();if(w===‘nil’||w===‘0’)return’safe’;const n=+v;if(isNaN(n))return’’;if(n===0)return’safe’;if(n<0.05)return’warn’;return’danger’;}},
+opt:‘0 — Zero tolerance<br><small>Any detect = warn · >0.05 = danger</small>’,
+// H₂S is zero-tolerance — no positive buffer, only a very small warn band
+check(v,s){const w=String(v).trim().toLowerCase();if(w===‘nil’||w===‘0’)return’safe’;
+const n=+v;if(isNaN(n))return’’;
+if(n===0)return’safe’;
+if(n<0.05)return’warn’;
+return’danger’;}},
 {id:‘do’,   label:‘D.O. (ppm)’,
-opt:‘≥5 ppm · Ideal 6–9<br><small>High sal. holds less O₂</small>’,
-check(v,s){const n=+v;if(isNaN(n))return’’;if(n>=5)return’safe’;if(n>=3)return’warn’;return’danger’;}},
+opt:‘≥5 ppm · Ideal 6–9<br><small>±10% tol · ≥4.5 safe</small>’,
+// safe: ≥5 -10% → ≥4.5
+check(v,s){const n=+v;if(isNaN(n))return’’;
+if(n>=4.5)return’safe’;
+if(n>=2.7)return’warn’;
+return’danger’;}},
 {id:‘cl2’,  label:‘Chlorine CL₂ (ppm)’,
 opt:‘0 — Must be zero<br><small>0.003 ppm damages gills</small>’,
-check(v,s){const w=String(v).trim().toLowerCase();if(w===‘0’||w===‘nil’)return’safe’;const n=+v;if(isNaN(n))return’’;if(n===0)return’safe’;if(n<=0.1)return’warn’;return’danger’;}},
+// No tolerance — chlorine is always harmful at any detectable level
+check(v,s){const w=String(v).trim().toLowerCase();if(w===‘0’||w===‘nil’)return’safe’;
+const n=+v;if(isNaN(n))return’’;
+if(n===0)return’safe’;
+if(n<=0.1)return’warn’;
+return’danger’;}},
 {id:‘redox’,label:‘Redox Potential (mV)’,
-opt:’+200 to +400 mV<br><small><+100 anaerobic · <0 H₂S zone</small>’,
-check(v,s){const n=+v;if(isNaN(n))return’’;if(n>=200&&n<=400)return’safe’;if((n>=100&&n<200)||(n>400&&n<=500))return’warn’;return’danger’;}},
+opt:’+200 to +400 mV<br><small>±10% tol · 180–440 safe</small>’,
+// safe: 200–400 ±10% → 180–440
+check(v,s){const n=+v;if(isNaN(n))return’’;
+if(n>=180&&n<=440)return’safe’;
+if((n>=90&&n<180)||(n>440&&n<=550))return’warn’;
+return’danger’;}},
 ];
 
 const USEFUL = [
@@ -571,9 +717,67 @@ const val=inp.value.trim();
 if(!val||val===’—’)return;
 const st=PARAMS[pi].check(val,getSal());
 if(st)td.classList.add(st);
+updateHealth();
 }
 
-function reColourAll(){PARAMS.forEach((_,pi)=>{for(let s=1;s<=4;s++)colourCell(pi,s);});}
+function reColourAll(){PARAMS.forEach((_,pi)=>{for(let s=1;s<=4;s++)colourCell(pi,s);});updateHealth();}
+
+/* ── POND HEALTH INDICATOR ── */
+function updateHealth(){
+let safe=0, warn=0, dngr=0, total=0;
+PARAMS.forEach((_,pi)=>{
+// Count worst status across all entered samples for this param
+let worst=’’;
+const ord={danger:0,warn:1,safe:2,’’:3};
+for(let s=1;s<=4;s++){
+const inp=INP[pi]?.[s];if(!inp)continue;
+const val=inp.value.trim();if(!val||val===’—’)continue;
+const st=PARAMS[pi].check(val,getSal());
+if(ord[st]<ord[worst])worst=st;
+}
+if(worst===‘safe’){safe++;total++;}
+else if(worst===‘warn’){warn++;total++;}
+else if(worst===‘danger’){dngr++;total++;}
+});
+
+const fill   = document.getElementById(‘health-fill’);
+const score  = document.getElementById(‘health-score’);
+const verdict= document.getElementById(‘health-verdict’);
+const cSafe  = document.getElementById(‘hc-safe’);
+const cWarn  = document.getElementById(‘hc-warn’);
+const cDngr  = document.getElementById(‘hc-dngr’);
+
+cSafe.textContent = safe+’ safe’;
+cWarn.textContent = warn+’ warn’;
+cDngr.textContent = dngr+’ danger’;
+
+if(total===0){
+fill.style.width=‘0%’;fill.style.background=’#9e9e9e’;
+score.textContent=’—’;score.style.color=’#9e9e9e’;
+verdict.textContent=‘No data’;verdict.style.background=’#9e9e9e’;
+return;
+}
+
+// Score: safe=100pts, warn=50pts, danger=0pts
+const pct = Math.round(((safe*100)+(warn*50)) / (total*100) * 100);
+fill.style.width = pct+’%’;
+score.textContent = pct+’%’;
+
+let color, label;
+if(dngr>0){
+color=’#c62828’; label=‘⚠ ACTION NEEDED’;
+} else if(warn>0){
+const warnRatio = warn/total;
+if(warnRatio>0.4){ color=’#e65100’; label=‘⚠ MONITOR CLOSELY’; }
+else             { color=’#f57f17’; label=‘BORDERLINE’; }
+} else {
+color=’#2e7d32’; label=‘✔ HEALTHY’;
+}
+fill.style.background = color;
+score.style.color     = color;
+verdict.textContent   = label;
+verdict.style.background = color;
+}
 
 function onInput(e){
 const pi=+e.target.dataset.pi,s=+e.target.dataset.s;

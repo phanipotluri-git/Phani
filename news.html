@@ -373,6 +373,26 @@
   .cat-tech   { color:#1a4a8a; }
   .cat-health { color:#5a1a6e; }
 
+  /* Telugu language badge */
+  .telugu-badge {
+    display:inline-block;
+    font-size:0.7rem;
+    font-weight:600;
+    color:#7a5c00;
+    background:#fff8dd;
+    border:1px solid #c8a030;
+    padding:1px 8px;
+    margin-bottom:6px;
+    letter-spacing:0.04em;
+  }
+  .telugu-note {
+    font-family:'Fira Code',monospace;
+    font-size:0.5rem;
+    color:var(--ink3);
+    letter-spacing:0.06em;
+    font-style:italic;
+  }
+
   .grid-headline {
     font-family:'Playfair Display',serif;
     font-size:0.95rem;
@@ -610,70 +630,88 @@ const CATS = [
   {
     id:"india", label:"India", icon:"🇮🇳", region:"india", catClass:"cat-india",
     feeds:[
-      { url:"https://timesofindia.indiatimes.com/rssfeedstopstories.cms",          name:"Times of India" },
-      { url:"https://feeds.feedburner.com/ndtvnews-top-stories",                   name:"NDTV" },
-      { url:"https://www.thehindu.com/feeder/default.rss",                         name:"The Hindu" },
+      { url:"https://timesofindia.indiatimes.com/rssfeedstopstories.cms",               name:"Times of India" },
+      { url:"https://feeds.feedburner.com/ndtvnews-top-stories",                        name:"NDTV" },
+      { url:"https://www.thehindu.com/feeder/default.rss",                              name:"The Hindu" },
     ]
   },
   {
     id:"ap", label:"Andhra Pradesh", icon:"📍", region:"ap", catClass:"cat-ap",
     feeds:[
       { url:"https://www.thehindu.com/news/national/andhra-pradesh/feeder/default.rss", name:"The Hindu AP" },
-      { url:"https://sakshipost.com/feed",                                          name:"Sakshi Post" },
-      { url:"https://timesofindia.indiatimes.com/rss/4719148.cms",                 name:"TOI Hyderabad" },
+      { url:"https://sakshipost.com/feed",                                               name:"Sakshi Post" },
+      { url:"https://timesofindia.indiatimes.com/rss/4719148.cms",                      name:"TOI Hyderabad" },
+    ]
+  },
+  {
+    id:"vja", label:"Vijayawada · Amaravati", icon:"🏙", region:"ap", catClass:"cat-ap",
+    feeds:[
+      { url:"https://www.thehindu.com/news/cities/Vijayawada/feeder/default.rss",       name:"The Hindu Vijayawada" },
+      { url:"https://www.thehindu.com/news/national/andhra-pradesh/feeder/default.rss", name:"The Hindu AP" },
+      { url:"https://sakshipost.com/tag/vijayawada/feed",                               name:"Sakshi Post VJA" },
+    ]
+  },
+  {
+    id:"telugu", label:"తెలుగు వార్తలు", icon:"🔤", region:"ap", catClass:"cat-ap", telugu:true,
+    feeds:[
+      { url:"https://www.sakshi.com/rss.xml",                                           name:"సాక్షి" },
+      { url:"https://www.andhrajyothy.com/rss",                                         name:"ఆంధ్రజ్యోతి" },
+      { url:"https://www.eenadu.net/rss",                                               name:"ఈనాడు" },
+      { url:"https://www.ntvtelugu.com/rss",                                            name:"NTV Telugu" },
+      { url:"https://telanganatoday.com/feed",                                          name:"Telangana Today" },
     ]
   },
   {
     id:"tg", label:"Telangana", icon:"🏛", region:"tg", catClass:"cat-tg",
     feeds:[
-      { url:"https://www.thehindu.com/news/national/telangana/feeder/default.rss", name:"The Hindu TG" },
-      { url:"https://telanganatoday.com/feed",                                      name:"Telangana Today" },
-      { url:"https://timesofindia.indiatimes.com/rss/4719148.cms",                 name:"TOI Hyderabad" },
+      { url:"https://www.thehindu.com/news/national/telangana/feeder/default.rss",      name:"The Hindu TG" },
+      { url:"https://telanganatoday.com/feed",                                           name:"Telangana Today" },
+      { url:"https://timesofindia.indiatimes.com/rss/4719148.cms",                      name:"TOI Hyderabad" },
     ]
   },
   {
     id:"hyd", label:"Hyderabad", icon:"🕌", region:"tg", catClass:"cat-tg",
     feeds:[
-      { url:"https://timesofindia.indiatimes.com/rss/4719148.cms",                 name:"TOI Hyderabad" },
-      { url:"https://www.thehindu.com/news/cities/Hyderabad/feeder/default.rss",   name:"The Hindu HYD" },
-      { url:"https://telanganatoday.com/hyderabad/feed",                            name:"Telangana Today HYD" },
+      { url:"https://timesofindia.indiatimes.com/rss/4719148.cms",                      name:"TOI Hyderabad" },
+      { url:"https://www.thehindu.com/news/cities/Hyderabad/feeder/default.rss",        name:"The Hindu HYD" },
+      { url:"https://telanganatoday.com/hyderabad/feed",                                 name:"Telangana Today HYD" },
     ]
   },
   {
     id:"markets", label:"Markets", icon:"📈", region:"india", catClass:"cat-biz",
     feeds:[
-      { url:"https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",name:"ET Markets" },
-      { url:"https://economictimes.indiatimes.com/rssfeedstopstories.cms",         name:"Economic Times" },
-      { url:"https://www.thehindubusinessline.com/feeder/default.rss",             name:"Business Line" },
+      { url:"https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",     name:"ET Markets" },
+      { url:"https://economictimes.indiatimes.com/rssfeedstopstories.cms",              name:"Economic Times" },
+      { url:"https://www.thehindubusinessline.com/feeder/default.rss",                  name:"Business Line" },
     ]
   },
   {
     id:"sports", label:"Cricket & Sports", icon:"🏏", region:"india", catClass:"cat-sport",
     feeds:[
-      { url:"https://feeds.feedburner.com/ndtvnews-sports",                        name:"NDTV Sports" },
-      { url:"https://timesofindia.indiatimes.com/rss/4719161.cms",                 name:"TOI Sports" },
-      { url:"https://feeds.bbci.co.uk/sport/cricket/rss.xml",                      name:"BBC Cricket" },
+      { url:"https://feeds.feedburner.com/ndtvnews-sports",                             name:"NDTV Sports" },
+      { url:"https://timesofindia.indiatimes.com/rss/4719161.cms",                      name:"TOI Sports" },
+      { url:"https://feeds.bbci.co.uk/sport/cricket/rss.xml",                           name:"BBC Cricket" },
     ]
   },
   {
     id:"tech", label:"Technology", icon:"💻", region:"india", catClass:"cat-tech",
     feeds:[
-      { url:"https://feeds.feedburner.com/ndtvnews-gadgets-news",                  name:"NDTV Gadgets" },
-      { url:"https://feeds.bbci.co.uk/news/technology/rss.xml",                    name:"BBC Tech" },
+      { url:"https://feeds.feedburner.com/ndtvnews-gadgets-news",                       name:"NDTV Gadgets" },
+      { url:"https://feeds.bbci.co.uk/news/technology/rss.xml",                         name:"BBC Tech" },
     ]
   },
   {
     id:"health", label:"Health", icon:"🏥", region:"india", catClass:"cat-health",
     feeds:[
-      { url:"https://feeds.feedburner.com/ndtvnews-health",                        name:"NDTV Health" },
-      { url:"https://feeds.bbci.co.uk/news/health/rss.xml",                        name:"BBC Health" },
+      { url:"https://feeds.feedburner.com/ndtvnews-health",                             name:"NDTV Health" },
+      { url:"https://feeds.bbci.co.uk/news/health/rss.xml",                             name:"BBC Health" },
     ]
   },
   {
     id:"world", label:"World", icon:"🌍", region:"world", catClass:"cat-world",
     feeds:[
-      { url:"https://feeds.feedburner.com/ndtvnews-world-news",                    name:"NDTV World" },
-      { url:"https://feeds.bbci.co.uk/news/world/rss.xml",                         name:"BBC World" },
+      { url:"https://feeds.feedburner.com/ndtvnews-world-news",                         name:"NDTV World" },
+      { url:"https://feeds.bbci.co.uk/news/world/rss.xml",                              name:"BBC World" },
     ]
   },
 ];
@@ -884,6 +922,8 @@ function frontPageHTML(hero, sidebar, lowers, cat) {
   const heroSum  = summaries[heroId];
   const heroBusy = busy.has(heroId);
   const reg      = cat.region;
+  const isTeluguCat = !!cat.telugu;
+  const teluguBadge = isTeluguCat ? `<div class="telugu-badge">తెలుగు వార్తలు</div><div class="telugu-note">AI Brief will summarise in English</div>` : "";
 
   const heroPanel = heroSum ? `
     <div class="ai-panel r-${reg}">
@@ -897,6 +937,7 @@ function frontPageHTML(hero, sidebar, lowers, cat) {
 
   const heroHTML = `
     <div class="hero">
+      ${teluguBadge}
       <div class="hero-cat">${cat.icon} ${cat.label} · ${fmtDate(hero.pubDate)}</div>
       <div class="hero-headline">${esc(hero.title)}</div>
       <div class="hero-desc">${esc(strip(hero.description)).slice(0, 380)}${strip(hero.description).length > 380 ? "…" : ""}</div>
@@ -981,9 +1022,11 @@ async function handleAI(encodedId) {
   setBtn(encodedId, true);
 
   const ctx = { india:"national Indian", ap:"Andhra Pradesh regional", tg:"Telangana regional", world:"international" }[cat.region] || "Indian";
+  const isTelugu = !!cat.telugu;
+  const langNote = isTelugu ? " The article may be in Telugu. Read it and summarise clearly in English." : "";
   const body = strip(article.description || "").slice(0, 900);
 
-  const prompt = `You are a seasoned ${ctx} news analyst writing for an educated Indian reader.
+  const prompt = `You are a seasoned ${ctx} news analyst writing for an educated Indian reader.${langNote}
 
 Analyse this article and write exactly 3 crisp sentences — no labels, no bullet points:
 1. What happened (the core fact)

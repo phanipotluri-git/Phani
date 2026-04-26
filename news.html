@@ -4,27 +4,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BRIEF. — AI News Intelligence</title>
+  <title>BRIEF. — Indian News Intelligence</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&family=Fira+Code:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 
   <style>
-    /* ─── RESET & TOKENS ─────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #07090d;
-      --surface:  #0e1118;
-      --surface2: #131820;
-      --border:   #1c2230;
-      --amber:    #f0a500;
-      --amber-dk: #8a5e00;
-      --amber-lt: #ffc845;
-      --text:     #ddd6c8;
-      --sub:      #8a8278;
-      --muted:    #4a4640;
+      --bg:       #07090c;
+      --surface:  #0d1017;
+      --surface2: #121720;
+      --border:   #1a2030;
+      --saffron:  #f5820a;
+      --saffron-dk: #7a3d00;
+      --saffron-lt: #ffaa45;
+      --india-green: #138808;
+      --india-green-lt: #1db810;
+      --navy:     #000080;
+      --text:     #ddd8cc;
+      --sub:      #8a8580;
+      --muted:    #45433e;
       --green:    #3ddc84;
       --red:      #ff5c5c;
+      --tg-blue:  #4a9eff;
+      --ap-gold:  #ffd447;
     }
 
     html { scroll-behavior: smooth; }
@@ -34,54 +38,59 @@
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
       min-height: 100vh;
-      /* Subtle grid texture */
       background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 40px 40px;
+        linear-gradient(rgba(26,32,48,0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26,32,48,0.5) 1px, transparent 1px);
+      background-size: 48px 48px;
       background-attachment: fixed;
     }
 
-    /* ─── MASTHEAD ───────────────────────────────────────── */
+    /* ── MASTHEAD ── */
     #masthead {
-      background: rgba(7,9,13,0.92);
+      background: rgba(7,9,12,0.95);
       border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
       position: sticky;
       top: 0;
       z-index: 100;
     }
-
     .mast-inner {
-      max-width: 1440px;
+      max-width: 1500px;
       margin: 0 auto;
-      padding: 18px 36px 0;
+      padding: 16px 32px 0;
     }
-
     .mast-top {
       display: flex;
       align-items: center;
-      gap: 20px;
-      margin-bottom: 16px;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
     }
 
+    /* Tricolor stripe on brand */
+    .brand-wrap { display: flex; flex-direction: column; gap: 0; }
+    .tricolor-bar {
+      height: 3px;
+      width: 100%;
+      background: linear-gradient(to right, #FF9933 33.3%, #FFFFFF 33.3% 66.6%, #138808 66.6%);
+      margin-bottom: 3px;
+    }
     .brand {
       font-family: 'Fraunces', serif;
-      font-size: 2.2rem;
+      font-size: 2.1rem;
       font-weight: 900;
       color: var(--text);
       letter-spacing: -2px;
       line-height: 1;
-      flex-shrink: 0;
     }
-    .brand .dot { color: var(--amber); }
+    .brand .dot { color: var(--saffron); }
 
     .live-indicator {
       display: flex;
       align-items: center;
       gap: 6px;
       font-family: 'Fira Code', monospace;
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       color: var(--green);
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -92,142 +101,96 @@
       background: var(--green);
       animation: pulse 2s infinite;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
     .datestamp {
       font-family: 'Fira Code', monospace;
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       color: var(--sub);
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
     }
 
-    .mast-right {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .mast-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
-    /* ─── API KEY SETUP ──────────────────────────────────── */
     #key-status {
       font-family: 'Fira Code', monospace;
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 5px 12px;
-      border-radius: 2px;
+      padding: 4px 10px;
     }
-    #key-status.no-key {
-      background: rgba(255,92,92,0.12);
-      color: var(--red);
-      border: 1px solid rgba(255,92,92,0.3);
-    }
-    #key-status.has-key {
-      background: rgba(61,220,132,0.1);
-      color: var(--green);
-      border: 1px solid rgba(61,220,132,0.25);
-    }
+    #key-status.no-key  { background:rgba(255,92,92,.1);  color:var(--red);   border:1px solid rgba(255,92,92,.3); }
+    #key-status.has-key { background:rgba(61,220,132,.08); color:var(--green); border:1px solid rgba(61,220,132,.25); }
 
     #key-toggle {
       font-family: 'Fira Code', monospace;
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 5px 12px;
+      padding: 4px 12px;
       background: var(--surface2);
-      color: var(--amber);
-      border: 1px solid var(--amber-dk);
+      color: var(--saffron);
+      border: 1px solid var(--saffron-dk);
       cursor: pointer;
       transition: all 0.15s;
     }
-    #key-toggle:hover {
-      background: var(--amber);
-      color: var(--bg);
-    }
+    #key-toggle:hover { background: var(--saffron); color: var(--bg); }
 
     /* Key drawer */
     #key-drawer {
       overflow: hidden;
       max-height: 0;
-      transition: max-height 0.3s ease, padding 0.3s;
+      transition: max-height 0.3s ease;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
     }
-    #key-drawer.open {
-      max-height: 80px;
-    }
+    #key-drawer.open { max-height: 80px; }
     .key-inner {
-      max-width: 1440px;
+      max-width: 1500px;
       margin: 0 auto;
-      padding: 12px 36px;
+      padding: 12px 32px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    .key-label {
-      font-family: 'Fira Code', monospace;
-      font-size: 0.62rem;
-      color: var(--amber);
-      letter-spacing: 0.1em;
-      white-space: nowrap;
-    }
+    .key-label { font-family:'Fira Code',monospace; font-size:0.6rem; color:var(--saffron); letter-spacing:0.1em; white-space:nowrap; }
     #groq-key-input {
-      flex: 1;
-      max-width: 480px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: 'Fira Code', monospace;
-      font-size: 0.7rem;
-      padding: 7px 12px;
-      outline: none;
-      transition: border-color 0.2s;
+      flex: 1; max-width: 480px;
+      background: var(--bg); border: 1px solid var(--border);
+      color: var(--text); font-family:'Fira Code',monospace; font-size:0.68rem;
+      padding: 7px 12px; outline: none; transition: border-color 0.2s;
     }
-    #groq-key-input:focus { border-color: var(--amber); }
+    #groq-key-input:focus { border-color: var(--saffron); }
     #groq-key-input::placeholder { color: var(--muted); }
     .btn-save-key {
-      padding: 7px 18px;
-      background: var(--amber);
-      color: var(--bg);
-      border: none;
-      font-family: 'Fira Code', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background 0.15s;
+      padding:7px 16px; background:var(--saffron); color:var(--bg);
+      border:none; font-family:'Fira Code',monospace; font-size:0.6rem;
+      letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; font-weight:500;
     }
-    .btn-save-key:hover { background: var(--amber-lt); }
+    .btn-save-key:hover { background:var(--saffron-lt); }
     .btn-clear-key {
-      padding: 7px 12px;
-      background: transparent;
-      color: var(--red);
-      border: 1px solid rgba(255,92,92,0.3);
-      font-family: 'Fira Code', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.08em;
-      cursor: pointer;
-      transition: all 0.15s;
+      padding:7px 10px; background:transparent; color:var(--red);
+      border:1px solid rgba(255,92,92,.3); font-family:'Fira Code',monospace;
+      font-size:0.6rem; cursor:pointer;
     }
-    .btn-clear-key:hover { background: rgba(255,92,92,0.1); }
+    .btn-clear-key:hover { background:rgba(255,92,92,.1); }
 
-    /* ─── TABS ───────────────────────────────────────────── */
+    /* ── CATEGORY TABS ── */
     .tabs {
       display: flex;
       overflow-x: auto;
       scrollbar-width: none;
+      border-top: 1px solid var(--border);
+      margin-top: 2px;
     }
     .tabs::-webkit-scrollbar { display: none; }
 
     .tab {
-      padding: 10px 22px;
+      padding: 10px 18px;
       font-family: 'Fira Code', monospace;
-      font-size: 0.63rem;
-      letter-spacing: 0.09em;
+      font-size: 0.61rem;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
       color: var(--muted);
       cursor: pointer;
@@ -240,47 +203,46 @@
       bottom: -1px;
     }
     .tab:hover { color: var(--sub); }
-    .tab.active {
-      color: var(--amber);
-      border-bottom-color: var(--amber);
-    }
+    .tab.active { color: var(--saffron); border-bottom-color: var(--saffron); }
 
-    /* ─── MAIN ───────────────────────────────────────────── */
+    /* Special accent for regional tabs */
+    .tab[data-region="ap"].active  { color: var(--ap-gold);  border-bottom-color: var(--ap-gold); }
+    .tab[data-region="tg"].active  { color: var(--tg-blue);  border-bottom-color: var(--tg-blue); }
+
+    /* ── MAIN ── */
     #main {
-      max-width: 1440px;
+      max-width: 1500px;
       margin: 0 auto;
-      padding: 36px;
+      padding: 32px;
     }
 
-    /* Section header */
     .sec-header {
       display: flex;
       align-items: center;
-      gap: 16px;
-      margin-bottom: 28px;
+      gap: 14px;
+      margin-bottom: 26px;
     }
-    .sec-icon {
-      font-size: 1rem;
-      color: var(--amber);
-    }
+    .sec-icon { font-size: 1.1rem; }
     .sec-title {
       font-family: 'Fraunces', serif;
-      font-size: 1.9rem;
+      font-size: 1.8rem;
       font-weight: 900;
       color: var(--text);
       letter-spacing: -0.5px;
     }
-    .sec-rule {
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(to right, var(--border), transparent);
+    .sec-rule { flex: 1; height: 1px; background: linear-gradient(to right, var(--border), transparent); }
+    .sec-source {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.55rem;
+      color: var(--sub);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
     }
     .sec-meta {
       font-family: 'Fira Code', monospace;
-      font-size: 0.58rem;
+      font-size: 0.55rem;
       color: var(--muted);
       letter-spacing: 0.1em;
-      white-space: nowrap;
     }
     .btn-refresh {
       padding: 5px 12px;
@@ -289,22 +251,21 @@
       border: 1px solid var(--border);
       font-family: 'Fira Code', monospace;
       font-size: 0.58rem;
-      letter-spacing: 0.08em;
       cursor: pointer;
       transition: all 0.15s;
     }
-    .btn-refresh:hover { color: var(--amber); border-color: var(--amber-dk); }
+    .btn-refresh:hover { color: var(--saffron); border-color: var(--saffron-dk); }
 
-    /* ─── GRID ───────────────────────────────────────────── */
+    /* ── GRID ── */
     #grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(355px, 1fr));
       gap: 1px;
       background: var(--border);
       border: 1px solid var(--border);
     }
 
-    /* ─── CARD ───────────────────────────────────────────── */
+    /* ── CARD ── */
     .card {
       background: var(--surface);
       padding: 22px;
@@ -312,44 +273,59 @@
       flex-direction: column;
       gap: 10px;
       transition: background 0.15s;
-      animation: cardIn 0.35s ease backwards;
+      animation: cardIn 0.3s ease backwards;
     }
     .card:hover { background: var(--surface2); }
-
     @keyframes cardIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from { opacity:0; transform:translateY(7px); }
+      to   { opacity:1; transform:translateY(0); }
     }
 
-    .card-meta {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-    .cat-tag {
+    /* Regional tint on card left border */
+    .card.region-ap  { border-left: 3px solid rgba(255,212,71,0.3); }
+    .card.region-tg  { border-left: 3px solid rgba(74,158,255,0.3); }
+    .card.region-india { border-left: 3px solid rgba(245,130,10,0.3); }
+
+    .card-meta { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+
+    .source-tag {
       font-family: 'Fira Code', monospace;
-      font-size: 0.55rem;
-      color: var(--amber);
-      letter-spacing: 0.12em;
+      font-size: 0.53rem;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      border: 1px solid var(--amber-dk);
-      padding: 1px 6px;
+      padding: 2px 7px;
+      border: 1px solid;
     }
+    /* colour per region */
+    .tag-ap     { color:var(--ap-gold);  border-color:rgba(255,212,71,0.3);  background:rgba(255,212,71,0.06); }
+    .tag-tg     { color:var(--tg-blue);  border-color:rgba(74,158,255,0.3);  background:rgba(74,158,255,0.06); }
+    .tag-india  { color:var(--saffron);  border-color:rgba(245,130,10,0.3);  background:rgba(245,130,10,0.06); }
+    .tag-world  { color:#c084fc;         border-color:rgba(192,132,252,0.3); background:rgba(192,132,252,0.06); }
+    .tag-biz    { color:#34d399;         border-color:rgba(52,211,153,0.3);  background:rgba(52,211,153,0.06); }
+    .tag-sport  { color:#f87171;         border-color:rgba(248,113,113,0.3); background:rgba(248,113,113,0.06); }
+    .tag-tech   { color:#60a5fa;         border-color:rgba(96,165,250,0.3);  background:rgba(96,165,250,0.06); }
+    .tag-health { color:#a78bfa;         border-color:rgba(167,139,250,0.3); background:rgba(167,139,250,0.06); }
+
     .pub-date {
       font-family: 'Fira Code', monospace;
-      font-size: 0.55rem;
+      font-size: 0.53rem;
       color: var(--muted);
       margin-left: auto;
+    }
+    .outlet-name {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.53rem;
+      color: var(--sub);
+      letter-spacing: 0.05em;
     }
 
     .headline {
       font-family: 'Fraunces', serif;
-      font-size: 1.05rem;
+      font-size: 1.04rem;
       font-weight: 700;
       line-height: 1.38;
       color: var(--text);
     }
-
     .desc {
       font-size: 0.78rem;
       color: var(--sub);
@@ -360,57 +336,57 @@
       overflow: hidden;
     }
 
-    /* ─── AI SUMMARY PANEL ───────────────────────────────── */
+    /* ── AI PANEL ── */
     .ai-panel {
-      background: #050710;
-      border: 1px solid var(--amber-dk);
-      border-left: 3px solid var(--amber);
-      padding: 14px 16px;
+      background: #050810;
+      border: 1px solid var(--saffron-dk);
+      border-left: 3px solid var(--saffron);
+      padding: 13px 16px;
       animation: fadeSlide 0.3s ease;
     }
+    .ai-panel.region-ap { border-left-color: var(--ap-gold); border-color: rgba(255,212,71,0.25); }
+    .ai-panel.region-tg { border-left-color: var(--tg-blue); border-color: rgba(74,158,255,0.25); }
     @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(-4px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from { opacity:0; transform:translateY(-4px); }
+      to   { opacity:1; transform:translateY(0); }
     }
-    .ai-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
+    .ai-header { display:flex; align-items:center; gap:8px; margin-bottom:9px; }
     .ai-label {
       font-family: 'Fira Code', monospace;
-      font-size: 0.55rem;
-      color: var(--amber);
-      letter-spacing: 0.15em;
+      font-size: 0.53rem;
+      color: var(--saffron);
+      letter-spacing: 0.14em;
       text-transform: uppercase;
     }
+    .ai-panel.region-ap .ai-label { color: var(--ap-gold); }
+    .ai-panel.region-tg .ai-label { color: var(--tg-blue); }
     .groq-badge {
       font-family: 'Fira Code', monospace;
-      font-size: 0.5rem;
+      font-size: 0.48rem;
       color: var(--muted);
-      letter-spacing: 0.1em;
       margin-left: auto;
+      letter-spacing: 0.08em;
     }
     .ai-text {
-      font-size: 0.8rem;
+      font-size: 0.79rem;
       line-height: 1.75;
-      color: #bfb9af;
+      color: #bbb5aa;
       font-style: italic;
     }
 
-    /* ─── CARD ACTIONS ───────────────────────────────────── */
+    /* ── CARD ACTIONS ── */
     .card-actions {
       display: flex;
       gap: 8px;
       margin-top: auto;
       padding-top: 12px;
       border-top: 1px solid var(--border);
+      flex-wrap: wrap;
     }
     .btn {
-      padding: 7px 14px;
+      padding: 6px 13px;
       font-family: 'Fira Code', monospace;
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       letter-spacing: 0.07em;
       text-transform: uppercase;
       border: none;
@@ -421,127 +397,109 @@
       gap: 5px;
       text-decoration: none;
     }
-    .btn-ai {
-      background: var(--amber);
-      color: var(--bg);
-      font-weight: 500;
-    }
-    .btn-ai:hover:not(:disabled) { background: var(--amber-lt); }
-    .btn-ai:disabled {
-      background: var(--amber-dk);
-      color: #333;
-      cursor: not-allowed;
-    }
-    .btn-read {
-      background: var(--surface2);
-      color: var(--sub);
-      border: 1px solid var(--border);
-    }
-    .btn-read:hover { color: var(--text); border-color: var(--sub); }
+    .btn-ai { background:var(--saffron); color:var(--bg); font-weight:500; }
+    .btn-ai:hover:not(:disabled) { background:var(--saffron-lt); }
+    .btn-ai:disabled { background:var(--saffron-dk); color:#333; cursor:not-allowed; }
+    .btn-ai.region-ap { background:var(--ap-gold); color:#111; }
+    .btn-ai.region-ap:hover:not(:disabled) { background:#ffe57a; }
+    .btn-ai.region-tg { background:var(--tg-blue); color:#fff; }
+    .btn-ai.region-tg:hover:not(:disabled) { background:#6ab4ff; }
+    .btn-read { background:var(--surface2); color:var(--sub); border:1px solid var(--border); }
+    .btn-read:hover { color:var(--text); border-color:var(--sub); }
 
-    /* ─── SKELETON LOADER ────────────────────────────────── */
+    /* ── SKELETON ── */
     #skeleton-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(355px, 1fr));
       gap: 1px;
       background: var(--border);
       border: 1px solid var(--border);
     }
-    .skel-card {
-      background: var(--surface);
-      padding: 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    .skel-card { background:var(--surface); padding:22px; display:flex; flex-direction:column; gap:12px; }
     .skel {
       border-radius: 2px;
-      background: linear-gradient(90deg, #111722 25%, #161e2a 50%, #111722 75%);
+      background: linear-gradient(90deg, #0f1520 25%, #141c2c 50%, #0f1520 75%);
       background-size: 200% 100%;
       animation: shimmer 1.6s infinite;
     }
-    @keyframes shimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-    /* ─── ERROR / EMPTY ──────────────────────────────────── */
+    /* ── ERROR / EMPTY ── */
     .state-msg {
       padding: 80px 40px;
       text-align: center;
       font-family: 'Fira Code', monospace;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: var(--muted);
-      letter-spacing: 0.05em;
-      line-height: 2;
+      letter-spacing: 0.04em;
+      line-height: 2.2;
     }
-    .state-msg .icon { font-size: 2rem; display: block; margin-bottom: 12px; }
+    .state-msg .icon { font-size: 2rem; display:block; margin-bottom:12px; }
 
-    /* ─── SPINNER ────────────────────────────────────────── */
-    .spin { display: inline-block; animation: rot 0.8s linear infinite; }
-    @keyframes rot { to { transform: rotate(360deg); } }
+    /* ── SPINNER ── */
+    .spin { display:inline-block; animation:rot 0.8s linear infinite; }
+    @keyframes rot { to { transform:rotate(360deg); } }
 
-    /* ─── TOAST ──────────────────────────────────────────── */
-    #toast {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--amber);
-      color: var(--text);
+    /* ── FEED SELECTOR NOTICE ── */
+    .feed-notice {
       font-family: 'Fira Code', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.05em;
-      padding: 10px 18px;
-      z-index: 9999;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.25s;
-      pointer-events: none;
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      padding: 6px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    #toast.show {
-      opacity: 1;
-      transform: translateY(0);
+    .feed-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom:24px; right:24px;
+      background: var(--surface2); border:1px solid var(--border);
+      border-left: 3px solid var(--saffron);
+      color: var(--text); font-family:'Fira Code',monospace;
+      font-size: 0.62rem; letter-spacing:0.04em;
+      padding: 10px 16px; z-index:9999;
+      opacity:0; transform:translateY(8px);
+      transition: all 0.25s; pointer-events:none;
     }
+    #toast.show { opacity:1; transform:translateY(0); }
 
-    /* ─── SCROLLBAR ──────────────────────────────────────── */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width:5px; height:5px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--muted); }
 
-    /* ─── RESPONSIVE ─────────────────────────────────────── */
-    @media (max-width: 700px) {
-      .mast-inner { padding: 14px 16px 0; }
-      #main { padding: 20px 16px; }
-      .brand { font-size: 1.7rem; }
-      .datestamp { display: none; }
-      #grid, #skeleton-grid { grid-template-columns: 1fr; }
-      .key-inner { flex-wrap: wrap; }
+    /* ── RESPONSIVE ── */
+    @media(max-width:680px){
+      .mast-inner { padding:12px 16px 0; }
+      #main { padding:18px 14px; }
+      .brand { font-size:1.7rem; }
+      .datestamp { display:none; }
+      #grid, #skeleton-grid { grid-template-columns:1fr; }
+      .key-inner { flex-wrap:wrap; }
     }
   </style>
 
 </head>
-
 <body>
 
-<!-- ══════════════════════════════════════════════════════════
-     MASTHEAD
-═════════════════════════════════════════════════════════════ -->
+<!-- ══════════ MASTHEAD ══════════ -->
 
 <div id="masthead">
   <div class="mast-inner">
+    <div class="mast-top">
+      <div class="brand-wrap">
+        <div class="tricolor-bar"></div>
+        <div class="brand">BRIEF<span class="dot">.</span></div>
+      </div>
 
 ```
-<div class="mast-top">
-  <div class="brand">BRIEF<span class="dot">.</span></div>
-
   <div class="live-indicator">
-    <div class="live-dot"></div>
-    Live
+    <div class="live-dot"></div> Live
   </div>
-
   <div class="datestamp" id="datestamp"></div>
 
   <div class="mast-right">
@@ -550,45 +508,37 @@
   </div>
 </div>
 
-<!-- Category tabs -->
+<!-- Tabs -->
 <div class="tabs" id="tabs"></div>
 ```
 
   </div>
 
-  <!-- API Key Drawer -->
+  <!-- Key drawer -->
 
   <div id="key-drawer">
     <div class="key-inner">
-      <span class="key-label">▸ Groq API Key:</span>
-      <input
-        type="password"
-        id="groq-key-input"
-        placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxxxx"
-        autocomplete="off"
-        spellcheck="false"
-      />
-      <button class="btn-save-key" onclick="saveKey()">Save Key</button>
+      <span class="key-label">▸ Groq API Key (free at console.groq.com):</span>
+      <input type="password" id="groq-key-input"
+             placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxxxx"
+             autocomplete="off" spellcheck="false" />
+      <button class="btn-save-key" onclick="saveKey()">Save</button>
       <button class="btn-clear-key" onclick="clearKey()">Clear</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     MAIN CONTENT
-═════════════════════════════════════════════════════════════ -->
+<!-- ══════════ MAIN ══════════ -->
 
 <div id="main">
-  <!-- Section header -->
   <div class="sec-header">
-    <span class="sec-icon" id="sec-icon">◈</span>
-    <div class="sec-title" id="sec-title">Business &amp; Finance</div>
+    <span class="sec-icon" id="sec-icon">🇮🇳</span>
+    <div class="sec-title" id="sec-title">India</div>
     <div class="sec-rule"></div>
-    <div class="sec-meta" id="sec-meta"></div>
-    <button class="btn-refresh" id="btn-refresh" onclick="refreshCategory()">↻ Refresh</button>
+    <div id="feed-info" class="sec-source"></div>
+    <div id="sec-meta" class="sec-meta"></div>
+    <button class="btn-refresh" onclick="refreshCategory()">↻ Refresh</button>
   </div>
-
-  <!-- Article grid / states -->
 
   <div id="content"></div>
 </div>
@@ -597,39 +547,110 @@
 
 <div id="toast"></div>
 
-<!-- ══════════════════════════════════════════════════════════
-     SCRIPT
-═════════════════════════════════════════════════════════════ -->
+<!-- ══════════ SCRIPT ══════════ -->
 
 <script>
-/* ── CATEGORIES ─────────────────────────────────────────── */
+/* ── CATEGORIES with multiple fallback feeds ──────────── */
 const CATS = [
-  { id:"business", label:"Business & Finance", icon:"◈", feed:"https://feeds.bbci.co.uk/news/business/rss.xml" },
-  { id:"tech",     label:"Technology",          icon:"◉", feed:"https://feeds.bbci.co.uk/news/technology/rss.xml" },
-  { id:"world",    label:"World & Politics",    icon:"◎", feed:"https://feeds.bbci.co.uk/news/world/rss.xml" },
-  { id:"sports",   label:"Sports",              icon:"◆", feed:"https://feeds.bbci.co.uk/sport/rss.xml" },
-  { id:"health",   label:"Health",              icon:"◇", feed:"https://feeds.bbci.co.uk/news/health/rss.xml" },
-  { id:"ent",      label:"Entertainment",       icon:"◑", feed:"https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml" },
+  {
+    id: "india", label: "India", icon: "🇮🇳", region: "india",
+    tagClass: "tag-india",
+    feeds: [
+      { url: "https://timesofindia.indiatimes.com/rssfeedstopstories.cms",       name: "Times of India" },
+      { url: "https://feeds.feedburner.com/ndtvnews-top-stories",                 name: "NDTV" },
+      { url: "https://www.thehindu.com/feeder/default.rss",                       name: "The Hindu" },
+    ]
+  },
+  {
+    id: "ap", label: "Andhra Pradesh", icon: "📍", region: "ap",
+    tagClass: "tag-ap",
+    feeds: [
+      { url: "https://sakshipost.com/feed",                                       name: "Sakshi Post" },
+      { url: "https://www.thehansindia.com/andhra-pradesh/feed",                  name: "Hans India AP" },
+      { url: "https://www.deccanchronicle.com/rss",                               name: "Deccan Chronicle" },
+    ]
+  },
+  {
+    id: "tg", label: "Telangana", icon: "🏛", region: "tg",
+    tagClass: "tag-tg",
+    feeds: [
+      { url: "https://telanganatoday.com/feed",                                   name: "Telangana Today" },
+      { url: "https://www.thehansindia.com/telangana/feed",                       name: "Hans India TG" },
+      { url: "https://www.deccanchronicle.com/rss",                               name: "Deccan Chronicle" },
+    ]
+  },
+  {
+    id: "hyderabad", label: "Hyderabad", icon: "🕌", region: "tg",
+    tagClass: "tag-tg",
+    feeds: [
+      { url: "https://www.thehansindia.com/hyderabad/feed",                       name: "Hans India HYD" },
+      { url: "https://telanganatoday.com/hyderabad/feed",                         name: "Telangana Today HYD" },
+      { url: "https://www.deccanchronicle.com/nation/in-other-news/rss",          name: "Deccan Chronicle" },
+    ]
+  },
+  {
+    id: "markets", label: "Markets & BSE/NSE", icon: "📈", region: "india",
+    tagClass: "tag-biz",
+    feeds: [
+      { url: "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms", name: "Economic Times Markets" },
+      { url: "https://economictimes.indiatimes.com/rssfeedstopstories.cms",       name: "Economic Times" },
+      { url: "https://www.thehindubusinessline.com/feeder/default.rss",           name: "Business Line" },
+    ]
+  },
+  {
+    id: "sports", label: "Cricket & Sports", icon: "🏏", region: "india",
+    tagClass: "tag-sport",
+    feeds: [
+      { url: "https://feeds.feedburner.com/ndtvnews-sports",                      name: "NDTV Sports" },
+      { url: "https://timesofindia.indiatimes.com/rss/4719161.cms",               name: "TOI Sports" },
+      { url: "https://feeds.bbci.co.uk/sport/cricket/rss.xml",                    name: "BBC Cricket" },
+    ]
+  },
+  {
+    id: "tech", label: "Technology", icon: "💻", region: "india",
+    tagClass: "tag-tech",
+    feeds: [
+      { url: "https://feeds.feedburner.com/ndtvnews-gadgets-news",                name: "NDTV Gadgets" },
+      { url: "https://feeds.bbci.co.uk/news/technology/rss.xml",                  name: "BBC Tech" },
+    ]
+  },
+  {
+    id: "health", label: "Health", icon: "🏥", region: "india",
+    tagClass: "tag-health",
+    feeds: [
+      { url: "https://feeds.feedburner.com/ndtvnews-health",                      name: "NDTV Health" },
+      { url: "https://feeds.bbci.co.uk/news/health/rss.xml",                      name: "BBC Health" },
+    ]
+  },
+  {
+    id: "world", label: "World", icon: "🌍", region: "world",
+    tagClass: "tag-world",
+    feeds: [
+      { url: "https://feeds.feedburner.com/ndtvnews-world-news",                  name: "NDTV World" },
+      { url: "https://feeds.bbci.co.uk/news/world/rss.xml",                       name: "BBC World" },
+    ]
+  },
 ];
 
-/* ── STATE ──────────────────────────────────────────────── */
-const RSS2JSON   = "https://api.rss2json.com/v1/api.json?rss_url=";
-const GROQ_URL   = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_MODEL = "llama-3.3-70b-versatile";
+/* ── CONSTANTS ───────────────────────────────────────── */
+const RSS2JSON    = "https://api.rss2json.com/v1/api.json?rss_url=";
+const GROQ_URL    = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODEL  = "llama-3.3-70b-versatile";
 const STORAGE_KEY = "brief_groq_key";
 
-let activeId   = "business";
-let cache      = {};          // catId → articles[]
-let summaries  = {};          // articleId → text
-let busy       = new Set();   // articleIds currently being summarised
-let keyDrawerOpen = false;
+/* ── STATE ───────────────────────────────────────────── */
+let activeId   = "india";
+let cache      = {};        // id → { items, sourceName }
+let summaries  = {};        // encodedId → text
+let busy       = new Set();
+let keyOpen    = false;
 
-/* ── INIT ───────────────────────────────────────────────── */
+/* ── INIT ────────────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", () => {
   setDatestamp();
   buildTabs();
   loadKey();
-  selectCategory("business");
+  selectCategory("india");
   setInterval(setDatestamp, 1000);
 });
 
@@ -637,19 +658,19 @@ function setDatestamp() {
   const d = new Date();
   document.getElementById("datestamp").textContent =
     d.toLocaleDateString("en-IN", { weekday:"short", day:"numeric", month:"short", year:"numeric" }) +
-    " · " + d.toLocaleTimeString("en-IN", { hour:"2-digit", minute:"2-digit", second:"2-digit" });
+    "  ·  " +
+    d.toLocaleTimeString("en-IN", { hour:"2-digit", minute:"2-digit", second:"2-digit", hour12:true });
 }
 
-/* ── TABS ───────────────────────────────────────────────── */
+/* ── TABS ────────────────────────────────────────────── */
 function buildTabs() {
-  const el = document.getElementById("tabs");
-  el.innerHTML = CATS.map(c => `
+  document.getElementById("tabs").innerHTML = CATS.map(c => `
     <button class="tab${c.id === activeId ? " active" : ""}"
-            onclick="selectCategory('${c.id}')"
-            id="tab-${c.id}">
+            id="tab-${c.id}"
+            data-region="${c.region}"
+            onclick="selectCategory('${c.id}')">
       ${c.icon} ${c.label}
-    </button>
-  `).join("");
+    </button>`).join("");
 }
 
 function setActiveTab(id) {
@@ -658,15 +679,16 @@ function setActiveTab(id) {
   if (t) t.classList.add("active");
 }
 
-/* ── CATEGORY SELECTION ─────────────────────────────────── */
+/* ── CATEGORY SELECT ─────────────────────────────────── */
 function selectCategory(id) {
   activeId = id;
   const cat = CATS.find(c => c.id === id);
-  document.getElementById("sec-icon").textContent  = cat.icon;
-  document.getElementById("sec-title").innerHTML   = cat.label;
+  document.getElementById("sec-icon").textContent = cat.icon;
+  document.getElementById("sec-title").textContent = cat.label;
   setActiveTab(id);
+
   if (cache[id]) {
-    renderGrid(cache[id]);
+    renderGrid(cache[id].items, cache[id].sourceName, cat);
   } else {
     fetchNews(id);
   }
@@ -677,45 +699,52 @@ function refreshCategory() {
   fetchNews(activeId);
 }
 
-/* ── FETCH RSS ──────────────────────────────────────────── */
+/* ── FETCH RSS (with fallbacks) ──────────────────────── */
 async function fetchNews(catId) {
   const cat = CATS.find(c => c.id === catId);
   showSkeleton();
-  document.getElementById("sec-meta").textContent = "Loading…";
+  document.getElementById("sec-meta").textContent = "";
+  document.getElementById("feed-info").textContent = "Searching feeds…";
 
-  try {
-    const res  = await fetch(`${RSS2JSON}${encodeURIComponent(cat.feed)}`);
-    const data = await res.json();
-    if (data.status !== "ok") throw new Error("Feed error");
+  for (const feed of cat.feeds) {
+    try {
+      const res  = await fetch(`${RSS2JSON}${encodeURIComponent(feed.url)}&count=15`);
+      const data = await res.json();
+      if (data.status === "ok" && data.items && data.items.length > 0) {
+        const items = data.items.slice(0, 12);
+        cache[catId] = { items, sourceName: feed.name };
+        if (catId === activeId) renderGrid(items, feed.name, cat);
+        return; // success
+      }
+    } catch { /* try next feed */ }
+  }
 
-    const items = data.items.slice(0, 12);
-    cache[catId] = items;
-
-    if (catId === activeId) renderGrid(items);
-  } catch(e) {
-    if (catId === activeId) showError("Could not load feed. Check your connection or try Refresh.");
+  // All failed
+  if (catId === activeId) {
+    document.getElementById("feed-info").textContent = "";
+    showError("Could not load any feed for this category.<br>Check your connection or try Refresh.");
   }
 }
 
-/* ── RENDER GRID ────────────────────────────────────────── */
-function renderGrid(articles) {
-  const cat  = CATS.find(c => c.id === activeId);
-  const meta = document.getElementById("sec-meta");
-  meta.textContent = `${articles.length} stories`;
+/* ── RENDER ──────────────────────────────────────────── */
+function renderGrid(articles, sourceName, cat) {
+  document.getElementById("feed-info").textContent = "via " + sourceName;
+  document.getElementById("sec-meta").textContent  = articles.length + " stories";
 
-  const content = document.getElementById("content");
-  content.innerHTML = `<div id="grid">${articles.map((a, i) => cardHTML(a, i, cat)).join("")}</div>`;
+  document.getElementById("content").innerHTML =
+    `<div id="grid">${articles.map((a, i) => cardHTML(a, i, cat)).join("")}</div>`;
 }
 
 function cardHTML(a, i, cat) {
-  const id   = encodeId(a.guid || a.link);
-  const desc = stripHtml(a.description || "");
-  const date = formatDate(a.pubDate);
-  const sum  = summaries[id];
-  const isBusy = busy.has(id);
+  const id    = encodeId(a.guid || a.link);
+  const desc  = stripHtml(a.description || "");
+  const date  = formatDate(a.pubDate);
+  const sum   = summaries[id];
+  const isBsy = busy.has(id);
+  const reg   = cat.region;
 
   const aiPanel = sum ? `
-    <div class="ai-panel">
+    <div class="ai-panel region-${reg}">
       <div class="ai-header">
         <span class="ai-label">⚡ Groq Intelligence Brief</span>
         <span class="groq-badge">llama-3.3-70b</span>
@@ -723,63 +752,70 @@ function cardHTML(a, i, cat) {
       <div class="ai-text">${escHtml(sum)}</div>
     </div>` : "";
 
-  const aiBtnLabel = isBusy
+  const aiBtnLabel = isBsy
     ? `<span class="spin">◌</span> Analysing…`
-    : sum
-      ? `↻ Re-Analyse`
-      : `⚡ AI Brief`;
+    : sum ? `↻ Re-Analyse` : `⚡ AI Brief`;
 
   return `
-    <div class="card" style="animation-delay:${i * 0.04}s">
+    <div class="card region-${reg}" style="animation-delay:${i * 0.04}s">
       <div class="card-meta">
-        <span class="cat-tag">${cat.icon} ${cat.label}</span>
+        <span class="source-tag ${cat.tagClass}">${cat.icon} ${cat.label}</span>
+        ${a.author ? `<span class="outlet-name">${escHtml(a.author.slice(0,30))}</span>` : ""}
         <span class="pub-date">${date}</span>
       </div>
       <div class="headline">${escHtml(a.title)}</div>
       <div class="desc">${escHtml(desc)}</div>
       ${aiPanel}
       <div class="card-actions">
-        <button class="btn btn-ai"
+        <button class="btn btn-ai region-${reg}"
                 id="btn-${id}"
-                ${isBusy ? "disabled" : ""}
-                onclick="summarise('${id}')">
+                ${isBsy ? "disabled" : ""}
+                onclick="handleSummarise('${id}')">
           ${aiBtnLabel}
         </button>
-        <a class="btn btn-read" href="${a.link}" target="_blank" rel="noopener noreferrer">
+        <a class="btn btn-read" href="${escHtml(a.link)}" target="_blank" rel="noopener">
           Read Full →
         </a>
       </div>
     </div>`;
 }
 
-/* ── GROQ SUMMARISE ─────────────────────────────────────── */
-async function summarise(encodedId) {
+/* ── GROQ SUMMARISE ──────────────────────────────────── */
+async function handleSummarise(encodedId) {
   const key = getKey();
   if (!key) {
-    toast("⚠ Please add your Groq API key first (⚙ Groq Key button)");
+    toast("⚠ Add your free Groq API key first");
     toggleKeyDrawer(true);
     return;
   }
 
-  // Find article
-  const catArticles = cache[activeId] || [];
-  const article = catArticles.find(a => encodeId(a.guid || a.link) === encodedId);
+  const cat      = CATS.find(c => c.id === activeId);
+  const articles = cache[activeId]?.items || [];
+  const article  = articles.find(a => encodeId(a.guid || a.link) === encodedId);
   if (!article) return;
 
   busy.add(encodedId);
-  updateBtn(encodedId, true);
+  updateBtnLoading(encodedId, true);
 
-  const body = stripHtml(article.description || article.content || "");
-  const prompt = `You are a senior news analyst. Analyse this article and write exactly 3 sharp sentences:
-Sentence 1 — Core fact: What happened?
-Sentence 2 — Significance: Why does this matter?
-Sentence 3 — Forward look: What should we watch next?
+  const bodyText = stripHtml(article.description || article.content || "").slice(0, 900);
 
-Rules: Be precise. Be insightful. No labels. No preamble. Just 3 sentences.
+  const regionContext = {
+    ap: "This is Andhra Pradesh regional news from India.",
+    tg: "This is Telangana regional news from India.",
+    india: "This is national Indian news.",
+    world: "This is international world news.",
+  }[cat.region] || "";
+
+  const prompt = `You are a sharp senior news analyst. ${regionContext}
+
+Analyse the article below and write exactly 3 precise sentences (no labels, no preamble):
+1. Core fact — what happened?
+2. Significance — why does it matter to Indian readers?
+3. Watch next — what should one monitor going forward?
 
 TITLE: ${article.title}
 DATE: ${article.pubDate}
-CONTENT: ${body.slice(0, 800)}`;
+CONTENT: ${bodyText}`;
 
   try {
     const res = await fetch(GROQ_URL, {
@@ -790,33 +826,30 @@ CONTENT: ${body.slice(0, 800)}`;
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
-        messages: [{ role:"user", content: prompt }],
+        messages: [{ role: "user", content: prompt }],
         max_tokens: 300,
-        temperature: 0.7,
+        temperature: 0.65,
       }),
     });
 
-    if (res.status === 401) throw new Error("Invalid API key");
-    if (!res.ok) throw new Error(`API error ${res.status}`);
+    if (res.status === 401) throw new Error("Invalid Groq API key");
+    if (!res.ok) throw new Error("Groq API error " + res.status);
 
     const data = await res.json();
     const text = data.choices?.[0]?.message?.content?.trim() || "Summary unavailable.";
     summaries[encodedId] = text;
-    toast("✓ AI brief generated");
-  } catch(e) {
+    toast("✓ AI brief ready");
+  } catch (e) {
     summaries[encodedId] = null;
-    toast("✗ " + (e.message || "Failed to generate summary"));
-    if (e.message === "Invalid API key") {
-      updateKeyStatus(false);
-    }
+    toast("✗ " + (e.message || "Failed"));
+    if (e.message?.includes("Invalid")) updateKeyStatus(false);
   } finally {
     busy.delete(encodedId);
-    // Re-render current grid to reflect summary
-    if (cache[activeId]) renderGrid(cache[activeId]);
+    if (cache[activeId]) renderGrid(cache[activeId].items, cache[activeId].sourceName, CATS.find(c => c.id === activeId));
   }
 }
 
-function updateBtn(id, loading) {
+function updateBtnLoading(id, loading) {
   const btn = document.getElementById("btn-" + id);
   if (!btn) return;
   btn.disabled = loading;
@@ -825,74 +858,58 @@ function updateBtn(id, loading) {
     : `⚡ AI Brief`;
 }
 
-/* ── SKELETON ───────────────────────────────────────────── */
+/* ── UI STATES ───────────────────────────────────────── */
 function showSkeleton() {
-  const skels = Array.from({length: 6}, () => `
-    <div class="skel-card">
-      <div class="skel" style="height:8px; width:40%"></div>
-      <div class="skel" style="height:16px; width:92%"></div>
-      <div class="skel" style="height:16px; width:76%"></div>
-      <div class="skel" style="height:11px; width:65%"></div>
-      <div class="skel" style="height:11px; width:80%"></div>
-      <div class="skel" style="height:11px; width:50%"></div>
-    </div>`).join("");
-  document.getElementById("content").innerHTML = `<div id="skeleton-grid">${skels}</div>`;
-  document.getElementById("sec-meta").textContent = "";
+  document.getElementById("content").innerHTML =
+    `<div id="skeleton-grid">${Array.from({length:6}, () => `
+      <div class="skel-card">
+        <div class="skel" style="height:7px;width:38%"></div>
+        <div class="skel" style="height:15px;width:93%"></div>
+        <div class="skel" style="height:15px;width:75%"></div>
+        <div class="skel" style="height:11px;width:65%"></div>
+        <div class="skel" style="height:11px;width:80%"></div>
+        <div class="skel" style="height:11px;width:52%"></div>
+      </div>`).join("")}</div>`;
 }
 
 function showError(msg) {
-  document.getElementById("content").innerHTML = `
-    <div class="state-msg">
-      <span class="icon">⚠</span>
-      ${escHtml(msg)}
-    </div>`;
+  document.getElementById("content").innerHTML =
+    `<div class="state-msg"><span class="icon">⚠</span>${msg}</div>`;
 }
 
-/* ── API KEY MGMT ───────────────────────────────────────── */
+/* ── API KEY ─────────────────────────────────────────── */
 function loadKey() {
   const k = localStorage.getItem(STORAGE_KEY) || "";
-  if (k) {
-    document.getElementById("groq-key-input").value = k;
-    updateKeyStatus(true);
-  } else {
-    updateKeyStatus(false);
-  }
+  if (k) { document.getElementById("groq-key-input").value = k; updateKeyStatus(true); }
+  else   { updateKeyStatus(false); }
 }
-
-function getKey() {
-  return localStorage.getItem(STORAGE_KEY) || "";
-}
-
+function getKey() { return localStorage.getItem(STORAGE_KEY) || ""; }
 function saveKey() {
-  const val = document.getElementById("groq-key-input").value.trim();
-  if (!val) { toast("Please enter a valid Groq API key"); return; }
-  localStorage.setItem(STORAGE_KEY, val);
+  const v = document.getElementById("groq-key-input").value.trim();
+  if (!v) { toast("Enter a valid key"); return; }
+  localStorage.setItem(STORAGE_KEY, v);
   updateKeyStatus(true);
   toggleKeyDrawer(false);
-  toast("✓ Groq API key saved");
+  toast("✓ Groq key saved");
 }
-
 function clearKey() {
   localStorage.removeItem(STORAGE_KEY);
   document.getElementById("groq-key-input").value = "";
   updateKeyStatus(false);
-  toast("API key cleared");
+  toast("Key cleared");
 }
-
-function updateKeyStatus(hasKey) {
+function updateKeyStatus(has) {
   const el = document.getElementById("key-status");
-  el.className = hasKey ? "has-key" : "no-key";
-  el.textContent = hasKey ? "✓ Key Active" : "No API Key";
+  el.className = has ? "has-key" : "no-key";
+  el.textContent = has ? "✓ Key Active" : "No API Key";
+}
+function toggleKeyDrawer(force) {
+  keyOpen = force !== undefined ? force : !keyOpen;
+  document.getElementById("key-drawer").classList.toggle("open", keyOpen);
+  if (keyOpen) document.getElementById("groq-key-input").focus();
 }
 
-function toggleKeyDrawer(forceOpen) {
-  const drawer = document.getElementById("key-drawer");
-  keyDrawerOpen = forceOpen !== undefined ? forceOpen : !keyDrawerOpen;
-  drawer.classList.toggle("open", keyDrawerOpen);
-  if (keyDrawerOpen) document.getElementById("groq-key-input").focus();
-}
-
-/* ── TOAST ──────────────────────────────────────────────── */
+/* ── TOAST ───────────────────────────────────────────── */
 let toastTimer;
 function toast(msg) {
   const el = document.getElementById("toast");
@@ -902,36 +919,16 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove("show"), 3000);
 }
 
-/* ── UTILS ──────────────────────────────────────────────── */
-function stripHtml(html) {
-  return (html || "").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
-}
+/* ── UTILS ───────────────────────────────────────────── */
+function stripHtml(h) { return (h||"").replace(/<[^>]*>/g,"").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").trim(); }
+function escHtml(s)   { return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function encodeId(s)  { try { return btoa(unescape(encodeURIComponent(s||Math.random()))).replace(/[^a-zA-Z0-9]/g,"").slice(0,24); } catch{ return Math.random().toString(36).slice(2); } }
+function formatDate(s){ try{ return new Date(s).toLocaleDateString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",hour12:true}); }catch{return "";} }
 
-function escHtml(str) {
-  return (str || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-function encodeId(str) {
-  // Create a safe CSS/JS id from url/guid
-  return btoa(unescape(encodeURIComponent(str || Math.random().toString()))).replace(/[^a-zA-Z0-9]/g, "").slice(0, 24);
-}
-
-function formatDate(str) {
-  try {
-    return new Date(str).toLocaleDateString("en-IN", {
-      day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
-    });
-  } catch { return ""; }
-}
-
-// Allow Enter key in API key input
+/* ── KEYBOARD ────────────────────────────────────────── */
 document.addEventListener("keydown", e => {
-  if (e.key === "Enter" && document.activeElement.id === "groq-key-input") saveKey();
-  if (e.key === "Escape" && keyDrawerOpen) toggleKeyDrawer(false);
+  if (e.key==="Enter" && document.activeElement.id==="groq-key-input") saveKey();
+  if (e.key==="Escape" && keyOpen) toggleKeyDrawer(false);
 });
 </script>
 

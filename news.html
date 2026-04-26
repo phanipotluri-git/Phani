@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BRIEF. — AI News Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&family=Fira+Code:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── RESET & TOKENS ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #07090d;
+      --surface:  #0e1118;
+      --surface2: #131820;
+      --border:   #1c2230;
+      --amber:    #f0a500;
+      --amber-dk: #8a5e00;
+      --amber-lt: #ffc845;
+      --text:     #ddd6c8;
+      --sub:      #8a8278;
+      --muted:    #4a4640;
+      --green:    #3ddc84;
+      --red:      #ff5c5c;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      /* Subtle grid texture */
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-attachment: fixed;
+    }
+
+    /* ─── MASTHEAD ───────────────────────────────────────── */
+    #masthead {
+      background: rgba(7,9,13,0.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .mast-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 18px 36px 0;
+    }
+
+    .mast-top {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      font-family: 'Fraunces', serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -2px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .brand .dot { color: var(--amber); }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.6rem;
+      color: var(--green);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .live-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .datestamp {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.62rem;
+      color: var(--sub);
+      letter-spacing: 0.08em;
+    }
+
+    .mast-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ─── API KEY SETUP ──────────────────────────────────── */
+    #key-status {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 2px;
+    }
+    #key-status.no-key {
+      background: rgba(255,92,92,0.12);
+      color: var(--red);
+      border: 1px solid rgba(255,92,92,0.3);
+    }
+    #key-status.has-key {
+      background: rgba(61,220,132,0.1);
+      color: var(--green);
+      border: 1px solid rgba(61,220,132,0.25);
+    }
+
+    #key-toggle {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      background: var(--surface2);
+      color: var(--amber);
+      border: 1px solid var(--amber-dk);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    #key-toggle:hover {
+      background: var(--amber);
+      color: var(--bg);
+    }
+
+    /* Key drawer */
+    #key-drawer {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease, padding 0.3s;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    #key-drawer.open {
+      max-height: 80px;
+    }
+    .key-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 12px 36px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .key-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.62rem;
+      color: var(--amber);
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+    #groq-key-input {
+      flex: 1;
+      max-width: 480px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.7rem;
+      padding: 7px 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #groq-key-input:focus { border-color: var(--amber); }
+    #groq-key-input::placeholder { color: var(--muted); }
+    .btn-save-key {
+      padding: 7px 18px;
+      background: var(--amber);
+      color: var(--bg);
+      border: none;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.15s;
+    }
+    .btn-save-key:hover { background: var(--amber-lt); }
+    .btn-clear-key {
+      padding: 7px 12px;
+      background: transparent;
+      color: var(--red);
+      border: 1px solid rgba(255,92,92,0.3);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-clear-key:hover { background: rgba(255,92,92,0.1); }
+
+    /* ─── TABS ───────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tab {
+      padding: 10px 22px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.63rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+      position: relative;
+      bottom: -1px;
+    }
+    .tab:hover { color: var(--sub); }
+    .tab.active {
+      color: var(--amber);
+      border-bottom-color: var(--amber);
+    }
+
+    /* ─── MAIN ───────────────────────────────────────────── */
+    #main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 36px;
+    }
+
+    /* Section header */
+    .sec-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .sec-icon {
+      font-size: 1rem;
+      color: var(--amber);
+    }
+    .sec-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.9rem;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+    .sec-rule {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
+    .sec-meta {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+    .btn-refresh {
+      padding: 5px 12px;
+      background: var(--surface2);
+      color: var(--sub);
+      border: 1px solid var(--border);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-refresh:hover { color: var(--amber); border-color: var(--amber-dk); }
+
+    /* ─── GRID ───────────────────────────────────────────── */
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    /* ─── CARD ───────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: background 0.15s;
+      animation: cardIn 0.35s ease backwards;
+    }
+    .card:hover { background: var(--surface2); }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .cat-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.55rem;
+      color: var(--amber);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--amber-dk);
+      padding: 1px 6px;
+    }
+    .pub-date {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.55rem;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .headline {
+      font-family: 'Fraunces', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.38;
+      color: var(--text);
+    }
+
+    .desc {
+      font-size: 0.78rem;
+      color: var(--sub);
+      line-height: 1.65;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ─── AI SUMMARY PANEL ───────────────────────────────── */
+    .ai-panel {
+      background: #050710;
+      border: 1px solid var(--amber-dk);
+      border-left: 3px solid var(--amber);
+      padding: 14px 16px;
+      animation: fadeSlide 0.3s ease;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .ai-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .ai-label {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.55rem;
+      color: var(--amber);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .groq-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.5rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      margin-left: auto;
+    }
+    .ai-text {
+      font-size: 0.8rem;
+      line-height: 1.75;
+      color: #bfb9af;
+      font-style: italic;
+    }
+
+    /* ─── CARD ACTIONS ───────────────────────────────────── */
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .btn {
+      padding: 7px 14px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+    }
+    .btn-ai {
+      background: var(--amber);
+      color: var(--bg);
+      font-weight: 500;
+    }
+    .btn-ai:hover:not(:disabled) { background: var(--amber-lt); }
+    .btn-ai:disabled {
+      background: var(--amber-dk);
+      color: #333;
+      cursor: not-allowed;
+    }
+    .btn-read {
+      background: var(--surface2);
+      color: var(--sub);
+      border: 1px solid var(--border);
+    }
+    .btn-read:hover { color: var(--text); border-color: var(--sub); }
+
+    /* ─── SKELETON LOADER ────────────────────────────────── */
+    #skeleton-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .skel-card {
+      background: var(--surface);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .skel {
+      border-radius: 2px;
+      background: linear-gradient(90deg, #111722 25%, #161e2a 50%, #111722 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s infinite;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ─── ERROR / EMPTY ──────────────────────────────────── */
+    .state-msg {
+      padding: 80px 40px;
+      text-align: center;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      line-height: 2;
+    }
+    .state-msg .icon { font-size: 2rem; display: block; margin-bottom: 12px; }
+
+    /* ─── SPINNER ────────────────────────────────────────── */
+    .spin { display: inline-block; animation: rot 0.8s linear infinite; }
+    @keyframes rot { to { transform: rotate(360deg); } }
+
+    /* ─── TOAST ──────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--amber);
+      color: var(--text);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+      padding: 10px 18px;
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.25s;
+      pointer-events: none;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── SCROLLBAR ──────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .mast-inner { padding: 14px 16px 0; }
+      #main { padding: 20px 16px; }
+      .brand { font-size: 1.7rem; }
+      .datestamp { display: none; }
+      #grid, #skeleton-grid { grid-template-columns: 1fr; }
+      .key-inner { flex-wrap: wrap; }
+    }
+  </style>
+
+</head>
+
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     MASTHEAD
+═════════════════════════════════════════════════════════════ -->
+
+<div id="masthead">
+  <div class="mast-inner">
+
+```
+<div class="mast-top">
+  <div class="brand">BRIEF<span class="dot">.</span></div>
+
+  <div class="live-indicator">
+    <div class="live-dot"></div>
+    Live
+  </div>
+
+  <div class="datestamp" id="datestamp"></div>
+
+  <div class="mast-right">
+    <div id="key-status" class="no-key">No API Key</div>
+    <button id="key-toggle" onclick="toggleKeyDrawer()">⚙ Groq Key</button>
+  </div>
+</div>
+
+<!-- Category tabs -->
+<div class="tabs" id="tabs"></div>
+```
+
+  </div>
+
+  <!-- API Key Drawer -->
+
+  <div id="key-drawer">
+    <div class="key-inner">
+      <span class="key-label">▸ Groq API Key:</span>
+      <input
+        type="password"
+        id="groq-key-input"
+        placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxxxx"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button class="btn-save-key" onclick="saveKey()">Save Key</button>
+      <button class="btn-clear-key" onclick="clearKey()">Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN CONTENT
+═════════════════════════════════════════════════════════════ -->
+
+<div id="main">
+  <!-- Section header -->
+  <div class="sec-header">
+    <span class="sec-icon" id="sec-icon">◈</span>
+    <div class="sec-title" id="sec-title">Business &amp; Finance</div>
+    <div class="sec-rule"></div>
+    <div class="sec-meta" id="sec-meta"></div>
+    <button class="btn-refresh" id="btn-refresh" onclick="refreshCategory()">↻ Refresh</button>
+  </div>
+
+  <!-- Article grid / states -->
+
+  <div id="content"></div>
+</div>
+
+<!-- Toast -->
+
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPT
+═════════════════════════════════════════════════════════════ -->
+
+<script>
+/* ── CATEGORIES ─────────────────────────────────────────── */
+const CATS = [
+  { id:"business", label:"Business & Finance", icon:"◈", feed:"https://feeds.bbci.co.uk/news/business/rss.xml" },
+  { id:"tech",     label:"Technology",          icon:"◉", feed:"https://feeds.bbci.co.uk/news/technology/rss.xml" },
+  { id:"world",    label:"World & Politics",    icon:"◎", feed:"https://feeds.bbci.co.uk/news/world/rss.xml" },
+  { id:"sports",   label:"Sports",              icon:"◆", feed:"https://feeds.bbci.co.uk/sport/rss.xml" },
+  { id:"health",   label:"Health",              icon:"◇", feed:"https://feeds.bbci.co.uk/news/health/rss.xml" },
+  { id:"ent",      label:"Entertainment",       icon:"◑", feed:"https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml" },
+];
+
+/* ── STATE ──────────────────────────────────────────────── */
+const RSS2JSON   = "https://api.rss2json.com/v1/api.json?rss_url=";
+const GROQ_URL   = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODEL = "llama-3.3-70b-versatile";
+const STORAGE_KEY = "brief_groq_key";
+
+let activeId   = "business";
+let cache      = {};          // catId → articles[]
+let summaries  = {};          // articleId → text
+let busy       = new Set();   // articleIds currently being summarised
+let keyDrawerOpen = false;
+
+/* ── INIT ───────────────────────────────────────────────── */
+document.addEventListener("DOMContentLoaded", () => {
+  setDatestamp();
+  buildTabs();
+  loadKey();
+  selectCategory("business");
+  setInterval(setDatestamp, 1000);
+});
+
+function setDatestamp() {
+  const d = new Date();
+  document.getElementById("datestamp").textContent =
+    d.toLocaleDateString("en-IN", { weekday:"short", day:"numeric", month:"short", year:"numeric" }) +
+    " · " + d.toLocaleTimeString("en-IN", { hour:"2-digit", minute:"2-digit", second:"2-digit" });
+}
+
+/* ── TABS ───────────────────────────────────────────────── */
+function buildTabs() {
+  const el = document.getElementById("tabs");
+  el.innerHTML = CATS.map(c => `
+    <button class="tab${c.id === activeId ? " active" : ""}"
+            onclick="selectCategory('${c.id}')"
+            id="tab-${c.id}">
+      ${c.icon} ${c.label}
+    </button>
+  `).join("");
+}
+
+function setActiveTab(id) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  const t = document.getElementById("tab-" + id);
+  if (t) t.classList.add("active");
+}
+
+/* ── CATEGORY SELECTION ─────────────────────────────────── */
+function selectCategory(id) {
+  activeId = id;
+  const cat = CATS.find(c => c.id === id);
+  document.getElementById("sec-icon").textContent  = cat.icon;
+  document.getElementById("sec-title").innerHTML   = cat.label;
+  setActiveTab(id);
+  if (cache[id]) {
+    renderGrid(cache[id]);
+  } else {
+    fetchNews(id);
+  }
+}
+
+function refreshCategory() {
+  delete cache[activeId];
+  fetchNews(activeId);
+}
+
+/* ── FETCH RSS ──────────────────────────────────────────── */
+async function fetchNews(catId) {
+  const cat = CATS.find(c => c.id === catId);
+  showSkeleton();
+  document.getElementById("sec-meta").textContent = "Loading…";
+
+  try {
+    const res  = await fetch(`${RSS2JSON}${encodeURIComponent(cat.feed)}`);
+    const data = await res.json();
+    if (data.status !== "ok") throw new Error("Feed error");
+
+    const items = data.items.slice(0, 12);
+    cache[catId] = items;
+
+    if (catId === activeId) renderGrid(items);
+  } catch(e) {
+    if (catId === activeId) showError("Could not load feed. Check your connection or try Refresh.");
+  }
+}
+
+/* ── RENDER GRID ────────────────────────────────────────── */
+function renderGrid(articles) {
+  const cat  = CATS.find(c => c.id === activeId);
+  const meta = document.getElementById("sec-meta");
+  meta.textContent = `${articles.length} stories`;
+
+  const content = document.getElementById("content");
+  content.innerHTML = `<div id="grid">${articles.map((a, i) => cardHTML(a, i, cat)).join("")}</div>`;
+}
+
+function cardHTML(a, i, cat) {
+  const id   = encodeId(a.guid || a.link);
+  const desc = stripHtml(a.description || "");
+  const date = formatDate(a.pubDate);
+  const sum  = summaries[id];
+  const isBusy = busy.has(id);
+
+  const aiPanel = sum ? `
+    <div class="ai-panel">
+      <div class="ai-header">
+        <span class="ai-label">⚡ Groq Intelligence Brief</span>
+        <span class="groq-badge">llama-3.3-70b</span>
+      </div>
+      <div class="ai-text">${escHtml(sum)}</div>
+    </div>` : "";
+
+  const aiBtnLabel = isBusy
+    ? `<span class="spin">◌</span> Analysing…`
+    : sum
+      ? `↻ Re-Analyse`
+      : `⚡ AI Brief`;
+
+  return `
+    <div class="card" style="animation-delay:${i * 0.04}s">
+      <div class="card-meta">
+        <span class="cat-tag">${cat.icon} ${cat.label}</span>
+        <span class="pub-date">${date}</span>
+      </div>
+      <div class="headline">${escHtml(a.title)}</div>
+      <div class="desc">${escHtml(desc)}</div>
+      ${aiPanel}
+      <div class="card-actions">
+        <button class="btn btn-ai"
+                id="btn-${id}"
+                ${isBusy ? "disabled" : ""}
+                onclick="summarise('${id}')">
+          ${aiBtnLabel}
+        </button>
+        <a class="btn btn-read" href="${a.link}" target="_blank" rel="noopener noreferrer">
+          Read Full →
+        </a>
+      </div>
+    </div>`;
+}
+
+/* ── GROQ SUMMARISE ─────────────────────────────────────── */
+async function summarise(encodedId) {
+  const key = getKey();
+  if (!key) {
+    toast("⚠ Please add your Groq API key first (⚙ Groq Key button)");
+    toggleKeyDrawer(true);
+    return;
+  }
+
+  // Find article
+  const catArticles = cache[activeId] || [];
+  const article = catArticles.find(a => encodeId(a.guid || a.link) === encodedId);
+  if (!article) return;
+
+  busy.add(encodedId);
+  updateBtn(encodedId, true);
+
+  const body = stripHtml(article.description || article.content || "");
+  const prompt = `You are a senior news analyst. Analyse this article and write exactly 3 sharp sentences:
+Sentence 1 — Core fact: What happened?
+Sentence 2 — Significance: Why does this matter?
+Sentence 3 — Forward look: What should we watch next?
+
+Rules: Be precise. Be insightful. No labels. No preamble. Just 3 sentences.
+
+TITLE: ${article.title}
+DATE: ${article.pubDate}
+CONTENT: ${body.slice(0, 800)}`;
+
+  try {
+    const res = await fetch(GROQ_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${key}`,
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: [{ role:"user", content: prompt }],
+        max_tokens: 300,
+        temperature: 0.7,
+      }),
+    });
+
+    if (res.status === 401) throw new Error("Invalid API key");
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content?.trim() || "Summary unavailable.";
+    summaries[encodedId] = text;
+    toast("✓ AI brief generated");
+  } catch(e) {
+    summaries[encodedId] = null;
+    toast("✗ " + (e.message || "Failed to generate summary"));
+    if (e.message === "Invalid API key") {
+      updateKeyStatus(false);
+    }
+  } finally {
+    busy.delete(encodedId);
+    // Re-render current grid to reflect summary
+    if (cache[activeId]) renderGrid(cache[activeId]);
+  }
+}
+
+function updateBtn(id, loading) {
+  const btn = document.getElementById("btn-" + id);
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.innerHTML = loading
+    ? `<span class="spin">◌</span> Analysing…`
+    : `⚡ AI Brief`;
+}
+
+/* ── SKELETON ───────────────────────────────────────────── */
+function showSkeleton() {
+  const skels = Array.from({length: 6}, () => `
+    <div class="skel-card">
+      <div class="skel" style="height:8px; width:40%"></div>
+      <div class="skel" style="height:16px; width:92%"></div>
+      <div class="skel" style="height:16px; width:76%"></div>
+      <div class="skel" style="height:11px; width:65%"></div>
+      <div class="skel" style="height:11px; width:80%"></div>
+      <div class="skel" style="height:11px; width:50%"></div>
+    </div>`).join("");
+  document.getElementById("content").innerHTML = `<div id="skeleton-grid">${skels}</div>`;
+  document.getElementById("sec-meta").textContent = "";
+}
+
+function showError(msg) {
+  document.getElementById("content").innerHTML = `
+    <div class="state-msg">
+      <span class="icon">⚠</span>
+      ${escHtml(msg)}
+    </div>`;
+}
+
+/* ── API KEY MGMT ───────────────────────────────────────── */
+function loadKey() {
+  const k = localStorage.getItem(STORAGE_KEY) || "";
+  if (k) {
+    document.getElementById("groq-key-input").value = k;
+    updateKeyStatus(true);
+  } else {
+    updateKeyStatus(false);
+  }
+}
+
+function getKey() {
+  return localStorage.getItem(STORAGE_KEY) || "";
+}
+
+function saveKey() {
+  const val = document.getElementById("groq-key-input").value.trim();
+  if (!val) { toast("Please enter a valid Groq API key"); return; }
+  localStorage.setItem(STORAGE_KEY, val);
+  updateKeyStatus(true);
+  toggleKeyDrawer(false);
+  toast("✓ Groq API key saved");
+}
+
+function clearKey() {
+  localStorage.removeItem(STORAGE_KEY);
+  document.getElementById("groq-key-input").value = "";
+  updateKeyStatus(false);
+  toast("API key cleared");
+}
+
+function updateKeyStatus(hasKey) {
+  const el = document.getElementById("key-status");
+  el.className = hasKey ? "has-key" : "no-key";
+  el.textContent = hasKey ? "✓ Key Active" : "No API Key";
+}
+
+function toggleKeyDrawer(forceOpen) {
+  const drawer = document.getElementById("key-drawer");
+  keyDrawerOpen = forceOpen !== undefined ? forceOpen : !keyDrawerOpen;
+  drawer.classList.toggle("open", keyDrawerOpen);
+  if (keyDrawerOpen) document.getElementById("groq-key-input").focus();
+}
+
+/* ── TOAST ──────────────────────────────────────────────── */
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 3000);
+}
+
+/* ── UTILS ──────────────────────────────────────────────── */
+function stripHtml(html) {
+  return (html || "").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
+}
+
+function escHtml(str) {
+  return (str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function encodeId(str) {
+  // Create a safe CSS/JS id from url/guid
+  return btoa(unescape(encodeURIComponent(str || Math.random().toString()))).replace(/[^a-zA-Z0-9]/g, "").slice(0, 24);
+}
+
+function formatDate(str) {
+  try {
+    return new Date(str).toLocaleDateString("en-IN", {
+      day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+    });
+  } catch { return ""; }
+}
+
+// Allow Enter key in API key input
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && document.activeElement.id === "groq-key-input") saveKey();
+  if (e.key === "Escape" && keyDrawerOpen) toggleKeyDrawer(false);
+});
+</script>
+
+</body>
+</html>

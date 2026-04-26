@@ -1,714 +1,1229 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>The Brief — Your Personal Indian Newspaper</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,600;1,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<title>The Brief · Indian News</title>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --paper:#f6f0df;--paper2:#ede5cc;--ink:#1a1410;--ink2:#3d3428;--ink3:#7a6e5c;
-  --rule:#1a1410;--rule-lt:#c8b99a;--red:#b5200f;--saffron:#d4691a;
-  --ap-gold:#8a6c00;--tg-blue:#1a4a8a;--ai-bg:#fffbf0;--ai-border:#c8a85a;
+/* ═══════════════ TOKENS ═══════════════ */
+:root {
+  --bg:       #f5efe0; --bg2:#ede5cc; --surface:#ffffff;
+  --ink:      #1a1410; --ink2:#3d3428; --ink3:#7a6e5c;
+  --border:   #d8ccb0; --border2:#c8b99a;
+  --accent:   #c8291a; --accent2:#e04030;
+  --ap:       #8a6c00; --tg:#1a4a8a; --ai:#6b21a8;
+  --green:    #166534; --muted:#9ca3af;
+  --tab-h:    56px;    --hdr-h:56px;
+  --shadow:   0 1px 3px rgba(0,0,0,.1);
+  --shadow2:  0 4px 16px rgba(0,0,0,.12);
+  --radius:   10px;
+  --font-body:'Georgia',serif;
+  --font-ui:  -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'Fira Code','Courier New',monospace;
 }
-html{scroll-behavior:smooth}
-body{background:#d0c4a8;color:var(--ink);font-family:'Lora',serif;min-height:100vh}
+[data-theme="dark"] {
+  --bg:#0f0f0f; --bg2:#1a1a1a; --surface:#1e1e1e;
+  --ink:#e8e0d0; --ink2:#c0b8a8; --ink3:#7a7268;
+  --border:#2a2a2a; --border2:#333;
+  --shadow:0 1px 3px rgba(0,0,0,.4); --shadow2:0 4px 16px rgba(0,0,0,.5);
+}
 
-/* ── PAPER WRAPPER ── */
-#paper{max-width:1400px;margin:0 auto;background:var(--paper);box-shadow:0 4px 40px rgba(0,0,0,.28);min-height:100vh}
+/* ═══════════════ RESET ═══════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{background:var(–bg);color:var(–ink);font-family:var(–font-body);line-height:1.5;min-height:100vh;overflow-x:hidden}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+a{color:inherit;text-decoration:none}
+input{font-family:var(–font-ui)}
+img{max-width:100%;display:block}
 
-/* ── MASTHEAD ── */
-#masthead{background:var(--paper);border-bottom:3px solid var(--rule);padding:0 36px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(26,20,16,.13)}
-.mast-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--rule-lt);font-family:'Fira Code',monospace;font-size:.6rem;color:var(--ink3);letter-spacing:.08em;flex-wrap:wrap;gap:8px}
-.bar-left{display:flex;gap:14px;align-items:center}
-.edition-tag{background:var(--ink);color:var(--paper);padding:2px 8px;font-size:.55rem;letter-spacing:.12em;text-transform:uppercase}
-.bar-right{display:flex;align-items:center;gap:8px}
-#key-status{font-family:'Fira Code',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border:1px solid}
-#key-status.no-key{color:var(--red);border-color:var(--red);background:rgba(181,32,15,.07)}
-#key-status.has-key{color:#1a6e2a;border-color:#1a6e2a;background:rgba(26,110,42,.07)}
-#key-toggle{font-family:'Fira Code',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;background:var(--ink);color:var(--paper);border:none;cursor:pointer;transition:opacity .15s}
-#key-toggle:hover{opacity:.8}
+/* ═══════════════ APP SHELL ═══════════════ */
+#app{display:flex;flex-direction:column;min-height:100vh;max-width:1440px;margin:0 auto}
 
-/* Key drawer */
-#key-drawer{overflow:hidden;max-height:0;transition:max-height .3s ease;background:var(--paper2);border-bottom:1px solid var(--rule-lt)}
-#key-drawer.open{max-height:70px}
-.key-row{padding:10px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.key-lbl{font-family:'Fira Code',monospace;font-size:.6rem;color:var(--ink2);white-space:nowrap}
-#groq-key-input{flex:1;max-width:420px;background:var(--paper);border:1px solid var(--ink3);color:var(--ink);font-family:'Fira Code',monospace;font-size:.68rem;padding:6px 10px;outline:none;transition:border-color .2s}
-#groq-key-input:focus{border-color:var(--ink)}
-#groq-key-input::placeholder{color:var(--ink3)}
-.btn-sv{padding:6px 14px;background:var(--ink);color:var(--paper);border:none;font-family:'Fira Code',monospace;font-size:.6rem;cursor:pointer}
-.btn-sv:hover{background:var(--ink2)}
-.btn-cl{padding:6px 10px;background:transparent;color:var(--red);border:1px solid var(--red);font-family:'Fira Code',monospace;font-size:.6rem;cursor:pointer}
+/* ─── TOP HEADER ─── */
+#hdr{
+position:sticky;top:0;z-index:200;
+background:var(–surface);border-bottom:1px solid var(–border);
+box-shadow:var(–shadow);
+height:var(–hdr-h);
+display:flex;align-items:center;gap:10px;
+padding:0 14px;
+}
+.brand{
+font-family:‘Georgia’,serif;font-size:1.4rem;font-weight:700;
+letter-spacing:-1px;white-space:nowrap;
+}
+.brand span{color:var(–accent)}
 
-/* Nameplate */
-.nameplate{text-align:center;padding:14px 0 6px}
-.paper-name{font-family:'Playfair Display',serif;font-size:3.8rem;font-weight:900;letter-spacing:12px;color:var(--ink);line-height:1;text-transform:uppercase}
-.paper-name .dot{color:var(--red);letter-spacing:0}
-.paper-tagline{font-family:'Fira Code',monospace;font-size:.55rem;letter-spacing:.28em;color:var(--ink3);text-transform:uppercase;margin-top:4px}
-.rule-double{border-top:4px double var(--rule);margin:6px 0 0}
+.hdr-search{
+flex:1;display:flex;align-items:center;gap:8px;
+background:var(–bg2);border:1px solid var(–border);
+border-radius:20px;padding:6px 12px;
+}
+.hdr-search input{
+flex:1;border:none;background:transparent;outline:none;
+font-size:.85rem;color:var(–ink);
+}
+.hdr-search input::placeholder{color:var(–ink3)}
+.hdr-search svg{width:16px;height:16px;stroke:var(–ink3);flex-shrink:0}
 
-/* Tabs */
-.tabs-row{display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:2px solid var(--rule);align-items:stretch}
-.tabs-row::-webkit-scrollbar{display:none}
-.tab{padding:7px 18px;font-family:'Fira Code',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);background:none;border:none;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s;position:relative;bottom:-2px}
-.tab:hover{color:var(--ink2)}
-.tab.active{color:var(--ink);border-bottom-color:var(--ink);font-weight:500}
-.tab.active[data-r=ap]{color:var(--ap-gold);border-bottom-color:var(--ap-gold)}
-.tab.active[data-r=tg]{color:var(--tg-blue);border-bottom-color:var(--tg-blue)}
-.tab.active[data-r=ai]{color:#5a1a8a;border-bottom-color:#5a1a8a}
+.hdr-btns{display:flex;gap:6px;align-items:center}
+.icon-btn{
+width:36px;height:36px;border-radius:50%;
+display:flex;align-items:center;justify-content:center;
+background:var(–bg2);border:1px solid var(–border);
+transition:background .15s;position:relative;
+}
+.icon-btn:hover{background:var(–border)}
+.icon-btn svg{width:18px;height:18px;stroke:var(–ink);fill:none}
 
-/* ── CONTENT ── */
-#content-area{padding:28px 36px 56px}
-.sec-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-.sec-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;font-style:italic;color:var(--ink2);white-space:nowrap}
-.sec-rule{flex:1;height:1px;background:var(--rule)}
-.sec-src{font-family:'Fira Code',monospace;font-size:.52rem;color:var(--ink3);letter-spacing:.07em;white-space:nowrap}
-.sec-cnt{font-family:'Fira Code',monospace;font-size:.52rem;color:var(--muted, var(--ink3));letter-spacing:.08em;white-space:nowrap}
-.btn-ref{font-family:'Fira Code',monospace;font-size:.52rem;padding:3px 8px;background:none;border:1px solid var(--ink3);color:var(--ink3);cursor:pointer;transition:all .15s}
-.btn-ref:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+#bm-badge{
+position:absolute;top:-2px;right:-2px;
+background:var(–accent);color:#fff;
+font-size:.55rem;font-family:var(–font-ui);
+width:16px;height:16px;border-radius:50%;
+display:none;align-items:center;justify-content:center;
+}
 
-/* ── FRONT PAGE LAYOUT ── */
-.front-page{display:grid;grid-template-columns:3fr 1px 2fr;gap:0;border:1px solid var(--rule)}
-.col-div{background:var(--rule);width:1px;margin:16px 0}
+/* ─── KEY BANNER ─── */
+#key-banner{
+background:#fef3c7;border-bottom:1px solid #fde68a;
+padding:8px 14px;display:flex;align-items:center;gap:10px;
+font-family:var(–font-ui);font-size:.78rem;color:#92400e;
+}
+[data-theme=“dark”] #key-banner{background:#2a1f00;border-color:#3a2e00;color:#fbbf24}
+#key-banner a{text-decoration:underline;cursor:pointer;font-weight:600}
+#key-banner.hidden{display:none}
 
-/* Hero */
-.hero{padding:22px 26px;display:flex;flex-direction:column;gap:12px}
-.hero-cat{font-family:'Fira Code',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.hero-headline{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;line-height:1.22;color:var(--ink);border-bottom:2px solid var(--rule);padding-bottom:12px}
-.hero-desc{font-size:.88rem;line-height:1.78;color:var(--ink2)}
-.hero-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+/* ─── KEY DRAWER ─── */
+#key-drawer{
+background:var(–bg2);border-bottom:1px solid var(–border);
+overflow:hidden;max-height:0;transition:max-height .3s ease;
+}
+#key-drawer.open{max-height:80px}
+.key-row{padding:10px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.key-row label{font-family:var(–font-ui);font-size:.75rem;color:var(–ink2);white-space:nowrap}
+#groq-input{
+flex:1;min-width:200px;max-width:400px;
+background:var(–surface);border:1px solid var(–border2);
+color:var(–ink);font-family:var(–font-mono);font-size:.72rem;
+padding:7px 10px;border-radius:6px;outline:none;transition:border-color .2s;
+}
+#groq-input:focus{border-color:var(–accent)}
+#groq-input::placeholder{color:var(–muted)}
+.btn-save{padding:7px 14px;background:var(–accent);color:#fff;border-radius:6px;font-family:var(–font-ui);font-size:.75rem;font-weight:600;transition:background .15s}
+.btn-save:hover{background:var(–accent2)}
+.btn-clr{padding:7px 10px;color:var(–accent);border:1px solid var(–accent);border-radius:6px;font-family:var(–font-ui);font-size:.75rem;transition:all .15s}
+.btn-clr:hover{background:var(–accent);color:#fff}
 
-/* Sidebar */
-.sidebar{display:flex;flex-direction:column}
-.side-art{padding:16px 20px;border-bottom:1px solid var(--rule-lt);flex:1;display:flex;flex-direction:column;gap:7px}
-.side-art:last-child{border-bottom:none}
-.side-cat{font-family:'Fira Code',monospace;font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.side-headline{font-family:'Playfair Display',serif;font-size:.97rem;font-weight:700;line-height:1.3;color:var(--ink)}
-.side-desc{font-size:.74rem;line-height:1.6;color:var(--ink3);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.side-actions{display:flex;gap:6px;margin-top:auto;padding-top:6px;flex-wrap:wrap}
+/* ─── TAB STRIP ─── */
+#tab-strip{
+position:sticky;top:var(–hdr-h);z-index:150;
+background:var(–surface);border-bottom:2px solid var(–border);
+display:flex;overflow-x:auto;scrollbar-width:none;
+-webkit-overflow-scrolling:touch;
+}
+#tab-strip::-webkit-scrollbar{display:none}
+.tab{
+padding:0 16px;height:44px;display:flex;align-items:center;gap:6px;
+font-family:var(–font-ui);font-size:.75rem;font-weight:500;
+color:var(–ink3);white-space:nowrap;
+border-bottom:2px solid transparent;margin-bottom:-2px;
+transition:color .15s,border-color .15s;flex-shrink:0;
+}
+.tab:hover{color:var(–ink)}
+.tab.active{color:var(–accent);border-bottom-color:var(–accent)}
+.tab[data-r=ap].active{color:var(–ap);border-bottom-color:var(–ap)}
+.tab[data-r=tg].active{color:var(–tg);border-bottom-color:var(–tg)}
+.tab[data-r=ai].active{color:var(–ai);border-bottom-color:var(–ai)}
+.tab-dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:none}
+.tab.loading .tab-dot{display:block;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+.tab-count{
+font-size:.6rem;background:var(–bg2);
+padding:1px 5px;border-radius:10px;min-width:18px;text-align:center;
+font-family:var(–font-ui);
+}
 
-/* Lower grid */
-.lower-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--rule);border-top:none}
-.grid-art{padding:16px 18px;border-right:1px solid var(--rule-lt);border-bottom:1px solid var(--rule-lt);display:flex;flex-direction:column;gap:7px;animation:fadeUp .35s ease backwards}
-.grid-art:nth-child(4n){border-right:none}
+/* ─── MAIN CONTENT ─── */
+#content-wrap{flex:1;padding-bottom:20px}
+
+/* Section header */
+.sec-hdr{
+display:flex;align-items:center;gap:10px;
+padding:16px 14px 10px;border-bottom:1px solid var(–border);
+}
+.sec-title{
+font-family:‘Georgia’,serif;font-size:1.1rem;font-weight:700;
+font-style:italic;color:var(–ink2);
+}
+.sec-meta{font-family:var(–font-ui);font-size:.7rem;color:var(–muted);margin-left:auto}
+.sec-src{font-family:var(–font-mono);font-size:.6rem;color:var(–muted);display:none}
+@media(min-width:600px){.sec-src{display:block}}
+.btn-refresh{
+padding:5px 10px;border-radius:6px;
+font-family:var(–font-ui);font-size:.72rem;
+background:var(–bg2);border:1px solid var(–border);
+color:var(–ink2);transition:all .15s;
+}
+.btn-refresh:hover{background:var(–border);color:var(–ink)}
+
+/* ─── HERO CARD ─── */
+.hero-card{
+margin:12px;border-radius:var(–radius);
+background:var(–surface);box-shadow:var(–shadow2);
+overflow:hidden;border:1px solid var(–border);
+}
+.hero-body{padding:16px}
+.hero-cat{
+display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+margin-bottom:10px;
+}
+.hero-headline{
+font-family:‘Georgia’,serif;font-size:1.35rem;font-weight:700;
+line-height:1.28;color:var(–ink);margin-bottom:10px;
+}
+.hero-desc{
+font-size:.88rem;line-height:1.72;color:var(–ink2);
+margin-bottom:14px;
+}
+@media(min-width:768px){.hero-headline{font-size:1.7rem}}
+
+/* ─── ARTICLE GRID ─── */
+.art-grid{
+display:grid;
+grid-template-columns:1fr;
+gap:1px;background:var(–border);
+margin:0 12px;
+border:1px solid var(–border);border-radius:var(–radius);
+overflow:hidden;
+}
+@media(min-width:600px){.art-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.art-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1200px){.art-grid{grid-template-columns:repeat(4,1fr)}}
+
+.art-card{
+background:var(–surface);padding:14px;
+display:flex;flex-direction:column;gap:8px;
+animation:fadeUp .3s ease backwards;
+}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.grid-cat{font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.grid-headline{font-family:'Playfair Display',serif;font-size:.94rem;font-weight:700;line-height:1.32;color:var(--ink)}
-.grid-desc{font-size:.73rem;line-height:1.58;color:var(--ink3);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.grid-actions{display:flex;gap:6px;margin-top:auto;padding-top:6px;flex-wrap:wrap}
+.art-card:hover{background:var(–bg2);transition:background .15s}
 
-/* Category colour classes */
-.c-world{color:#5a3a8a}.c-india{color:var(--saffron)}.c-ap{color:var(--ap-gold)}
-.c-tg{color:var(--tg-blue)}.c-sport{color:var(--red)}.c-biz{color:#1a6e2a}
-.c-health{color:#5a1a6e}.c-ai{color:#5a1a8a}
+.art-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.art-headline{
+font-family:‘Georgia’,serif;font-size:.95rem;font-weight:700;
+line-height:1.35;color:var(–ink);flex:1;
+}
+.art-desc{
+font-size:.78rem;line-height:1.62;color:var(–ink3);
+display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
 
-/* ── BUTTONS ── */
-.btn{padding:5px 12px;font-family:'Fira Code',monospace;font-size:.56rem;letter-spacing:.07em;text-transform:uppercase;border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:4px;text-decoration:none}
-.btn-ai{background:var(--ink);color:var(--paper)}
-.btn-ai:hover:not(:disabled){background:var(--ink2)}
-.btn-ai:disabled{background:var(--ink3);cursor:not-allowed}
-.btn-ai.r-ap{background:var(--ap-gold);color:#fff}
-.btn-ai.r-ap:hover:not(:disabled){background:#7a5c00}
-.btn-ai.r-tg{background:var(--tg-blue);color:#fff}
-.btn-ai.r-tg:hover:not(:disabled){background:#153a70}
-.btn-ai.r-ai{background:#5a1a8a;color:#fff}
-.btn-ai.r-ai:hover:not(:disabled){background:#420f66}
-.btn-read{background:transparent;color:var(--ink3);border:1px solid var(--rule-lt)}
-.btn-read:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+/* ─── ACTIONS ─── */
+.art-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:10px;border-top:1px solid var(–border)}
+.btn-ai{
+padding:6px 12px;border-radius:6px;
+font-family:var(–font-ui);font-size:.7rem;font-weight:600;
+background:var(–ink);color:var(–bg);
+display:inline-flex;align-items:center;gap:5px;
+transition:all .15s;
+}
+.btn-ai:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,.2)}
+.btn-ai:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-ai.r-ap{background:var(–ap)}
+.btn-ai.r-tg{background:var(–tg)}
+.btn-ai.r-ai{background:var(–ai)}
+.btn-read{
+padding:6px 12px;border-radius:6px;
+font-family:var(–font-ui);font-size:.7rem;font-weight:500;
+background:var(–bg2);border:1px solid var(–border);color:var(–ink2);
+display:inline-flex;align-items:center;gap:5px;transition:all .15s;
+}
+.btn-read:hover{background:var(–border)}
+.btn-bm{
+padding:6px 10px;border-radius:6px;
+font-family:var(–font-ui);font-size:.7rem;
+background:transparent;border:1px solid var(–border);color:var(–ink3);
+transition:all .15s;margin-left:auto;
+}
+.btn-bm:hover{border-color:var(–ap);color:var(–ap)}
+.btn-bm.saved{background:#fef3c7;border-color:#d97706;color:#92400e}
+[data-theme=“dark”] .btn-bm.saved{background:#2a1f00;border-color:#d97706;color:#fbbf24}
 
-/* ── AI PANEL ── */
-.ai-panel{background:var(--ai-bg);border:1px solid var(--ai-border);border-left:3px solid var(--ink);padding:12px 14px;animation:fadeSlide .3s ease}
-.ai-panel.r-ap{border-left-color:var(--ap-gold)}
-.ai-panel.r-tg{border-left-color:var(--tg-blue)}
-.ai-panel.r-ai{border-left-color:#5a1a8a}
-@keyframes fadeSlide{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-.ai-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase}
-.ai-tag{color:var(--ink2)}.groq-tag{color:var(--ink3);margin-left:auto}
-.ai-text{font-family:'Lora',serif;font-size:.78rem;font-style:italic;line-height:1.72;color:var(--ink2)}
+/* ─── BADGES ─── */
+.lang-badge{
+display:inline-flex;align-items:center;
+font-family:var(–font-mono);font-size:.55rem;font-weight:500;
+padding:2px 7px;border-radius:4px;border:1px solid;white-space:nowrap;
+}
+.lb-te{color:#7a5c00;background:#fef9c3;border-color:#ca8a04}
+.lb-en{color:#166534;background:#f0fdf4;border-color:#86efac}
+[data-theme=“dark”] .lb-te{background:#2a1f00;color:#fbbf24}
+[data-theme=“dark”] .lb-en{background:#052e16;color:#86efac}
 
-/* ── LANGUAGE BADGES ── */
-.lang-badge{display:inline-flex;align-items:center;font-family:'Fira Code',monospace;font-size:.5rem;font-weight:500;letter-spacing:.09em;padding:1px 6px;border:1px solid;vertical-align:middle;white-space:nowrap}
-.lb-te{color:#7a5c00;background:#fff8dd;border-color:#c8a030}
-.lb-en{color:#2a4a2a;background:#f0f7f0;border-color:#6a9a6a}
+.cat-badge{
+display:inline-flex;align-items:center;
+font-family:var(–font-ui);font-size:.6rem;font-weight:600;
+padding:2px 7px;border-radius:4px;
+letter-spacing:.04em;text-transform:uppercase;
+}
+.cat-world{background:#ede9fe;color:#5b21b6}
+.cat-india{background:#fff7ed;color:#c2410c}
+.cat-ap   {background:#fefce8;color:#a16207}
+.cat-tg   {background:#eff6ff;color:#1d4ed8}
+.cat-sport{background:#fef2f2;color:#b91c1c}
+.cat-biz  {background:#f0fdf4;color:#166534}
+.cat-health{background:#fdf4ff;color:#7e22ce}
+.cat-ai   {background:#f5f3ff;color:#5b21b6}
+[data-theme=“dark”] .cat-world{background:#1e1b4b;color:#a5b4fc}
+[data-theme=“dark”] .cat-india{background:#431407;color:#fdba74}
+[data-theme=“dark”] .cat-ap   {background:#1c1400;color:#fde047}
+[data-theme=“dark”] .cat-tg   {background:#0c1a3a;color:#93c5fd}
+[data-theme=“dark”] .cat-sport{background:#3b0000;color:#fca5a5}
+[data-theme=“dark”] .cat-biz  {background:#052e16;color:#86efac}
+[data-theme=“dark”] .cat-health{background:#2e1065;color:#d8b4fe}
+[data-theme=“dark”] .cat-ai   {background:#2e1065;color:#d8b4fe}
 
-/* ── SKELETON ── */
-#skel-wrap{display:grid;grid-template-columns:3fr 2fr;gap:24px;border:1px solid var(--rule);padding:28px}
-.skel{background:linear-gradient(90deg,var(--paper2) 25%,#e8ddc0 50%,var(--paper2) 75%);background-size:200% 100%;animation:shimmer 1.6s infinite;border-radius:1px}
+.src-badge{
+font-family:var(–font-mono);font-size:.58rem;color:var(–muted);
+white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;
+}
+.date-badge{font-family:var(–font-mono);font-size:.58rem;color:var(–muted)}
+
+/* ─── AI PANEL ─── */
+.ai-panel{
+background:var(–bg2);border:1px solid var(–border2);
+border-left:3px solid var(–ink);border-radius:0 6px 6px 0;
+padding:10px 12px;animation:fadeIn .25s ease;
+}
+.ai-panel.r-ap{border-left-color:var(–ap)}
+.ai-panel.r-tg{border-left-color:var(–tg)}
+.ai-panel.r-ai{border-left-color:var(–ai)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+.ai-hdr{
+display:flex;align-items:center;justify-content:space-between;
+margin-bottom:7px;
+}
+.ai-tag{font-family:var(–font-ui);font-size:.62rem;font-weight:700;color:var(–ink2);text-transform:uppercase;letter-spacing:.06em}
+.ai-model{font-family:var(–font-mono);font-size:.55rem;color:var(–muted)}
+.ai-text{font-family:‘Georgia’,serif;font-size:.82rem;line-height:1.72;color:var(–ink2);font-style:italic}
+
+/* ─── SKELETON ─── */
+.skeleton-wrap{padding:12px;display:flex;flex-direction:column;gap:12px}
+.skel-hero{border-radius:var(–radius);height:220px;overflow:hidden}
+.skel-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;border-radius:var(–radius);overflow:hidden}
+@media(min-width:600px){.skel-grid{grid-template-columns:repeat(3,1fr)}}
+.skel-card{height:160px}
+.skel{
+background:linear-gradient(90deg,var(–bg2) 25%,var(–border) 50%,var(–bg2) 75%);
+background-size:200% 100%;animation:shimmer 1.5s infinite;
+}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* ── ERROR ── */
-.err-box{border:1px solid var(--rule);padding:60px;text-align:center}
-.err-icon{font-size:2.5rem;display:block;margin-bottom:14px}
-.err-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin-bottom:8px}
-.err-msg{font-family:'Fira Code',monospace;font-size:.65rem;color:var(--ink3);line-height:1.9}
-
-/* ── SPINNER / TOAST ── */
-.spin{display:inline-block;animation:rot .8s linear infinite}
-@keyframes rot{to{transform:rotate(360deg)}}
-#toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:var(--paper);font-family:'Fira Code',monospace;font-size:.62rem;letter-spacing:.04em;padding:10px 16px;z-index:9999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;border-left:3px solid var(--red)}
-#toast.show{opacity:1;transform:translateY(0)}
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--paper2)}
-::-webkit-scrollbar-thumb{background:var(--rule-lt);border-radius:2px}
-
-/* ── RESPONSIVE ── */
-@media(max-width:960px){
-  .front-page{grid-template-columns:1fr}.col-div{display:none}
-  .lower-grid{grid-template-columns:repeat(2,1fr)}
-  #content-area{padding:16px}#masthead{padding:0 16px}
-  .paper-name{font-size:2.4rem;letter-spacing:6px}
+/* ─── ERROR / EMPTY ─── */
+.state-box{
+padding:60px 24px;text-align:center;
+display:flex;flex-direction:column;align-items:center;gap:12px;
 }
-@media(max-width:560px){
-  .lower-grid{grid-template-columns:1fr}.paper-name{font-size:1.8rem;letter-spacing:3px}
+.state-icon{font-size:2.5rem}
+.state-title{font-family:‘Georgia’,serif;font-size:1.1rem;font-weight:700;color:var(–ink)}
+.state-msg{font-family:var(–font-ui);font-size:.82rem;color:var(–ink3);line-height:1.7}
+.state-btn{
+padding:8px 18px;border-radius:20px;
+background:var(–accent);color:#fff;
+font-family:var(–font-ui);font-size:.82rem;font-weight:600;
+margin-top:6px;transition:background .15s;
+}
+.state-btn:hover{background:var(–accent2)}
+
+/* ─── BOOKMARKS DRAWER ─── */
+#bm-drawer{
+position:fixed;inset:0;z-index:500;display:none;
+}
+#bm-drawer.open{display:flex}
+.bm-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+.bm-panel{
+position:absolute;right:0;top:0;bottom:0;width:min(360px,100vw);
+background:var(–surface);display:flex;flex-direction:column;
+box-shadow:-4px 0 20px rgba(0,0,0,.2);overflow:hidden;
+}
+.bm-hdr{
+padding:16px;border-bottom:1px solid var(–border);
+display:flex;align-items:center;justify-content:space-between;
+}
+.bm-title{font-family:‘Georgia’,serif;font-size:1rem;font-weight:700}
+.bm-close{font-size:1.2rem;width:32px;height:32px;border-radius:50%;background:var(–bg2);display:flex;align-items:center;justify-content:center}
+.bm-list{flex:1;overflow-y:auto;padding:8px}
+.bm-item{
+padding:12px;border-radius:8px;margin-bottom:6px;
+background:var(–bg2);border:1px solid var(–border);
+display:flex;flex-direction:column;gap:6px;
+}
+.bm-item-title{font-family:‘Georgia’,serif;font-size:.88rem;font-weight:700;color:var(–ink);line-height:1.35}
+.bm-item-meta{font-family:var(–font-ui);font-size:.7rem;color:var(–muted);display:flex;gap:8px;align-items:center}
+.bm-item-actions{display:flex;gap:6px}
+.bm-empty{padding:40px;text-align:center;color:var(–muted);font-family:var(–font-ui);font-size:.85rem}
+
+/* ─── KEY MODAL ─── */
+#key-modal{
+position:fixed;inset:0;z-index:600;display:none;
+align-items:flex-end;justify-content:center;
+background:rgba(0,0,0,.5);
+}
+#key-modal.open{display:flex}
+.key-sheet{
+width:100%;max-width:480px;background:var(–surface);
+border-radius:16px 16px 0 0;padding:20px;
+display:flex;flex-direction:column;gap:12px;
+}
+@media(min-width:520px){
+#key-modal{align-items:center}
+.key-sheet{border-radius:16px}
+}
+.key-sheet h3{font-family:‘Georgia’,serif;font-size:1rem;font-weight:700}
+.key-sheet p{font-family:var(–font-ui);font-size:.8rem;color:var(–ink3);line-height:1.6}
+.key-sheet input{
+width:100%;background:var(–bg2);border:1px solid var(–border2);
+color:var(–ink);font-family:var(–font-mono);font-size:.8rem;
+padding:10px 12px;border-radius:8px;outline:none;
+}
+.key-sheet input:focus{border-color:var(–accent)}
+.key-sheet-btns{display:flex;gap:8px}
+.key-sheet-btns .btn-save{flex:1;padding:10px}
+.key-close{
+position:absolute;top:14px;right:14px;
+width:28px;height:28px;border-radius:50%;
+background:var(–bg2);display:flex;align-items:center;justify-content:center;
+font-size:.9rem;
+}
+
+/* ─── SEARCH RESULTS MODE ─── */
+#search-results{padding:12px;display:none}
+#search-results.show{display:block}
+.search-hdr{padding:0 0 10px;font-family:var(–font-ui);font-size:.8rem;color:var(–muted)}
+
+/* ─── TOAST ─── */
+#toast{
+position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+background:var(–ink);color:var(–bg);
+font-family:var(–font-ui);font-size:.8rem;
+padding:10px 18px;border-radius:20px;
+opacity:0;transition:all .25s;z-index:800;white-space:nowrap;
+pointer-events:none;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ─── SPINNER ─── */
+.spin{display:inline-block;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(–border2);border-radius:2px}
+
+/* ─── DESKTOP LAYOUT ─── */
+@media(min-width:768px){
+#content-wrap{display:grid;grid-template-columns:1fr}
 }
 </style>
+
 </head>
 <body>
-<div id="paper">
+<div id="app">
 
-<!-- ══════════ MASTHEAD ══════════ -->
-<header id="masthead">
-  <div class="mast-bar">
-    <div class="bar-left">
-      <span class="edition-tag">Hyderabad Edition</span>
-      <span id="datestamp"></span>
-    </div>
-    <div class="bar-right">
-      <div id="key-status" class="no-key">No API Key</div>
-      <button id="key-toggle" onclick="toggleKey()">⚙ Groq Key</button>
-    </div>
+<!-- ═══ HEADER ═══ -->
+
+<header id="hdr">
+  <div class="brand">BRIEF<span>.</span></div>
+
+  <div class="hdr-search">
+    <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="search" id="search-input" placeholder="Search articles…" autocomplete="off"/>
   </div>
 
-  <div id="key-drawer">
-    <div class="key-row">
-      <span class="key-lbl">Groq API Key (free · console.groq.com):</span>
-      <input type="password" id="groq-key-input" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false"/>
-      <button class="btn-sv" onclick="saveKey()">Save</button>
-      <button class="btn-cl" onclick="clearKey()">Clear</button>
-    </div>
+  <div class="hdr-btns">
+    <button class="icon-btn" id="bm-btn" title="Bookmarks" onclick="openBM()">
+      <svg viewBox="0 0 24 24" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <span id="bm-badge"></span>
+    </button>
+    <button class="icon-btn" id="key-btn" title="Groq API Key" onclick="openKeyModal()">
+      <svg viewBox="0 0 24 24" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+    </button>
+    <button class="icon-btn" id="theme-btn" title="Toggle theme" onclick="toggleTheme()">
+      <svg id="theme-icon" viewBox="0 0 24 24" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
   </div>
-
-  <div class="nameplate">
-    <div class="paper-name">THE BRIEF<span class="dot">.</span></div>
-    <div class="paper-tagline">Your Personal AI-Powered Indian Newspaper</div>
-  </div>
-  <div class="rule-double"></div>
-
-  <div class="tabs-row" id="tabs"></div>
 </header>
 
-<!-- ══════════ CONTENT ══════════ -->
-<main id="content-area">
-  <div class="sec-header">
-    <span class="sec-name" id="sec-name"></span>
-    <div class="sec-rule"></div>
-    <span class="sec-src" id="sec-src"></span>
-    <span class="sec-cnt" id="sec-cnt"></span>
-    <button class="btn-ref" onclick="refreshCat()">↻ Refresh</button>
-  </div>
-  <div id="content"></div>
-</main>
+<!-- ═══ KEY BANNER ═══ -->
+
+<div id="key-banner">
+  ⚡ Add your free <a onclick="openKeyModal()">Groq API key</a> to enable AI briefs on every article. Get one free at <a href="https://console.groq.com" target="_blank">console.groq.com</a>
 </div>
+
+<!-- ═══ TAB STRIP ═══ -->
+
+<div id="tab-strip"></div>
+
+<!-- ═══ CONTENT ═══ -->
+
+<div id="content-wrap">
+  <!-- Section header -->
+  <div class="sec-hdr">
+    <span class="sec-title" id="sec-title"></span>
+    <span class="sec-src" id="sec-src"></span>
+    <span class="sec-meta" id="sec-meta"></span>
+    <button class="btn-refresh" onclick="refreshCat()">↻ Refresh</button>
+  </div>
+
+  <!-- Search results (shown when searching) -->
+
+  <div id="search-results"></div>
+
+  <!-- Main content area -->
+
+  <div id="content"></div>
+</div>
+
+</div><!-- #app -->
+
+<!-- ═══ BOOKMARKS DRAWER ═══ -->
+
+<div id="bm-drawer">
+  <div class="bm-backdrop" onclick="closeBM()"></div>
+  <div class="bm-panel">
+    <div class="bm-hdr">
+      <div class="bm-title">📌 Saved Articles</div>
+      <button class="bm-close" onclick="closeBM()">✕</button>
+    </div>
+    <div class="bm-list" id="bm-list"></div>
+  </div>
+</div>
+
+<!-- ═══ KEY MODAL ═══ -->
+
+<div id="key-modal">
+  <div class="key-sheet" style="position:relative">
+    <button class="key-close" onclick="closeKeyModal()">✕</button>
+    <h3>⚡ Groq API Key</h3>
+    <p>Get a <strong>free</strong> API key at <a href="https://console.groq.com" target="_blank" style="color:var(--accent);text-decoration:underline">console.groq.com</a> — no credit card needed. Powers ultra-fast AI briefs using Llama 3.3 70B.</p>
+    <input type="password" id="key-modal-input" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false"/>
+    <div class="key-sheet-btns">
+      <button class="btn-save" onclick="saveKeyFromModal()">Save Key</button>
+      <button class="btn-clr" onclick="clearKey()" id="clear-btn" style="display:none">Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST ═══ -->
+
 <div id="toast"></div>
 
 <script>
-/* ═══════════════════════════════════════════════
-   CATEGORIES
-   Telugu sources: ABN Andhra Jyothi + BBC Telugu only
-═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   CATEGORIES — 9 sections, rich source pool
+   Telugu: ABN + BBC Telugu + TV9 + Mana TG
+           + Telugu360 + Visala Andhra
+           + Prajatantra + OneIndia Telugu
+   English: TOI, NDTV, The Hindu, IE,
+            HT, DC, Firstpost, Reuters,
+            LiveMint, BS, ET, CNBC etc.
+═══════════════════════════════════════════ */
 const CATS = [
   {
-    id:"world", label:"World", icon:"🌍", region:"world", cc:"c-world", mixed:true,
+    id:"world", label:"🌍 World", region:"world", cc:"cat-world", mixed:true,
     feeds:[
-      { url:"https://feeds.feedburner.com/ndtvnews-world-news",                   name:"NDTV World",       lang:"en" },
-      { url:"https://feeds.bbci.co.uk/news/world/rss.xml",                        name:"BBC World",        lang:"en" },
-      { url:"https://feeds.bbci.co.uk/telugu/rss.xml",                            name:"BBC Telugu",       lang:"te" },
-      { url:"https://andhrajyothy.com/rss/feed.xml",                              name:"ABN AndhraJyothi", lang:"te" },
+      {url:"https://feeds.feedburner.com/ndtvnews-world-news",                              name:"NDTV World",       lang:"en"},
+      {url:"https://feeds.bbci.co.uk/news/world/rss.xml",                                  name:"BBC World",        lang:"en"},
+      {url:"https://indianexpress.com/section/world/feed/",                                 name:"Indian Express",   lang:"en"},
+      {url:"https://www.firstpost.com/commonfeeds/v1/eng/pageview/world/rss.xml",          name:"Firstpost",        lang:"en"},
+      {url:"https://timesofindia.indiatimes.com/rss/2647163.cms",                          name:"TOI World",        lang:"en"},
+      {url:"https://feeds.bbci.co.uk/telugu/rss.xml",                                      name:"BBC Telugu",       lang:"te"},
+      {url:"https://andhrajyothy.com/rss/feed.xml",                                        name:"ABN AndhraJyothi", lang:"te"},
+      {url:"https://tv9telugu.com/feed",                                                    name:"TV9 Telugu",       lang:"te"},
     ]
   },
   {
-    id:"india", label:"India", icon:"🇮🇳", region:"india", cc:"c-india", mixed:true,
+    id:"india", label:"🇮🇳 India", region:"india", cc:"cat-india", mixed:true,
     feeds:[
-      { url:"https://timesofindia.indiatimes.com/rssfeedstopstories.cms",         name:"Times of India",   lang:"en" },
-      { url:"https://feeds.feedburner.com/ndtvnews-top-stories",                  name:"NDTV",             lang:"en" },
-      { url:"https://www.thehindu.com/feeder/default.rss",                        name:"The Hindu",        lang:"en" },
-      { url:"https://feeds.bbci.co.uk/telugu/rss.xml",                            name:"BBC Telugu",       lang:"te" },
-      { url:"https://andhrajyothy.com/rss/feed.xml",                              name:"ABN AndhraJyothi", lang:"te" },
+      {url:"https://timesofindia.indiatimes.com/rssfeedstopstories.cms",                   name:"Times of India",   lang:"en"},
+      {url:"https://feeds.feedburner.com/ndtvnews-top-stories",                            name:"NDTV",             lang:"en"},
+      {url:"https://www.thehindu.com/feeder/default.rss",                                  name:"The Hindu",        lang:"en"},
+      {url:"https://indianexpress.com/section/india/feed/",                                name:"Indian Express",   lang:"en"},
+      {url:"https://hindustantimes.com/feeds/rss/india/rssfeed.xml",                      name:"Hindustan Times",  lang:"en"},
+      {url:"https://www.deccanchronicle.com/rss_feed/",                                   name:"Deccan Chronicle", lang:"en"},
+      {url:"https://feeds.bbci.co.uk/telugu/rss.xml",                                      name:"BBC Telugu",       lang:"te"},
+      {url:"https://andhrajyothy.com/rss/feed.xml",                                        name:"ABN AndhraJyothi", lang:"te"},
+      {url:"https://tv9telugu.com/feed",                                                    name:"TV9 Telugu",       lang:"te"},
+      {url:"https://telugu.oneindia.com/rss/telugu-news.xml",                              name:"OneIndia Telugu",  lang:"te"},
     ]
   },
   {
-    id:"regional", label:"Regional", icon:"📍", region:"ap", cc:"c-ap", mixed:true,
+    id:"regional", label:"📍 Regional", region:"ap", cc:"cat-ap", mixed:true,
     feeds:[
-      { url:"https://www.thehindu.com/news/national/andhra-pradesh/feeder/default.rss", name:"The Hindu AP",     lang:"en" },
-      { url:"https://www.thehindu.com/news/national/telangana/feeder/default.rss",      name:"The Hindu TG",     lang:"en" },
-      { url:"https://telanganatoday.com/feed",                                           name:"Telangana Today",  lang:"en" },
-      { url:"https://andhrajyothy.com/rss/feed.xml",                                    name:"ABN AndhraJyothi", lang:"te" },
-      { url:"https://feeds.bbci.co.uk/telugu/rss.xml",                                  name:"BBC Telugu",       lang:"te" },
+      {url:"https://www.thehindu.com/news/national/andhra-pradesh/feeder/default.rss",     name:"The Hindu AP",     lang:"en"},
+      {url:"https://www.thehindu.com/news/national/telangana/feeder/default.rss",          name:"The Hindu TG",     lang:"en"},
+      {url:"https://telanganatoday.com/feed",                                               name:"Telangana Today",  lang:"en"},
+      {url:"https://www.deccanchronicle.com/rss_feed/",                                   name:"Deccan Chronicle", lang:"en"},
+      {url:"https://andhrajyothy.com/rss/feed.xml",                                        name:"ABN AndhraJyothi", lang:"te"},
+      {url:"https://feeds.bbci.co.uk/telugu/rss.xml",                                      name:"BBC Telugu",       lang:"te"},
+      {url:"https://tv9telugu.com/feed",                                                    name:"TV9 Telugu",       lang:"te"},
+      {url:"https://manatelangana.news/feed",                                               name:"Mana Telangana",   lang:"te"},
+      {url:"https://telugu360.com/feed",                                                    name:"Telugu360",        lang:"te"},
+      {url:"https://visalaandhra.com/feed",                                                 name:"Visala Andhra",    lang:"te"},
+      {url:"https://prajatantranews.com/feed",                                              name:"Prajatantra",      lang:"te"},
+      {url:"https://telugu.oneindia.com/rss/telugu-news.xml",                              name:"OneIndia Telugu",  lang:"te"},
     ]
   },
   {
-    id:"hyd", label:"Hyderabad", icon:"🕌", region:"tg", cc:"c-tg", mixed:true,
+    id:"hyd", label:"🕌 Hyderabad", region:"tg", cc:"cat-tg", mixed:true,
     feeds:[
-      { url:"https://timesofindia.indiatimes.com/rss/4719148.cms",               name:"TOI Hyderabad",    lang:"en" },
-      { url:"https://www.thehindu.com/news/cities/Hyderabad/feeder/default.rss", name:"The Hindu HYD",    lang:"en" },
-      { url:"https://telanganatoday.com/hyderabad/feed",                          name:"Telangana Today",  lang:"en" },
-      { url:"https://andhrajyothy.com/rss/feed.xml",                             name:"ABN AndhraJyothi", lang:"te" },
-      { url:"https://feeds.bbci.co.uk/telugu/rss.xml",                           name:"BBC Telugu",       lang:"te" },
+      {url:"https://timesofindia.indiatimes.com/rss/4719148.cms",                         name:"TOI Hyderabad",    lang:"en"},
+      {url:"https://www.thehindu.com/news/cities/Hyderabad/feeder/default.rss",           name:"The Hindu HYD",    lang:"en"},
+      {url:"https://telanganatoday.com/hyderabad/feed",                                    name:"Telangana Today",  lang:"en"},
+      {url:"https://www.deccanchronicle.com/rss_feed/",                                   name:"Deccan Chronicle", lang:"en"},
+      {url:"https://andhrajyothy.com/rss/feed.xml",                                        name:"ABN AndhraJyothi", lang:"te"},
+      {url:"https://tv9telugu.com/feed",                                                    name:"TV9 Telugu",       lang:"te"},
+      {url:"https://manatelangana.news/feed",                                               name:"Mana Telangana",   lang:"te"},
+      {url:"https://feeds.bbci.co.uk/telugu/rss.xml",                                      name:"BBC Telugu",       lang:"te"},
     ]
   },
   {
-    id:"vja", label:"Vijayawada · Amaravati", icon:"🏙", region:"ap", cc:"c-ap", mixed:true,
+    id:"vja", label:"🏙 Vijayawada", region:"ap", cc:"cat-ap", mixed:true,
     feeds:[
-      { url:"https://www.thehindu.com/news/cities/Vijayawada/feeder/default.rss",       name:"The Hindu VJA",    lang:"en" },
-      { url:"https://www.thehindu.com/news/national/andhra-pradesh/feeder/default.rss", name:"The Hindu AP",     lang:"en" },
-      { url:"https://andhrajyothy.com/rss/feed.xml",                                    name:"ABN AndhraJyothi", lang:"te" },
-      { url:"https://feeds.bbci.co.uk/telugu/rss.xml",                                  name:"BBC Telugu",       lang:"te" },
+      {url:"https://www.thehindu.com/news/cities/Vijayawada/feeder/default.rss",          name:"The Hindu VJA",    lang:"en"},
+      {url:"https://www.thehindu.com/news/national/andhra-pradesh/feeder/default.rss",    name:"The Hindu AP",     lang:"en"},
+      {url:"https://www.deccanchronicle.com/rss_feed/",                                   name:"Deccan Chronicle", lang:"en"},
+      {url:"https://andhrajyothy.com/rss/feed.xml",                                        name:"ABN AndhraJyothi", lang:"te"},
+      {url:"https://visalaandhra.com/feed",                                                name:"Visala Andhra",    lang:"te"},
+      {url:"https://telugu360.com/feed",                                                   name:"Telugu360",        lang:"te"},
+      {url:"https://tv9telugu.com/feed",                                                   name:"TV9 Telugu",       lang:"te"},
     ]
   },
   {
-    id:"sports", label:"Sports", icon:"🏏", region:"india", cc:"c-sport", mixed:true,
+    id:"sports", label:"🏏 Sports", region:"india", cc:"cat-sport", mixed:true,
     feeds:[
-      { url:"https://feeds.feedburner.com/ndtvnews-sports",                      name:"NDTV Sports",      lang:"en" },
-      { url:"https://timesofindia.indiatimes.com/rss/4719161.cms",               name:"TOI Sports",       lang:"en" },
-      { url:"https://feeds.bbci.co.uk/sport/cricket/rss.xml",                   name:"BBC Cricket",      lang:"en" },
-      { url:"https://andhrajyothy.com/rss/feed.xml",                             name:"ABN AndhraJyothi", lang:"te" },
+      {url:"https://feeds.feedburner.com/ndtvnews-sports",                                name:"NDTV Sports",      lang:"en"},
+      {url:"https://timesofindia.indiatimes.com/rss/4719161.cms",                         name:"TOI Sports",       lang:"en"},
+      {url:"https://feeds.bbci.co.uk/sport/cricket/rss.xml",                             name:"BBC Cricket",      lang:"en"},
+      {url:"https://indianexpress.com/section/sports/feed/",                              name:"Indian Express",   lang:"en"},
+      {url:"https://www.firstpost.com/commonfeeds/v1/eng/pageview/sports/rss.xml",       name:"Firstpost",        lang:"en"},
+      {url:"https://andhrajyothy.com/rss/feed.xml",                                       name:"ABN AndhraJyothi", lang:"te"},
+      {url:"https://tv9telugu.com/feed",                                                   name:"TV9 Telugu",       lang:"te"},
     ]
   },
   {
-    id:"finance", label:"Finance", icon:"📈", region:"india", cc:"c-biz", mixed:false,
+    id:"finance", label:"📈 Finance", region:"india", cc:"cat-biz", mixed:true,
     feeds:[
-      { url:"https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms", name:"ET Markets",      lang:"en" },
-      { url:"https://economictimes.indiatimes.com/rssfeedstopstories.cms",           name:"Economic Times",  lang:"en" },
-      { url:"https://www.thehindubusinessline.com/feeder/default.rss",              name:"Business Line",   lang:"en" },
-      { url:"https://andhrajyothy.com/rss/feed.xml",                                name:"ABN AndhraJyothi",lang:"te" },
+      {url:"https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",        name:"ET Markets",       lang:"en"},
+      {url:"https://economictimes.indiatimes.com/rssfeedstopstories.cms",                 name:"Economic Times",   lang:"en"},
+      {url:"https://www.thehindubusinessline.com/feeder/default.rss",                    name:"Business Line",    lang:"en"},
+      {url:"https://livemint.com/rss/markets",                                            name:"LiveMint Markets", lang:"en"},
+      {url:"https://livemint.com/rss/money",                                              name:"LiveMint Money",   lang:"en"},
+      {url:"https://livemint.com/rss/industry",                                           name:"LiveMint Industry",lang:"en"},
+      {url:"https://www.business-standard.com/rss/home_page_top_stories.rss",            name:"Business Standard",lang:"en"},
+      {url:"https://cnbctv18.com/commonfeeds/v1/eng/pageview/market/rss.xml",            name:"CNBC TV18",        lang:"en"},
+      {url:"https://syndication.financialexpress.com/rss/latest-news.xml",               name:"Financial Express",lang:"en"},
+      {url:"https://andhrajyothy.com/rss/feed.xml",                                       name:"ABN AndhraJyothi", lang:"te"},
     ]
   },
   {
-    id:"health", label:"Health", icon:"🏥", region:"india", cc:"c-health", mixed:true,
+    id:"health", label:"🏥 Health", region:"india", cc:"cat-health", mixed:true,
     feeds:[
-      { url:"https://feeds.feedburner.com/ndtvnews-health",                      name:"NDTV Health",      lang:"en" },
-      { url:"https://feeds.bbci.co.uk/news/health/rss.xml",                      name:"BBC Health",       lang:"en" },
-      { url:"https://feeds.bbci.co.uk/telugu/rss.xml",                           name:"BBC Telugu",       lang:"te" },
-      { url:"https://andhrajyothy.com/rss/feed.xml",                             name:"ABN AndhraJyothi", lang:"te" },
+      {url:"https://feeds.feedburner.com/ndtvnews-health",                                name:"NDTV Health",      lang:"en"},
+      {url:"https://feeds.bbci.co.uk/news/health/rss.xml",                               name:"BBC Health",       lang:"en"},
+      {url:"https://livemint.com/rss/science",                                            name:"LiveMint Science", lang:"en"},
+      {url:"https://www.firstpost.com/commonfeeds/v1/eng/pageview/health/rss.xml",       name:"Firstpost Health", lang:"en"},
+      {url:"https://feeds.bbci.co.uk/telugu/rss.xml",                                     name:"BBC Telugu",       lang:"te"},
+      {url:"https://andhrajyothy.com/rss/feed.xml",                                       name:"ABN AndhraJyothi", lang:"te"},
     ]
   },
   {
-    id:"ai", label:"AI News", icon:"🤖", region:"ai", cc:"c-ai", mixed:false,
+    id:"ai", label:"🤖 AI & Tech", region:"ai", cc:"cat-ai", mixed:false,
     feeds:[
-      { url:"https://techcrunch.com/category/artificial-intelligence/feed/",     name:"TechCrunch AI",    lang:"en" },
-      { url:"https://www.technologyreview.com/feed/",                             name:"MIT Tech Review",  lang:"en" },
-      { url:"https://www.theverge.com/rss/ai-artificial-intelligence/index.xml", name:"The Verge AI",     lang:"en" },
-      { url:"https://feeds.feedburner.com/ndtvnews-gadgets-news",                name:"NDTV Gadgets",     lang:"en" },
+      {url:"https://techcrunch.com/category/artificial-intelligence/feed/",               name:"TechCrunch AI",    lang:"en"},
+      {url:"https://www.technologyreview.com/feed/",                                       name:"MIT Tech Review",  lang:"en"},
+      {url:"https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",          name:"The Verge AI",     lang:"en"},
+      {url:"https://www.wired.com/feed/category/artificial-intelligence/latest/rss",     name:"Wired AI",         lang:"en"},
+      {url:"https://feeds.feedburner.com/ndtvnews-gadgets-news",                         name:"NDTV Gadgets",     lang:"en"},
+      {url:"https://indianexpress.com/section/technology/feed/",                          name:"Indian Express Tech",lang:"en"},
     ]
   },
 ];
 
-/* ═══════════════════════════════════════════════
-   PROXY CHAIN  (3 independent proxies)
-═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   3-PROXY CHAIN
+═══════════════════════════════════════════ */
 const PROXIES = [
   {
     name:"AllOrigins",
-    fetch: async url => {
-      const r = await ftch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, 9000);
-      const d = await r.json();
-      if (!d.contents) throw new Error("empty");
+    fetch: async u=>{
+      const r=await tFetch(`https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,9000);
+      const d=await r.json();
+      if(!d.contents) throw new Error("empty");
       return parseXML(d.contents);
     }
   },
   {
     name:"RSS2JSON",
-    fetch: async url => {
-      const r = await ftch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=15`, 9000);
-      const d = await r.json();
-      if (d.status !== "ok" || !d.items?.length) throw new Error("bad");
-      return d.items.map(i => ({
-        title:i.title||"", link:i.link||"",
-        description:i.description||i.content||"",
-        pubDate:i.pubDate||"", author:i.author||"", guid:i.guid||i.link||""
+    fetch: async u=>{
+      const r=await tFetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(u)}&count=15`,9000);
+      const d=await r.json();
+      if(d.status!=="ok"||!d.items?.length) throw new Error("bad");
+      return d.items.map(i=>({
+        title:i.title||"",link:i.link||"",description:i.description||i.content||"",
+        pubDate:i.pubDate||"",author:i.author||"",guid:i.guid||i.link||""
       }));
     }
   },
   {
     name:"CORSProxy",
-    fetch: async url => {
-      const r = await ftch(`https://corsproxy.io/?${encodeURIComponent(url)}`, 9000);
+    fetch: async u=>{
+      const r=await tFetch(`https://corsproxy.io/?${encodeURIComponent(u)}`,9000);
       return parseXML(await r.text());
     }
   },
 ];
 
-async function ftch(url, ms) {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), ms);
-  try { const r = await fetch(url,{signal:ctrl.signal}); clearTimeout(t); return r; }
-  catch(e) { clearTimeout(t); throw e; }
+async function tFetch(url,ms){
+  const c=new AbortController();
+  const t=setTimeout(()=>c.abort(),ms);
+  try{const r=await fetch(url,{signal:c.signal});clearTimeout(t);return r;}
+  catch(e){clearTimeout(t);throw e;}
 }
 
-function parseXML(xml) {
-  const doc = new DOMParser().parseFromString(xml, "text/xml");
-  const items = Array.from(doc.querySelectorAll("item"));
-  if (!items.length) throw new Error("no items");
-  return items.slice(0,15).map(item => {
-    function gT(tag) {
-      let el; try{el=item.querySelector(tag)}catch{}
-      if (!el) el = item.getElementsByTagName(tag)[0];
-      if (!el && tag.includes(":")) el = item.getElementsByTagName(tag.split(":")[1])[0];
-      return el ? el.textContent.trim() : "";
+function parseXML(xml){
+  const doc=new DOMParser().parseFromString(xml,"text/xml");
+  const items=Array.from(doc.querySelectorAll("item"));
+  if(!items.length) throw new Error("no items");
+  return items.slice(0,16).map(item=>{
+    function g(tag){
+      let el;try{el=item.querySelector(tag)}catch{}
+      if(!el)el=item.getElementsByTagName(tag)[0];
+      if(!el&&tag.includes(":"))el=item.getElementsByTagName(tag.split(":")[1])[0];
+      return el?el.textContent.trim():"";
     }
-    let link = gT("link");
-    if (!link) { const l=item.getElementsByTagName("link")[0]; if(l) link=l.getAttribute("href")||l.textContent.trim(); }
-    return { title:gT("title"), link, description:gT("description")||gT("summary")||gT("encoded")||gT("content"),
-             pubDate:gT("pubDate")||gT("published")||gT("updated")||gT("date"),
-             author:gT("author")||gT("creator")||gT("managingEditor"), guid:gT("guid")||link };
-  }).filter(i => i.title && i.link);
+    let link=g("link");
+    if(!link){const l=item.getElementsByTagName("link")[0];if(l)link=l.getAttribute("href")||l.textContent.trim();}
+    return{
+      title:g("title"),link,
+      description:g("description")||g("summary")||g("encoded")||g("content"),
+      pubDate:g("pubDate")||g("published")||g("updated")||g("date"),
+      author:g("author")||g("creator"),guid:g("guid")||link
+    };
+  }).filter(i=>i.title&&i.link);
 }
 
-/* ═══════════════════════════════════════════════
-   FEED LOADER
-═══════════════════════════════════════════════ */
-async function loadOne(feed) {
-  for (const px of PROXIES) {
-    try {
-      const items = await px.fetch(feed.url);
-      if (items.length) {
-        items.forEach(i => { i._src=feed.name; i._lang=feed.lang||"en"; });
-        return { items:items.slice(0,8), source:feed.name };
+async function loadOne(feed){
+  for(const px of PROXIES){
+    try{
+      const items=await px.fetch(feed.url);
+      if(items.length){
+        items.forEach(i=>{i._src=feed.name;i._lang=feed.lang||"en";});
+        return{items:items.slice(0,8),source:feed.name,proxy:px.name};
       }
-    } catch(e) { console.warn(`[${px.name}] ${feed.name}:`, e.message); }
+    }catch(e){console.warn(`[${px.name}] ${feed.name}:`,e.message);}
   }
   return null;
 }
 
-async function loadFeed(catId) {
-  const cat = CATS.find(c => c.id === catId);
-
-  if (cat.mixed) {
-    const settled = await Promise.allSettled(cat.feeds.map(f => loadOne(f)));
-    let all=[]; const srcs=new Set();
-    for (const r of settled) {
-      if (r.status==="fulfilled" && r.value) {
-        all.push(...r.value.items);
-        srcs.add(r.value.source);
+async function loadCat(catId){
+  const cat=CATS.find(c=>c.id===catId);
+  if(cat.mixed){
+    const results=await Promise.allSettled(cat.feeds.map(f=>loadOne(f)));
+    let all=[];const srcs=new Set();
+    for(const r of results){
+      if(r.status==="fulfilled"&&r.value){
+        all.push(...r.value.items);srcs.add(r.value.source);
       }
     }
-    if (!all.length) throw new Error("all failed");
-    all.sort((a,b) => new Date(b.pubDate||0)-new Date(a.pubDate||0));
+    if(!all.length) throw new Error("all failed");
+    all.sort((a,b)=>new Date(b.pubDate||0)-new Date(a.pubDate||0));
     const seen=new Set();
-    all = all.filter(i => { const k=(i.title||"").slice(0,40).toLowerCase().replace(/\s+/g,""); if(seen.has(k))return false; seen.add(k); return true; });
-    return { items:all.slice(0,14), source:[...srcs].join(" · "), proxy:"mixed" };
+    all=all.filter(i=>{
+      const k=(i.title||"").slice(0,42).toLowerCase().replace(/\s+/g,"");
+      if(seen.has(k))return false;seen.add(k);return true;
+    });
+    return{items:all.slice(0,16),source:[...srcs].join(" · "),proxy:"mixed"};
   }
-
-  for (const feed of cat.feeds) {
-    for (const px of PROXIES) {
-      try {
-        const items = await px.fetch(feed.url);
-        if (items.length) {
-          items.forEach(i=>{ i._src=feed.name; i._lang=feed.lang||"en"; });
-          return { items:items.slice(0,12), source:feed.name, proxy:px.name };
-        }
-      } catch(e) { console.warn(`[${px.name}] ${feed.name}:`, e.message); }
-    }
+  for(const feed of cat.feeds){
+    const r=await loadOne(feed);
+    if(r)return{items:r.items.slice(0,14),source:r.source,proxy:r.proxy};
   }
   throw new Error("all failed");
 }
 
-/* ═══════════════════════════════════════════════
-   STATE & INIT
-═══════════════════════════════════════════════ */
-let activeId="world", cache={}, summaries={}, busy=new Set(), keyOpen=false;
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let activeId="world";
+const cache={};
+const summaries={};
+const busy=new Set();
+let bookmarks=JSON.parse(localStorage.getItem("brief_bm")||"[]");
+const SKEY="brief_groq_key";
+let keyModalOpen=false;
 
-document.addEventListener("DOMContentLoaded", () => {
-  buildTabs(); loadKeyFromStore(); tick(); setInterval(tick,1000); selectCat("world");
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+document.addEventListener("DOMContentLoaded",()=>{
+  buildTabs();
+  loadTheme();
+  checkKey();
+  setInterval(()=>document.getElementById("datestamp")?.remove(),0);
+  selectCat("world");
+  updateBMBadge();
+
+  // Search
+  document.getElementById("search-input").addEventListener("input",e=>{
+    const q=e.target.value.trim();
+    if(q.length>1) doSearch(q);
+    else clearSearch();
+  });
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"&&keyModalOpen) closeKeyModal();
+  });
 });
 
-function tick() {
-  const d=new Date();
-  document.getElementById("datestamp").textContent =
-    d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"long",year:"numeric"}) +
-    "  ·  " + d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:true});
-}
-
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    TABS
-═══════════════════════════════════════════════ */
-function buildTabs() {
-  document.getElementById("tabs").innerHTML = CATS.map(c =>
+═══════════════════════════════════════════ */
+function buildTabs(){
+  document.getElementById("tab-strip").innerHTML=CATS.map(c=>
     `<button class="tab${c.id===activeId?" active":""}" id="tab-${c.id}"
              data-r="${c.region}" onclick="selectCat('${c.id}')">
-       ${c.icon} ${c.label}
-     </button>`).join("");
+       ${c.label}
+       <span class="tab-dot"></span>
+       <span class="tab-count" id="cnt-${c.id}" style="display:none"></span>
+     </button>`
+  ).join("");
 }
-function hlTab(id) {
+
+function hlTab(id){
   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  document.getElementById("tab-"+id)?.classList.add("active");
+  const t=document.getElementById("tab-"+id);
+  if(t){t.classList.add("active");t.scrollIntoView({inline:"nearest",block:"nearest"});}
 }
 
-/* ═══════════════════════════════════════════════
-   CATEGORY SELECT / REFRESH
-═══════════════════════════════════════════════ */
-function selectCat(id) {
-  activeId = id;
-  const cat = CATS.find(c=>c.id===id);
-  document.getElementById("sec-name").textContent = cat.icon+" "+cat.label;
+function setTabLoading(id,on){
+  document.getElementById("tab-"+id)?.classList.toggle("loading",on);
+}
+
+function setTabCount(id,n){
+  const el=document.getElementById("cnt-"+id);
+  if(el){el.textContent=n;el.style.display=n?"":"none";}
+}
+
+/* ═══════════════════════════════════════════
+   CATEGORY SELECT
+═══════════════════════════════════════════ */
+function selectCat(id){
+  clearSearch();
+  document.getElementById("search-input").value="";
+  activeId=id;
+  const cat=CATS.find(c=>c.id===id);
+  document.getElementById("sec-title").textContent=cat.label;
   hlTab(id);
-  cache[id] ? render(cache[id]) : fetchAndRender(id);
+  if(cache[id]){render(cache[id]);}
+  else fetchAndRender(id);
 }
-function refreshCat() { delete cache[activeId]; fetchAndRender(activeId); }
 
-async function fetchAndRender(catId) {
+function refreshCat(){delete cache[activeId];fetchAndRender(activeId);}
+
+async function fetchAndRender(catId){
   showSkeleton();
-  document.getElementById("sec-src").textContent = "Loading feeds…";
-  document.getElementById("sec-cnt").textContent = "";
-  try {
-    const result = await loadFeed(catId);
-    cache[catId] = result;
-    if (catId===activeId) render(result);
-  } catch { if (catId===activeId) showError(); }
+  setTabLoading(catId,true);
+  document.getElementById("sec-src").textContent="Loading…";
+  document.getElementById("sec-meta").textContent="";
+  try{
+    const result=await loadCat(catId);
+    cache[catId]=result;
+    setTabCount(catId,result.items.length);
+    if(catId===activeId) render(result);
+  }catch{
+    if(catId===activeId) showError();
+  }finally{setTabLoading(catId,false);}
 }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    RENDER
-═══════════════════════════════════════════════ */
-function render({ items, source, proxy }) {
-  document.getElementById("sec-src").textContent  = "via "+source+(proxy&&proxy!=="mixed"?" ["+proxy+"]":"");
-  document.getElementById("sec-cnt").textContent  = items.length+" stories";
-  if (!items.length) { showError(); return; }
+═══════════════════════════════════════════ */
+function render({items,source,proxy}){
+  document.getElementById("sec-src").textContent="Sources: "+source.split(" · ").length+" feeds";
+  document.getElementById("sec-meta").textContent=items.length+" stories";
 
-  const cat = CATS.find(c=>c.id===activeId);
-  const [hero,...rest] = items;
-  const sidebar = rest.slice(0,3);
-  const lowers  = rest.slice(3);
-  document.getElementById("content").innerHTML = pageHTML(hero, sidebar, lowers, cat);
-}
+  if(!items.length){showError();return;}
 
-/* ─ Helpers ─ */
-function lbadge(item) {
-  const te = isTe(item.title)||item._lang==="te";
-  return te ? `<span class="lang-badge lb-te">తె Telugu</span>`
-             : `<span class="lang-badge lb-en">EN</span>`;
-}
-function srcName(item) { return item._src ? esc(item._src) : ""; }
+  const cat=CATS.find(c=>c.id===activeId);
+  const [hero,...rest]=items;
+  const lowers=rest;
+  const reg=cat.region;
 
-/* ─ Page HTML ─ */
-function pageHTML(hero, sidebar, lowers, cat) {
-  const reg = cat.region;
-  const hid = enc(hero.guid||hero.link), hsum=summaries[hid], hbz=busy.has(hid);
-  const hPanel = hsum ? aiPanel(hsum,reg) : "";
-  const hLbl   = hbz ? `<span class="spin">◌</span> Analysing…` : hsum ? `↻ Re-Analyse` : `⚡ AI Brief`;
+  const heroId=enc(hero.guid||hero.link);
+  const heroSum=summaries[heroId];
+  const heroBz=busy.has(heroId);
 
-  const heroH = `
-    <div class="hero">
-      <div class="hero-cat ${cat.cc}">${lbadge(hero)} ${srcName(hero)} · ${fmtDate(hero.pubDate)}</div>
-      <div class="hero-headline">${esc(hero.title)}</div>
-      <div class="hero-desc">${esc(strip(hero.description)).slice(0,400)}${strip(hero.description).length>400?"…":""}</div>
-      ${hPanel}
-      <div class="hero-actions">
-        <button class="btn btn-ai r-${reg}" id="btn-${hid}" ${hbz?"disabled":""} onclick="doAI('${hid}')">${hLbl}</button>
-        <a class="btn btn-read" href="${esc(hero.link)}" target="_blank" rel="noopener">Read Full →</a>
+  const heroHTML=`
+    <div class="hero-card">
+      <div class="hero-body">
+        <div class="hero-cat">
+          ${lbadge(hero)}
+          <span class="cat-badge ${cat.cc}">${cat.label.replace(/^[^ ]+ /,"")}</span>
+          <span class="src-badge">${esc(hero._src||"")}</span>
+          <span class="date-badge" style="margin-left:auto">${fmtDate(hero.pubDate)}</span>
+        </div>
+        <div class="hero-headline">${esc(hero.title)}</div>
+        <div class="hero-desc">${esc(strip(hero.description)).slice(0,320)}${strip(hero.description).length>320?"…":""}</div>
+        ${heroSum?aiPanel(heroSum,reg):""}
+        <div class="art-actions" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+          <button class="btn-ai r-${reg}" id="btn-${heroId}" ${heroBz?"disabled":""} onclick="doAI('${heroId}')">
+            ${heroBz?`<span class="spin">◌</span> Analysing…`:heroSum?"↻ Re-Analyse":"⚡ AI Brief"}
+          </button>
+          <a class="btn-read" href="${esc(hero.link)}" target="_blank" rel="noopener">Read Full →</a>
+          <button class="btn-bm${isBookmarked(heroId)?" saved":""}" onclick="toggleBM('${heroId}')" title="Bookmark">
+            ${isBookmarked(heroId)?"📌":"🔖"}
+          </button>
+        </div>
       </div>
     </div>`;
 
-  const sideH = sidebar.map(a => {
-    const id=enc(a.guid||a.link), sum=summaries[id], bz=busy.has(id);
-    const lbl = bz?`<span class="spin">◌</span>`:sum?"↻":"⚡";
+  const lowHTML=lowers.map((a,i)=>{
+    const id=enc(a.guid||a.link);
+    const sum=summaries[id],bz=busy.has(id);
+    const lbl=bz?`<span class="spin">◌</span>`:sum?"↻":"⚡";
     return `
-      <div class="side-art">
-        <div class="side-cat ${cat.cc}">${lbadge(a)} ${srcName(a)} · ${fmtDate(a.pubDate)}</div>
-        <div class="side-headline">${esc(a.title)}</div>
-        <div class="side-desc">${esc(strip(a.description))}</div>
+      <div class="art-card" style="animation-delay:${i*.04}s">
+        <div class="art-meta">
+          ${lbadge(a)}
+          <span class="src-badge">${esc(a._src||"")}</span>
+          <span class="date-badge" style="margin-left:auto">${fmtDate(a.pubDate)}</span>
+        </div>
+        <div class="art-headline">${esc(a.title)}</div>
+        <div class="art-desc">${esc(strip(a.description))}</div>
         ${sum?aiPanel(sum,reg):""}
-        <div class="side-actions">
-          <button class="btn btn-ai r-${reg}" id="btn-${id}" ${bz?"disabled":""} onclick="doAI('${id}')">${lbl} AI</button>
-          <a class="btn btn-read" href="${esc(a.link)}" target="_blank" rel="noopener">Read →</a>
+        <div class="art-actions">
+          <button class="btn-ai r-${reg}" id="btn-${id}" ${bz?"disabled":""} onclick="doAI('${id}')">${lbl} AI</button>
+          <a class="btn-read" href="${esc(a.link)}" target="_blank" rel="noopener">Read →</a>
+          <button class="btn-bm${isBookmarked(id)?" saved":""}" onclick="toggleBM('${id}')" title="Bookmark">${isBookmarked(id)?"📌":"🔖"}</button>
         </div>
       </div>`;
   }).join("");
 
-  const lowH = lowers.map((a,i) => {
-    const id=enc(a.guid||a.link), sum=summaries[id], bz=busy.has(id);
-    const lbl = bz?`<span class="spin">◌</span>`:sum?"↻":"⚡";
-    return `
-      <div class="grid-art" style="animation-delay:${i*.05}s">
-        <div class="grid-cat ${cat.cc}">${lbadge(a)} ${srcName(a)} · ${fmtDate(a.pubDate)}</div>
-        <div class="grid-headline">${esc(a.title)}</div>
-        <div class="grid-desc">${esc(strip(a.description))}</div>
-        ${sum?aiPanel(sum,reg):""}
-        <div class="grid-actions">
-          <button class="btn btn-ai r-${reg}" id="btn-${id}" ${bz?"disabled":""} onclick="doAI('${id}')">${lbl} AI</button>
-          <a class="btn btn-read" href="${esc(a.link)}" target="_blank" rel="noopener">Read →</a>
-        </div>
-      </div>`;
-  }).join("");
-
-  return `
-    <div class="front-page">
-      ${heroH}
-      <div class="col-div"></div>
-      <div class="sidebar">${sideH}</div>
-    </div>
-    ${lowH.trim()?`<div class="lower-grid">${lowH}</div>`:""}`;
+  document.getElementById("content").innerHTML=`
+    ${heroHTML}
+    <div class="art-grid" style="margin-top:12px">${lowHTML}</div>`;
 }
 
-function aiPanel(sum, reg) {
+function aiPanel(sum,reg){
   return `
-    <div class="ai-panel r-${reg}">
-      <div class="ai-hdr"><span class="ai-tag">⚡ AI Brief</span><span class="groq-tag">llama-3.3-70b · Groq</span></div>
+    <div class="ai-panel r-${reg}" style="margin-top:10px">
+      <div class="ai-hdr">
+        <span class="ai-tag">⚡ AI Brief</span>
+        <span class="ai-model">llama-3.3-70b · Groq</span>
+      </div>
       <div class="ai-text">${esc(sum)}</div>
     </div>`;
 }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    GROQ AI BRIEF
-═══════════════════════════════════════════════ */
-async function doAI(eid) {
-  const key = getKey();
-  if (!key) { toast("⚠ Add your free Groq API key first"); toggleKey(true); return; }
+═══════════════════════════════════════════ */
+async function doAI(eid){
+  const key=getKey();
+  if(!key){toast("⚠ Add your Groq API key first");openKeyModal();return;}
 
-  const cat = CATS.find(c=>c.id===activeId);
-  const article = (cache[activeId]?.items||[]).find(a=>enc(a.guid||a.link)===eid);
-  if (!article) return;
+  const cat=CATS.find(c=>c.id===activeId);
+  const items=cache[activeId]?.items||[];
+  const article=items.find(a=>enc(a.guid||a.link)===eid);
+  if(!article)return;
 
   busy.add(eid);
-  const b=document.getElementById("btn-"+eid);
-  if(b){b.disabled=true;b.innerHTML=`<span class="spin">◌</span> Analysing…`}
+  const btn=document.getElementById("btn-"+eid);
+  if(btn){btn.disabled=true;btn.innerHTML=`<span class="spin">◌</span> Analysing…`;}
 
-  const ctx  = {world:"international",india:"national Indian",ap:"Andhra Pradesh regional",tg:"Telangana regional",ai:"global AI & technology"}[cat.region]||"Indian";
-  const teArt = isTe(article.title)||article._lang==="te";
-  const lang  = teArt ? " The article is in Telugu — read it carefully and write your entire analysis in clear English." : "";
-  const body  = strip(article.description||"").slice(0,900);
+  const ctxMap={world:"international",india:"national Indian",ap:"Andhra Pradesh regional",tg:"Telangana regional",ai:"global AI & technology"};
+  const ctx=ctxMap[cat.region]||"Indian";
+  const teArt=isTe(article.title)||article._lang==="te";
+  const langNote=teArt?" The article is in Telugu — read it and write your entire analysis in clear English.":"";
+  const body=strip(article.description||"").slice(0,900);
 
-  const prompt = `You are a sharp ${ctx} news analyst writing for an educated reader.${lang}
+  const prompt=`You are a sharp ${ctx} news analyst.${langNote}
 
-Write exactly 3 sentences — no labels, no bullet points:
-1. What happened (the core fact)
-2. Why it matters
-3. What to watch next
+Write exactly 3 crisp sentences — no labels, no bullet points:
+1. Core fact: what happened?
+2. Significance: why does it matter?
+3. Watch next: what should readers follow?
 
 TITLE: ${article.title}
 CONTENT: ${body}`;
 
-  try {
-    const r = await fetch("https://api.groq.com/openai/v1/chat/completions",{
+  try{
+    const r=await fetch("https://api.groq.com/openai/v1/chat/completions",{
       method:"POST",
       headers:{"Content-Type":"application/json","Authorization":`Bearer ${key}`},
       body:JSON.stringify({model:"llama-3.3-70b-versatile",messages:[{role:"user",content:prompt}],max_tokens:280,temperature:.65})
     });
-    if (r.status===401) throw new Error("Invalid Groq key");
-    if (!r.ok) throw new Error("Groq error "+r.status);
-    const d = await r.json();
-    summaries[eid] = d.choices?.[0]?.message?.content?.trim()||"Summary unavailable.";
+    if(r.status===401)throw new Error("Invalid Groq key — check your key");
+    if(!r.ok)throw new Error("Groq error "+r.status);
+    const d=await r.json();
+    summaries[eid]=d.choices?.[0]?.message?.content?.trim()||"Summary unavailable.";
     toast("✓ AI brief ready");
-  } catch(e) {
-    summaries[eid]=null; toast("✗ "+e.message);
-    if(e.message.includes("Invalid")) updateKeyStatus(false);
-  } finally {
+  }catch(e){
+    summaries[eid]=null;toast("✗ "+e.message);
+    if(e.message.includes("Invalid"))checkKey();
+  }finally{
     busy.delete(eid);
-    if(cache[activeId]) render(cache[activeId]);
+    if(cache[activeId])render(cache[activeId]);
   }
 }
 
-/* ═══════════════════════════════════════════════
-   UI STATES
-═══════════════════════════════════════════════ */
-function showSkeleton() {
-  document.getElementById("content").innerHTML = `
-    <div id="skel-wrap">
-      <div style="display:flex;flex-direction:column;gap:14px">
-        <div class="skel" style="height:10px;width:32%"></div>
-        <div class="skel" style="height:36px;width:96%"></div>
-        <div class="skel" style="height:36px;width:78%"></div>
-        <div class="skel" style="height:11px;width:90%"></div>
-        <div class="skel" style="height:11px;width:82%"></div>
-        <div class="skel" style="height:11px;width:68%"></div>
-        <div class="skel" style="height:11px;width:74%"></div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:16px">
-        ${[0,1,2].map(()=>`
-          <div style="display:flex;flex-direction:column;gap:8px;padding-bottom:14px;border-bottom:1px solid #d8ccb0">
-            <div class="skel" style="height:9px;width:38%"></div>
-            <div class="skel" style="height:19px;width:92%"></div>
-            <div class="skel" style="height:9px;width:70%"></div>
-          </div>`).join("")}
+/* ═══════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════ */
+function doSearch(q){
+  const ql=q.toLowerCase();
+  let all=[];
+  for(const id in cache){
+    const cat=CATS.find(c=>c.id===id);
+    cache[id].items.forEach(a=>{
+      if((a.title||"").toLowerCase().includes(ql)||(a._src||"").toLowerCase().includes(ql)){
+        all.push({...a,_catLabel:cat.label,_catCc:cat.cc,_catRegion:cat.region});
+      }
+    });
+  }
+
+  const sr=document.getElementById("search-results");
+  const content=document.getElementById("content");
+  sr.classList.add("show");content.style.display="none";
+  document.querySelector(".sec-hdr").style.display="none";
+
+  if(!all.length){
+    sr.innerHTML=`<div class="state-box"><div class="state-icon">🔍</div><div class="state-msg">No results for "<strong>${esc(q)}</strong>" in loaded articles.<br>Try switching tabs to load more categories.</div></div>`;
+    return;
+  }
+
+  sr.innerHTML=`
+    <div class="search-hdr" style="padding:12px 14px 0">${all.length} results for "<strong>${esc(q)}</strong>"</div>
+    <div class="art-grid" style="margin:10px 12px">
+      ${all.map((a,i)=>{
+        const id=enc(a.guid||a.link);
+        const sum=summaries[id],bz=busy.has(id);
+        return `
+          <div class="art-card" style="animation-delay:${i*.03}s">
+            <div class="art-meta">
+              ${lbadge(a)}
+              <span class="cat-badge ${a._catCc}">${a._catLabel.replace(/^[^ ]+ /,"")}</span>
+              <span class="date-badge" style="margin-left:auto">${fmtDate(a.pubDate)}</span>
+            </div>
+            <div class="art-headline">${esc(a.title)}</div>
+            <div class="art-desc">${esc(strip(a.description))}</div>
+            ${sum?aiPanel(sum,a._catRegion):""}
+            <div class="art-actions">
+              <button class="btn-ai r-${a._catRegion}" id="btn-${id}" ${bz?"disabled":""} onclick="activeId='${a._catId||activeId}';doAI('${id}')">${bz?`<span class="spin">◌</span>`:sum?"↻":"⚡"} AI</button>
+              <a class="btn-read" href="${esc(a.link)}" target="_blank" rel="noopener">Read →</a>
+            </div>
+          </div>`;
+      }).join("")}
+    </div>`;
+}
+
+function clearSearch(){
+  document.getElementById("search-results").classList.remove("show");
+  document.getElementById("content").style.display="";
+  const sh=document.querySelector(".sec-hdr");if(sh)sh.style.display="";
+}
+
+/* ═══════════════════════════════════════════
+   BOOKMARKS
+═══════════════════════════════════════════ */
+function isBookmarked(id){return bookmarks.some(b=>b.id===id)}
+
+function toggleBM(id){
+  const items=cache[activeId]?.items||[];
+  const article=items.find(a=>enc(a.guid||a.link)===id);
+  if(!article)return;
+
+  if(isBookmarked(id)){
+    bookmarks=bookmarks.filter(b=>b.id!==id);
+    toast("Bookmark removed");
+  }else{
+    bookmarks.unshift({id,title:article.title,link:article.link,src:article._src||"",date:article.pubDate,saved:Date.now()});
+    if(bookmarks.length>50)bookmarks=bookmarks.slice(0,50);
+    toast("📌 Bookmarked!");
+  }
+  localStorage.setItem("brief_bm",JSON.stringify(bookmarks));
+  updateBMBadge();
+  if(cache[activeId])render(cache[activeId]);
+}
+
+function updateBMBadge(){
+  const badge=document.getElementById("bm-badge");
+  badge.textContent=bookmarks.length;
+  badge.style.display=bookmarks.length?"flex":"none";
+}
+
+function openBM(){
+  const drawer=document.getElementById("bm-drawer");
+  const list=document.getElementById("bm-list");
+  if(!bookmarks.length){list.innerHTML=`<div class="bm-empty">No saved articles yet.<br>Tap 🔖 on any article to save it.</div>`;}
+  else{
+    list.innerHTML=bookmarks.map(b=>`
+      <div class="bm-item">
+        <div class="bm-item-title">${esc(b.title)}</div>
+        <div class="bm-item-meta">
+          <span>${esc(b.src)}</span>
+          <span>${fmtDate(b.date)}</span>
+        </div>
+        <div class="bm-item-actions">
+          <a class="btn-read" style="font-size:.68rem;padding:5px 10px" href="${esc(b.link)}" target="_blank" rel="noopener">Read →</a>
+          <button class="btn-clr" style="font-size:.68rem;padding:5px 10px" onclick="removeBM('${b.id}')">Remove</button>
+        </div>
+      </div>`).join("");
+  }
+  drawer.classList.add("open");
+}
+
+function removeBM(id){
+  bookmarks=bookmarks.filter(b=>b.id!==id);
+  localStorage.setItem("brief_bm",JSON.stringify(bookmarks));
+  updateBMBadge();
+  openBM();
+  if(cache[activeId])render(cache[activeId]);
+}
+
+function closeBM(){document.getElementById("bm-drawer").classList.remove("open")}
+
+/* ═══════════════════════════════════════════
+   LOADING / ERROR STATES
+═══════════════════════════════════════════ */
+function showSkeleton(){
+  document.getElementById("content").innerHTML=`
+    <div class="skeleton-wrap">
+      <div class="skel skel-hero"></div>
+      <div class="skel-grid">
+        ${Array(6).fill(`<div class="skel skel-card"></div>`).join("")}
       </div>
     </div>`;
 }
 
-function showError() {
-  document.getElementById("sec-src").textContent = "";
-  document.getElementById("content").innerHTML = `
-    <div class="err-box">
-      <span class="err-icon">📰</span>
-      <div class="err-title">Could Not Load This Edition</div>
-      <div class="err-msg">All RSS feeds and proxies were tried.<br>Check your connection and click ↻ Refresh.</div>
+function showError(){
+  document.getElementById("sec-src").textContent="";
+  document.getElementById("content").innerHTML=`
+    <div class="state-box">
+      <div class="state-icon">📡</div>
+      <div class="state-title">Could Not Load Feeds</div>
+      <div class="state-msg">All RSS sources and proxies were tried.<br>Check your internet and tap Refresh.</div>
+      <button class="state-btn" onclick="refreshCat()">↻ Try Again</button>
     </div>`;
 }
 
-/* ═══════════════════════════════════════════════
-   KEY MANAGEMENT
-═══════════════════════════════════════════════ */
-const SKEY="brief_groq_key";
-function loadKeyFromStore() {
-  const k=localStorage.getItem(SKEY)||"";
-  if(k){document.getElementById("groq-key-input").value=k;updateKeyStatus(true);}
-  else updateKeyStatus(false);
+/* ═══════════════════════════════════════════
+   API KEY
+═══════════════════════════════════════════ */
+function getKey(){return localStorage.getItem(SKEY)||""}
+
+function checkKey(){
+  const has=!!getKey();
+  document.getElementById("key-banner").classList.toggle("hidden",has);
+  document.getElementById("clear-btn").style.display=has?"":"none";
 }
-function getKey(){return localStorage.getItem(SKEY)||"";}
-function saveKey(){
-  const v=document.getElementById("groq-key-input").value.trim();
-  if(!v){toast("Enter a Groq API key");return;}
-  localStorage.setItem(SKEY,v); updateKeyStatus(true); toggleKey(false); toast("✓ Key saved");
+
+function openKeyModal(){
+  document.getElementById("key-modal-input").value=getKey();
+  document.getElementById("key-modal").classList.add("open");
+  keyModalOpen=true;
+  setTimeout(()=>document.getElementById("key-modal-input").focus(),100);
 }
+
+function closeKeyModal(){
+  document.getElementById("key-modal").classList.remove("open");
+  keyModalOpen=false;
+}
+
+function saveKeyFromModal(){
+  const v=document.getElementById("key-modal-input").value.trim();
+  if(!v){toast("Please enter your Groq API key");return;}
+  localStorage.setItem(SKEY,v);
+  checkKey();closeKeyModal();toast("✓ Groq key saved — AI briefs enabled!");
+}
+
 function clearKey(){
   localStorage.removeItem(SKEY);
-  document.getElementById("groq-key-input").value=""; updateKeyStatus(false); toast("Key cleared");
-}
-function updateKeyStatus(has){
-  const el=document.getElementById("key-status");
-  el.className=has?"has-key":"no-key"; el.textContent=has?"✓ Key Active":"No API Key";
-}
-function toggleKey(force){
-  keyOpen=force!==undefined?force:!keyOpen;
-  document.getElementById("key-drawer").classList.toggle("open",keyOpen);
-  if(keyOpen) document.getElementById("groq-key-input").focus();
+  document.getElementById("key-modal-input").value="";
+  checkKey();closeKeyModal();toast("Key cleared");
 }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════
+   DARK MODE
+═══════════════════════════════════════════ */
+function loadTheme(){
+  const saved=localStorage.getItem("brief_theme")||"light";
+  document.documentElement.setAttribute("data-theme",saved);
+  updateThemeIcon(saved);
+}
+
+function toggleTheme(){
+  const current=document.documentElement.getAttribute("data-theme");
+  const next=current==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",next);
+  localStorage.setItem("brief_theme",next);
+  updateThemeIcon(next);
+}
+
+function updateThemeIcon(theme){
+  const icon=document.getElementById("theme-icon");
+  icon.innerHTML=theme==="dark"
+    ?`<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`
+    :`<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+}
+
+/* ═══════════════════════════════════════════
    TOAST
-═══════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
 let toastT;
 function toast(msg){
   const el=document.getElementById("toast");
-  el.textContent=msg; el.classList.add("show");
-  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove("show"),3200);
+  el.textContent=msg;el.classList.add("show");
+  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),3000);
 }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    UTILITIES
-═══════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
 function isTe(s){return /[\u0C00-\u0C7F]/.test(s||"")}
-function strip(h){return(h||"").replace(/<[^>]*>/g,"").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#\d+;/g,"").trim()}
+function lbadge(item){
+  const te=isTe(item.title)||item._lang==="te";
+  return te?`<span class="lang-badge lb-te">తె</span>`:`<span class="lang-badge lb-en">EN</span>`;
+}
+function strip(h){return(h||"").replace(/<[^>]*>/g,"").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#\d+;/g,"").replace(/\s+/g," ").trim()}
 function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function enc(s){
-  if(!s) return"x"+Math.random().toString(36).slice(2,10);
-  let h=5381;
-  for(let i=0;i<s.length;i++) h=Math.imul(31,h)+s.charCodeAt(i)|0;
-  return "id"+Math.abs(h).toString(36).padStart(8,"0");
+  if(!s)return"x"+Math.random().toString(36).slice(2,10);
+  let h=5381;for(let i=0;i<s.length;i++)h=Math.imul(31,h)+s.charCodeAt(i)|0;
+  return"id"+Math.abs(h).toString(36).padStart(8,"0");
 }
 function fmtDate(s){
-  try{return new Date(s).toLocaleDateString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",hour12:true})}catch{return""}
+  try{
+    const d=new Date(s);
+    const now=new Date();
+    const diff=now-d;
+    if(diff<3600000)return Math.floor(diff/60000)+"m ago";
+    if(diff<86400000)return Math.floor(diff/3600000)+"h ago";
+    return d.toLocaleDateString("en-IN",{day:"numeric",month:"short"});
+  }catch{return""}
 }
 
-/* keyboard */
+// Keyboard shortcut for key modal
 document.addEventListener("keydown",e=>{
-  if(e.key==="Enter"&&document.activeElement.id==="groq-key-input") saveKey();
-  if(e.key==="Escape"&&keyOpen) toggleKey(false);
+  if(e.key==="Enter"&&keyModalOpen) saveKeyFromModal();
 });
 </script>
+
 </body>
 </html>

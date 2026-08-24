@@ -1,0 +1,5 @@
+# TTD booking assistant — personal data, never commit
+ttd_config.json
+ttd_config*.json
+*.ttd_config.json
+ttd_photos/

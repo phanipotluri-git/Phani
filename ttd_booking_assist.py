@@ -217,7 +217,23 @@ def main():
     cfg = load_config(config_path)
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        # Prefer driving the system-installed Google Chrome (channel="chrome")
+        # over Playwright's own bundled Chromium build -- the bundled build
+        # drops support for older OS versions (e.g. it refuses to install on
+        # macOS 12) well before the OS itself stops running Chrome fine.
+        try:
+            browser = p.chromium.launch(channel="chrome", headless=False)
+        except Exception as e:
+            sys.exit(
+                "Could not launch Google Chrome via Playwright "
+                f"({e}).\n"
+                "Make sure Google Chrome is installed (chrome://version in "
+                "Chrome shows its path). Alternatively, run "
+                "'playwright install chromium' and remove the "
+                "channel=\"chrome\" argument from p.chromium.launch(...) "
+                "in this script to use Playwright's own bundled Chromium "
+                "instead (only works if your OS is new enough for it)."
+            )
         page = browser.new_page()
 
         wait_for_login(page)

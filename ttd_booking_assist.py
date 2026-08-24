@@ -140,12 +140,18 @@ def fill_category_age_spouse(page, cfg):
         pause(f"Could not auto-fill Age. Please enter {pilgrim['age']} yourself.")
 
     print(f"Setting 'Accompany with the Spouse' = {accompany}...")
-    try:
-        page.get_by_label("Accompany", exact=False).select_option(label=accompany)
-    except Exception:
+    # The site's dropdown options are ALL CAPS ("YES"/"NO"), but the config
+    # value from TTD.html is Title Case ("Yes"/"No") -- try both.
+    for candidate in (accompany, accompany.upper(), accompany.lower()):
+        try:
+            page.get_by_label("Accompany", exact=False).select_option(label=candidate)
+            break
+        except Exception:
+            continue
+    else:
         try:
             page.get_by_text("Accompany with the Spouse", exact=False).click()
-            page.get_by_text(accompany, exact=True).click()
+            page.get_by_text(accompany, exact=False).click()
         except Exception:
             pause(f"Could not auto-select spouse option. Please choose '{accompany}' yourself.")
 
@@ -171,15 +177,22 @@ def upload_photo(page, photo: dict):
         print("No photo in config — skipping upload, please attach it yourself.")
         return
     print(f"Uploading ID proof photo ({photo['filename']})...")
+    file_bytes = base64.b64decode(photo["base64"])
+    file_payload = [{
+        "name": photo["filename"],
+        "mimeType": photo.get("mime") or "image/png",
+        "buffer": file_bytes,
+    }]
     try:
-        file_bytes = base64.b64decode(photo["base64"])
-        page.get_by_text("Upload document", exact=False).first.set_input_files(
-            files=[{
-                "name": photo["filename"],
-                "mimeType": photo.get("mime") or "image/png",
-                "buffer": file_bytes,
-            }]
-        )
+        # The real <input type="file"> is usually hidden behind a styled
+        # "Upload document" label/button, so target the input directly
+        # rather than the visible text.
+        page.locator('input[type="file"]').first.set_input_files(files=file_payload)
+        return
+    except Exception:
+        pass
+    try:
+        page.get_by_text("Upload document", exact=False).first.set_input_files(files=file_payload)
     except Exception as e:
         pause(f"Could not auto-upload the photo ({e}). Please upload it yourself.")
 

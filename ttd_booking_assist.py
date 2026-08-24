@@ -159,12 +159,17 @@ def fill_category_age_spouse(page, cfg):
 def fill_pilgrim_details(page, person: dict, s_no: int):
     label = "yours" if s_no == 1 else "your spouse's"
     print(f"Filling Pilgrim Details ({label})...")
+    # If the form pre-renders all S.No blocks at once (common in reactive
+    # forms), ".last" would resolve to the same final block on every call,
+    # silently overwriting it instead of filling each pilgrim's own block.
+    # Index by position (nth) instead, 0-based.
+    idx = s_no - 1
     try:
-        page.get_by_label("Pilgrim Name", exact=False).last.fill(person["name"])
-        page.get_by_label("Age", exact=False).last.fill(str(person["age"]))
-        page.get_by_label("Gender", exact=False).last.select_option(label=person["gender"])
-        page.get_by_label("Photo ID Proof", exact=False).last.select_option(label=person["id_proof_type"])
-        page.get_by_label("ID Card Number", exact=False).last.fill(person["id_number"])
+        page.get_by_label("Pilgrim Name", exact=False).nth(idx).fill(person["name"])
+        page.get_by_label("Age", exact=False).nth(idx).fill(str(person["age"]))
+        page.get_by_label("Gender", exact=False).nth(idx).select_option(label=person["gender"])
+        page.get_by_label("Photo ID Proof", exact=False).nth(idx).select_option(label=person["id_proof_type"])
+        page.get_by_label("ID Card Number", exact=False).nth(idx).fill(person["id_number"])
     except Exception as e:
         pause(
             f"Could not auto-fill all Pilgrim Details fields ({e}). "

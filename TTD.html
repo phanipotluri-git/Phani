@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TTD · Sr. Citizen Darshan Prefill</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0b0b0e;
+      --surface: #111116;
+      --border: #1c1c28;
+      --accent: #f0c040;
+      --accent2: #5cf0b0;
+      --accent3: #60b0ff;
+      --accent4: #f07880;
+      --text: #e4e4f0;
+      --muted: #58586a;
+      --hover-bg: #18181f;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(240,192,64,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,192,64,0.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none; z-index: 0;
+    }
+
+    .container {
+      position: relative; z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 90px;
+    }
+
+    a.back { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-decoration: none; }
+    a.back:hover { color: var(--accent); }
+
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); border: 1px solid var(--accent);
+      padding: 4px 10px; border-radius: 2px; margin: 18px 0;
+    }
+
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 10px; }
+    h1 span { color: var(--accent); }
+
+    .subtitle { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+
+    .notice {
+      background: var(--surface); border: 1px solid var(--accent2);
+      border-left: 3px solid var(--accent2);
+      border-radius: 4px; padding: 14px 16px; margin-bottom: 30px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text); line-height: 1.7;
+    }
+    .notice b { color: var(--accent2); }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-bottom: 20px; }
+    .card h2 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .card .card-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 18px; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .row.single { grid-template-columns: 1fr; }
+    @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+
+    label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    label .req { color: var(--accent4); }
+
+    input[type=text], input[type=number], input[type=tel], select {
+      width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 10px 12px; border-radius: 4px;
+      outline: none; transition: border-color .2s;
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+    select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2358586a'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+
+    .file-drop {
+      border: 1px dashed var(--border); border-radius: 4px; padding: 16px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted);
+      display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer;
+      transition: border-color .2s;
+    }
+    .file-drop:hover { border-color: var(--accent); }
+    .file-drop.filled { border-color: var(--accent2); color: var(--text); }
+    .file-drop input[type=file] { display: none; }
+
+    .toggle-group { display: flex; gap: 8px; }
+    .toggle-btn {
+      flex: 1; text-align: center; padding: 10px; border-radius: 4px; border: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer; color: var(--muted);
+      transition: all .15s; background: var(--bg);
+    }
+    .toggle-btn.active { border-color: var(--accent3); color: var(--accent3); background: rgba(96,176,255,0.08); }
+
+    #spouseFields { display: none; margin-top: 4px; padding-top: 14px; border-top: 1px dashed var(--border); }
+
+    .err { color: var(--accent4); font-family: 'JetBrains Mono', monospace; font-size: 10px; margin-top: 4px; display: none; }
+
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+    button {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+      padding: 12px 20px; border-radius: 4px; border: 1px solid var(--accent);
+      background: var(--accent); color: #0b0b0e; cursor: pointer; transition: opacity .2s;
+    }
+    button:hover { opacity: 0.85; }
+    button.secondary { background: transparent; color: var(--text); border-color: var(--border); }
+    button.secondary:hover { border-color: var(--muted); opacity: 1; }
+
+    #status { font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 14px; color: var(--accent2); display: none; }
+
+    .steps { list-style: none; counter-reset: step; }
+    .steps li { counter-increment: step; position: relative; padding-left: 34px; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); line-height: 1.6; }
+    .steps li::before {
+      content: counter(step); position: absolute; left: 0; top: -1px;
+      width: 22px; height: 22px; border-radius: 50%; background: var(--surface); border: 1px solid var(--accent);
+      color: var(--accent); font-size: 11px; display: flex; align-items: center; justify-content: center;
+    }
+    .steps li b { color: var(--accent); }
+    .steps li.manual b { color: var(--accent4); }
+    .tag { display: inline-block; font-size: 9px; padding: 1px 6px; border-radius: 8px; margin-left: 6px; vertical-align: middle; }
+    .tag.auto { background: rgba(92,240,176,0.12); color: var(--accent2); border: 1px solid rgba(92,240,176,0.3); }
+    .tag.manual { background: rgba(240,120,128,0.12); color: var(--accent4); border: 1px solid rgba(240,120,128,0.3); }
+
+    code { font-family: 'JetBrains Mono', monospace; background: var(--bg); border: 1px solid var(--border); padding: 2px 6px; border-radius: 3px; font-size: 11px; color: var(--accent); }
+    pre { font-family: 'JetBrains Mono', monospace; background: var(--bg); border: 1px solid var(--border); padding: 12px 14px; border-radius: 4px; font-size: 11px; color: var(--text); overflow-x: auto; margin: 10px 0; }
+
+    footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <a class="back" href="index.html">← Tool Hub</a>
+  <div class="badge">🛕 TTD</div>
+  <h1>Sr. Citizen Darshan <span>Prefill</span></h1>
+  <p class="subtitle">// Differently Abled / Sr. Citizen / Medical Cases quota — booking helper</p>
+
+  <div class="notice">
+    <b>Privacy:</b> everything you enter below — including the ID photo — is saved only in this browser
+    (<code>localStorage</code>). Nothing is uploaded, nothing is sent anywhere, and nothing here is ever
+    committed to git. Use the <b>Download config</b> button to save a local file for the companion
+    booking-assist script.
+  </div>
+
+  <div class="card">
+    <h2>Pilgrim details</h2>
+    <div class="card-sub">Required for the "Booking for Self" section of the TTD form</div>
+
+    <div class="row">
+      <div>
+        <label>Pilgrim Name <span class="req">*</span></label>
+        <input type="text" id="name" placeholder="As per ID proof" required/>
+      </div>
+      <div>
+        <label>Age <span class="req">*</span></label>
+        <input type="number" id="age" min="60" max="120" placeholder="60+" required/>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Gender <span class="req">*</span></label>
+        <select id="gender" required>
+          <option value="">Select</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div>
+        <label>Photo ID Proof <span class="req">*</span></label>
+        <select id="idType" required>
+          <option value="">Select</option>
+          <option>Aadhaar Card</option>
+          <option>PAN Card</option>
+          <option>Voter ID</option>
+          <option>Driving License</option>
+          <option>Passport</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row single">
+      <div>
+        <label>ID Card Number <span class="req">*</span></label>
+        <input type="text" id="idNumber" placeholder="Enter ID number" required/>
+      </div>
+    </div>
+
+    <div class="row single">
+      <div>
+        <label>Mobile Number <span class="req">*</span></label>
+        <input type="tel" id="mobile" placeholder="10-digit mobile number" maxlength="10" required/>
+      </div>
+    </div>
+
+    <div class="row single">
+      <div>
+        <label>ID Proof Photo <span class="req">*</span> <span style="text-transform:none;color:var(--muted)">(jpeg/png/pdf, max 1 MB)</span></label>
+        <div class="file-drop" id="fileDrop">
+          <span id="fileLabel">Click to choose file…</span>
+          <span>📎</span>
+          <input type="file" id="idPhoto" accept=".jpg,.jpeg,.png,.pdf" required/>
+        </div>
+        <div class="err" id="fileErr">File must be under 1 MB.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Accompany with Spouse</h2>
+    <div class="card-sub">Only spouse is allowed as attendant per TTD rules</div>
+    <div class="toggle-group">
+      <div class="toggle-btn active" data-spouse="No">No</div>
+      <div class="toggle-btn" data-spouse="Yes">Yes</div>
+    </div>
+
+    <div id="spouseFields">
+      <div class="row">
+        <div>
+          <label>Spouse Name</label>
+          <input type="text" id="spouseName" placeholder="As per ID proof"/>
+        </div>
+        <div>
+          <label>Spouse Age</label>
+          <input type="number" id="spouseAge" placeholder="Age"/>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Spouse Gender</label>
+          <select id="spouseGender">
+            <option value="">Select</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label>Spouse Photo ID Proof</label>
+          <select id="spouseIdType">
+            <option value="">Select</option>
+            <option>Aadhaar Card</option>
+            <option>PAN Card</option>
+            <option>Voter ID</option>
+            <option>Driving License</option>
+            <option>Passport</option>
+          </select>
+        </div>
+      </div>
+      <div class="row single">
+        <div>
+          <label>Spouse ID Card Number</label>
+          <input type="text" id="spouseIdNumber" placeholder="Enter ID number"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="saveBtn">💾 Save locally</button>
+    <button class="secondary" id="downloadBtn">⬇ Download config (ttd_config.json)</button>
+    <button class="secondary" id="clearBtn">🗑 Clear</button>
+  </div>
+  <div id="status"></div>
+
+  <div class="card" style="margin-top:34px;">
+    <h2>What happens next</h2>
+    <div class="card-sub">This page cannot control ttdevasthanams.ap.gov.in directly — browsers block a page from reaching into another website. The steps below are done by the companion script, <code>ttd_booking_assist.py</code>, which runs on your own computer.</div>
+    <ol class="steps">
+      <li class="manual"><b>Log in</b> yourself in the browser window the script opens (mobile + OTP). <span class="tag manual">manual</span></li>
+      <li><b>Open</b> the Differently Abled / Sr. Citizen Darshan booking flow. <span class="tag auto">auto</span></li>
+      <li><b>Wait through the virtual queue</b> — the script polls for you, no need to babysit it. <span class="tag auto">auto</span></li>
+      <li><b>Select Category = Senior Citizen</b>, fill Age and "Accompany with Spouse". <span class="tag auto">auto</span></li>
+      <li class="manual"><b>Pick your date and confirm the time slot</b> yourself on the calendar. <span class="tag manual">manual</span></li>
+      <li><b>Fill Pilgrim Details</b> (name, age, gender, ID type/number) and <b>upload your ID photo</b> from the config. <span class="tag auto">auto</span></li>
+      <li class="manual"><b>Review and click the final Submit/Book button</b> yourself. <span class="tag manual">manual</span></li>
+    </ol>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7;margin-top:6px;">
+      Steps 1 and 5 stay manual on purpose: login needs your OTP, and the date/time pick is the fair,
+      first-come part of a high-demand quota that many other senior citizens are also waiting on — that
+      shouldn't be automated. The final submit (step 7) also stays manual since this script hasn't been
+      tested against the live site.
+    </p>
+    <pre>pip install playwright
+playwright install chromium
+python ttd_booking_assist.py</pre>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">
+      Place the downloaded <code>ttd_config.json</code> in the same folder as the script before running it.
+    </p>
+  </div>
+
+  <footer>// TTD.html · local-only, nothing leaves your browser</footer>
+
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const STORAGE_KEY = 'ttd_prefill_v1';
+
+  let spouseMode = 'No';
+  let photoData = null; // { filename, mime, base64 }
+
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      spouseMode = btn.dataset.spouse;
+      $('spouseFields').style.display = spouseMode === 'Yes' ? 'block' : 'none';
+    });
+  });
+
+  $('fileDrop').addEventListener('click', () => $('idPhoto').click());
+  $('idPhoto').addEventListener('change', () => {
+    const f = $('idPhoto').files[0];
+    $('fileErr').style.display = 'none';
+    if (!f) return;
+    if (f.size > 1024 * 1024) {
+      $('fileErr').style.display = 'block';
+      $('idPhoto').value = '';
+      photoData = null;
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      photoData = { filename: f.name, mime: f.type, base64: reader.result.split(',')[1] };
+      $('fileLabel').textContent = f.name;
+      $('fileDrop').classList.add('filled');
+    };
+    reader.readAsDataURL(f);
+  });
+
+  function collect() {
+    return {
+      pilgrim: {
+        name: $('name').value.trim(),
+        age: $('age').value.trim(),
+        gender: $('gender').value,
+        id_proof_type: $('idType').value,
+        id_number: $('idNumber').value.trim(),
+      },
+      mobile: $('mobile').value.trim(),
+      accompany_spouse: spouseMode,
+      spouse: spouseMode === 'Yes' ? {
+        name: $('spouseName').value.trim(),
+        age: $('spouseAge').value.trim(),
+        gender: $('spouseGender').value,
+        id_proof_type: $('spouseIdType').value,
+        id_number: $('spouseIdNumber').value.trim(),
+      } : null,
+      photo: photoData,
+    };
+  }
+
+  function validate(data) {
+    const missing = [];
+    if (!data.pilgrim.name) missing.push('Pilgrim Name');
+    if (!data.pilgrim.age) missing.push('Age');
+    if (!data.pilgrim.gender) missing.push('Gender');
+    if (!data.pilgrim.id_proof_type) missing.push('Photo ID Proof type');
+    if (!data.pilgrim.id_number) missing.push('ID Card Number');
+    if (!data.mobile || data.mobile.length !== 10) missing.push('valid 10-digit Mobile Number');
+    if (!data.photo) missing.push('ID Proof Photo');
+    return missing;
+  }
+
+  function showStatus(msg, isError) {
+    const s = $('status');
+    s.textContent = msg;
+    s.style.color = isError ? 'var(--accent4)' : 'var(--accent2)';
+    s.style.display = 'block';
+  }
+
+  $('saveBtn').addEventListener('click', () => {
+    const data = collect();
+    const missing = validate(data);
+    if (missing.length) { showStatus('Missing: ' + missing.join(', '), true); return; }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    showStatus('Saved locally in this browser ✓');
+  });
+
+  $('downloadBtn').addEventListener('click', () => {
+    const data = collect();
+    const missing = validate(data);
+    if (missing.length) { showStatus('Missing: ' + missing.join(', '), true); return; }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ttd_config.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showStatus('Downloaded ttd_config.json — keep it local, it is already in .gitignore ✓');
+  });
+
+  $('clearBtn').addEventListener('click', () => {
+    localStorage.removeItem(STORAGE_KEY);
+    document.querySelectorAll('input[type=text], input[type=number], input[type=tel]').forEach(i => i.value = '');
+    document.querySelectorAll('select').forEach(s => s.value = '');
+    $('idPhoto').value = '';
+    photoData = null;
+    $('fileLabel').textContent = 'Click to choose file…';
+    $('fileDrop').classList.remove('filled');
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.toggle-btn[data-spouse="No"]').classList.add('active');
+    spouseMode = 'No';
+    $('spouseFields').style.display = 'none';
+    showStatus('Cleared ✓');
+  });
+
+  // restore from localStorage on load
+  (function restore() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      $('name').value = data.pilgrim?.name || '';
+      $('age').value = data.pilgrim?.age || '';
+      $('gender').value = data.pilgrim?.gender || '';
+      $('idType').value = data.pilgrim?.id_proof_type || '';
+      $('idNumber').value = data.pilgrim?.id_number || '';
+      $('mobile').value = data.mobile || '';
+      if (data.accompany_spouse === 'Yes') {
+        document.querySelector('.toggle-btn[data-spouse="Yes"]').click();
+        $('spouseName').value = data.spouse?.name || '';
+        $('spouseAge').value = data.spouse?.age || '';
+        $('spouseGender').value = data.spouse?.gender || '';
+        $('spouseIdType').value = data.spouse?.id_proof_type || '';
+        $('spouseIdNumber').value = data.spouse?.id_number || '';
+      }
+      if (data.photo) {
+        photoData = data.photo;
+        $('fileLabel').textContent = data.photo.filename + ' (restored)';
+        $('fileDrop').classList.add('filled');
+      }
+    } catch (e) { /* ignore corrupt storage */ }
+  })();
+</script>
+
+</body>
+</html>

@@ -84,6 +84,9 @@ def handle_failure(action_desc: str, exc: Exception, manual_hint: str):
     pause(f"Could not {action_desc} ({text}). {manual_hint}")
 
 
+NON_VISUAL_TAGS = "style", "script", "link", "meta", "noscript"
+
+
 def find_field(page, label_text: str, placeholder: str = None, tag: str = "input", after_text: str = None):
     """Best-effort locator for a form control near a visual label.
 
@@ -92,31 +95,58 @@ def find_field(page, label_text: str, placeholder: str = None, tag: str = "input
     finding nothing for "Pilgrim Name" on a live run), so try several
     strategies in order and use whichever actually finds something.
 
-    If `after_text` is given (e.g. "Pilgrim Details"), the *first* strategy
-    tried is a DOM-proximity XPath scoped to elements appearing after that
-    anchor AND near `label_text` specifically -- both scoped, in one query.
-    This matters because some labels/placeholders repeat elsewhere on the
-    page (confirmed: "Enter Age" appears both in the top-level slot form
-    and in each Pilgrim Details block -- an unscoped placeholder search
-    silently fills the wrong field). Falls back to the unscoped versions
-    (get_by_label, get_by_placeholder, plain proximity) if that fails.
+    Strategy 0 (added after inspecting a real error log): the site's real
+    inputs carry a plain `label="..."` HTML attribute directly on the
+    element itself, e.g. <input ... label="Accompany with the Spouse"/>.
+    This is a first-class, unambiguous hook -- try it before anything
+    proximity-based. Matched case-insensitively (CSS `i` flag) since exact
+    label casing varies by field.
 
-    Every proximity match here tries the label's *own direct text* (XPath
-    text()) before falling back to its full descendant text (XPath '.').
-    On a real, deeply-nested DOM (this site is visually a Material-style
-    app with wrapper divs everywhere), contains(., label_text) can match
-    an ancestor wrapper whose *aggregate* text happens to contain the
-    label, not just the label element itself -- confirmed by reproducing
-    exactly this failure against a nested mock. text() only ever matches
-    an element's own direct text node, which is unambiguous.
+    If that isn't present, falls back to DOM-proximity XPath (scoped after
+    `after_text` if given, to avoid picking up a same-named field earlier
+    on the page -- confirmed necessary: "Enter Age" repeats in both the
+    top-level form and each Pilgrim Details block). These proximity
+    fallbacks exclude non-visual tags (<style>, <script>, ...) from the
+    "next element" match -- confirmed necessary: Next.js injects <style>
+    tags inline in the DOM near their component, and an unfiltered
+    following::*[1] can land on one of those instead of the real field.
+
+    Every proximity match also tries the label's own direct text (XPath
+    text()) before its full descendant text (XPath '.'), since '.' can
+    match an ancestor wrapper whose aggregate text merely contains the
+    label, not just the label element itself.
 
     Returns a Locator (which may match 0, 1, or more elements -- caller
     decides via .first / .nth(i)), or raises if nothing at all was found.
     """
+    tag_exclusion = "".join(f"[not(self::{t})]" for t in NON_VISUAL_TAGS)
+
+    # The [label=...] attribute match is unscoped by nature (it's a direct
+    # attribute selector, not a proximity search), so when after_text is
+    # given, scope it to elements after that anchor FIRST -- otherwise it
+    # matches the same-named field elsewhere on the page too (confirmed:
+    # unscoped [label="Age" i] matched the top-level Age field as well as
+    # both Pilgrim Details blocks' Age fields, shifting every index by one).
+    if after_text:
+        try:
+            xpath = f"xpath=//*[contains(text(), '{after_text}')]/following::*[@label='{label_text}']"
+            loc = page.locator(xpath)
+            if loc.count() > 0:
+                return loc
+        except Exception:
+            pass
+
+    try:
+        loc = page.locator(f'[label="{label_text}" i]')
+        if loc.count() > 0:
+            return loc
+    except Exception:
+        pass
+
     def _proximity(scope_prefix: str, tag_: str):
         for predicate in (f"text(), '{label_text}'", f"normalize-space(.), '{label_text}'"):
             try:
-                xpath = f"xpath={scope_prefix}//*[contains({predicate})]/following::{tag_}[1]"
+                xpath = f"xpath={scope_prefix}//*[contains({predicate})]/following::{tag_}{tag_exclusion}[1]"
                 loc = page.locator(xpath)
                 if loc.count() > 0:
                     return loc
@@ -128,7 +158,10 @@ def find_field(page, label_text: str, placeholder: str = None, tag: str = "input
         try:
             anchor_xpath = f"//*[contains(text(), '{after_text}')]"
             for label_predicate in (f"text(), '{label_text}'", f"normalize-space(.), '{label_text}'"):
-                xpath = f"xpath={anchor_xpath}/following::*[contains({label_predicate})]/following::{tag}[1]"
+                xpath = (
+                    f"xpath={anchor_xpath}/following::*[contains({label_predicate})]"
+                    f"/following::{tag}{tag_exclusion}[1]"
+                )
                 loc = page.locator(xpath)
                 if loc.count() > 0:
                     return loc
@@ -177,21 +210,63 @@ def select_dropdown_value(page, trigger_label: str, option_text: str, after_text
         pass
 
     try:
-        find_field(page, trigger_label, tag="*", after_text=after_text).nth(idx).click()
+        trigger = find_field(page, trigger_label, tag="*", after_text=after_text).nth(idx)
+        try:
+            trigger.click(timeout=3000)
+        except Exception:
+            # A nearby icon/overlay can intercept a normal click even when
+            # we've correctly targeted the real trigger element (confirmed
+            # live: a dropdown-arrow <img> sits over the input and steals
+            # pointer events). force=True does NOT reliably fix this --
+            # it still does a real pixel-coordinate click that the browser
+            # resolves via actual hit-testing, so it can silently "succeed"
+            # (no exception) while actually clicking the overlay instead of
+            # the input, with nothing left open (confirmed: reproduced
+            # exactly this against a mock -- force click returned cleanly
+            # but the popup never opened). dispatch_event is the only
+            # approach that reliably worked: it fires the DOM event
+            # directly on the target element, bypassing hit-testing
+            # entirely, so it can't be silently misdirected like this.
+            trigger.dispatch_event("click")
     except Exception as e:
         raise LookupError(f"could not click the '{trigger_label}' dropdown trigger: {e}")
 
-    try:
-        page.get_by_role("option", name=option_text, exact=True).first.click()
+    def _click_first_visible(locator, label):
+        # .first / .last only care about DOM order, not visibility -- with
+        # several duplicate popups on the page (e.g. Gender appears once
+        # per pilgrim block) and only one actually open at a time, that
+        # can click a match inside a *different, still-hidden* popup
+        # (confirmed: this caused S.No 1's Gender/Photo ID Proof to end up
+        # blank while S.No 2's got filled, purely from bad element choice,
+        # not a missing element). Walk matches and use the visible one.
+        try:
+            count = locator.count()
+        except Exception:
+            return False
+        for i in range(count):
+            candidate = locator.nth(i)
+            try:
+                if candidate.is_visible():
+                    candidate.click(timeout=3000)
+                    return True
+            except Exception:
+                continue
+        return False
+
+    # Short timeout on the role attempt: if role="option" isn't used at
+    # all, fail fast rather than burning the full default 30s per call.
+    if _click_first_visible(page.get_by_role("option", name=option_text, exact=True), "role"):
         return
-    except Exception:
-        pass
+
+    text_matches = page.get_by_text(option_text, exact=True)
+    if _click_first_visible(text_matches, "text"):
+        return
 
     try:
-        # The popup's option row was just added to the page, so it's the
-        # most recent matching text node -- .last avoids re-clicking the
-        # trigger's own (possibly identical) displayed value.
-        page.get_by_text(option_text, exact=True).last.click()
+        # Last resort: dispatch straight on the last DOM match regardless
+        # of visibility (bypasses hit-testing entirely, same rationale as
+        # the trigger click fallback above).
+        text_matches.last.dispatch_event("click")
     except Exception as e:
         raise LookupError(f"could not click option '{option_text}' in the '{trigger_label}' dropdown: {e}")
 

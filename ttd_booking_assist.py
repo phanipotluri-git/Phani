@@ -63,9 +63,89 @@ def load_config(path: Path) -> dict:
         return json.load(f)
 
 
+BROWSER_CLOSED_MARKERS = ("has been closed", "Target page, context or browser")
+
+
 def pause(message: str):
     print(f"\n>>> {message}")
     input(">>> Press Enter here once done... ")
+
+
+def handle_failure(action_desc: str, exc: Exception, manual_hint: str):
+    """Print what actually went wrong, and stop cleanly instead of looping
+    through more doomed steps if the browser/page itself is gone."""
+    text = str(exc)
+    if any(marker in text for marker in BROWSER_CLOSED_MARKERS):
+        sys.exit(
+            f"\nThe browser window was closed while trying to {action_desc}. "
+            "Nothing further can be automated once that happens -- re-run "
+            "the script to start over."
+        )
+    pause(f"Could not {action_desc} ({text}). {manual_hint}")
+
+
+def find_field(page, label_text: str, placeholder: str = None, tag: str = "input", after_text: str = None):
+    """Best-effort locator for a form control near a visual label.
+
+    The real TTD form does not reliably associate labels with their
+    controls via <label for=...> (confirmed: get_by_label timed out
+    finding nothing for "Pilgrim Name" on a live run), so try several
+    strategies in order and use whichever actually finds something.
+
+    If `after_text` is given (e.g. "Pilgrim Details"), the *first* strategy
+    tried is a DOM-proximity XPath scoped to elements appearing after that
+    anchor AND near `label_text` specifically -- both scoped, in one query:
+        //*[text() contains after_text]/following::*[text() contains label]
+            /following::tag[1]
+    This matters because some labels/placeholders repeat elsewhere on the
+    page (confirmed: "Enter Age" appears both in the top-level slot form
+    and in each Pilgrim Details block -- an unscoped placeholder search
+    silently fills the wrong field). Falls back to the unscoped versions
+    (get_by_label, get_by_placeholder, plain proximity) if that fails.
+
+    Returns a Locator (which may match 0, 1, or more elements -- caller
+    decides via .first / .nth(i)), or raises if nothing at all was found.
+    """
+    if after_text:
+        try:
+            xpath = (
+                f"xpath=//*[contains(text(), '{after_text}')]"
+                f"/following::*[contains(normalize-space(.), '{label_text}')]"
+                f"/following::{tag}[1]"
+            )
+            loc = page.locator(xpath)
+            if loc.count() > 0:
+                return loc
+        except Exception:
+            pass
+
+    try:
+        loc = page.get_by_label(label_text, exact=False)
+        if loc.count() > 0:
+            return loc
+    except Exception:
+        pass
+
+    if placeholder:
+        try:
+            loc = page.get_by_placeholder(placeholder, exact=False)
+            if loc.count() > 0:
+                return loc
+        except Exception:
+            pass
+
+    try:
+        xpath = (
+            f"xpath=//*[contains(normalize-space(.), '{label_text}')]"
+            f"/following::{tag}[1]"
+        )
+        loc = page.locator(xpath)
+        if loc.count() > 0:
+            return loc
+    except Exception:
+        pass
+
+    raise LookupError(f"no element found for label '{label_text}' (tried proximity/label/placeholder)")
 
 
 def wait_for_login(page):
@@ -125,35 +205,38 @@ def fill_category_age_spouse(page, cfg):
 
     print("Selecting Category = Senior Citizen...")
     try:
-        page.get_by_label("Category", exact=False).select_option(label="Senior Citizen")
-    except Exception:
+        find_field(page, "Category", tag="select").first.select_option(label="Senior Citizen")
+    except Exception as e:
         try:
             page.get_by_text("Category", exact=False).click()
             page.get_by_text("Senior Citizen", exact=True).click()
         except Exception:
-            pause("Could not auto-select Category. Please choose 'Senior Citizen' yourself.")
+            handle_failure("select Category", e, "Please choose 'Senior Citizen' yourself.")
 
     print(f"Filling Age = {pilgrim['age']}...")
     try:
-        page.get_by_label("Age", exact=False).first.fill(str(pilgrim["age"]))
-    except Exception:
-        pause(f"Could not auto-fill Age. Please enter {pilgrim['age']} yourself.")
+        find_field(page, "Age", placeholder="Enter Age", tag="input").first.fill(str(pilgrim["age"]))
+    except Exception as e:
+        handle_failure("fill Age", e, f"Please enter {pilgrim['age']} yourself.")
 
     print(f"Setting 'Accompany with the Spouse' = {accompany}...")
     # The site's dropdown options are ALL CAPS ("YES"/"NO"), but the config
     # value from TTD.html is Title Case ("Yes"/"No") -- try both.
+    last_exc = None
     for candidate in (accompany, accompany.upper(), accompany.lower()):
         try:
-            page.get_by_label("Accompany", exact=False).select_option(label=candidate)
+            find_field(page, "Accompany", tag="select").first.select_option(label=candidate)
             break
-        except Exception:
-            continue
+        except Exception as e:
+            last_exc = e
     else:
         try:
             page.get_by_text("Accompany with the Spouse", exact=False).click()
             page.get_by_text(accompany, exact=False).click()
         except Exception:
-            pause(f"Could not auto-select spouse option. Please choose '{accompany}' yourself.")
+            handle_failure(
+                "select spouse option", last_exc, f"Please choose '{accompany}' yourself."
+            )
 
 
 def fill_pilgrim_details(page, person: dict, s_no: int):
@@ -164,16 +247,18 @@ def fill_pilgrim_details(page, person: dict, s_no: int):
     # silently overwriting it instead of filling each pilgrim's own block.
     # Index by position (nth) instead, 0-based.
     idx = s_no - 1
+    anchor = "Pilgrim Details"
     try:
-        page.get_by_label("Pilgrim Name", exact=False).nth(idx).fill(person["name"])
-        page.get_by_label("Age", exact=False).nth(idx).fill(str(person["age"]))
-        page.get_by_label("Gender", exact=False).nth(idx).select_option(label=person["gender"])
-        page.get_by_label("Photo ID Proof", exact=False).nth(idx).select_option(label=person["id_proof_type"])
-        page.get_by_label("ID Card Number", exact=False).nth(idx).fill(person["id_number"])
+        find_field(page, "Pilgrim Name", placeholder="Enter Name", tag="input", after_text=anchor).nth(idx).fill(person["name"])
+        find_field(page, "Age", placeholder="Enter Age", tag="input", after_text=anchor).nth(idx).fill(str(person["age"]))
+        find_field(page, "Gender", tag="select", after_text=anchor).nth(idx).select_option(label=person["gender"])
+        find_field(page, "Photo ID Proof", tag="select", after_text=anchor).nth(idx).select_option(label=person["id_proof_type"])
+        find_field(page, "ID Card Number", placeholder="Enter ID Card Number", tag="input", after_text=anchor).nth(idx).fill(person["id_number"])
     except Exception as e:
-        pause(
-            f"Could not auto-fill all Pilgrim Details fields ({e}). "
-            f"Please check/complete them yourself for S.No {s_no}."
+        handle_failure(
+            f"fill all Pilgrim Details fields for S.No {s_no}",
+            e,
+            f"Please check/complete them yourself for S.No {s_no}.",
         )
 
 
@@ -199,17 +284,24 @@ def upload_photo(page, photo: dict):
     try:
         page.get_by_text("Upload document", exact=False).first.set_input_files(files=file_payload)
     except Exception as e:
-        pause(f"Could not auto-upload the photo ({e}). Please upload it yourself.")
+        handle_failure("upload the photo", e, "Please upload it yourself.")
 
 
 def confirm_mobile(page, mobile: str):
     print("Checking mobile number field...")
     try:
-        field = page.get_by_label("Mobile number", exact=False).first
+        field = find_field(page, "Mobile number", tag="input").first
         if field.input_value().strip() == "":
             field.fill(mobile)
-    except Exception:
-        pass  # mobile is often prefilled from the logged-in account
+    except Exception as e:
+        text = str(e)
+        if any(marker in text for marker in BROWSER_CLOSED_MARKERS):
+            sys.exit(
+                "\nThe browser window was closed while checking the mobile "
+                "number field. Re-run the script to start over."
+            )
+        print(f"(Could not check/fill Mobile number automatically: {text}. "
+              f"It's often prefilled from your account -- verify it yourself.)")
 
 
 def main():
@@ -256,8 +348,8 @@ def main():
         print("\nAttempting to click 'Continue'...")
         try:
             page.get_by_text("Continue", exact=True).click()
-        except Exception:
-            pause("Could not auto-click Continue. Please click it yourself.")
+        except Exception as e:
+            handle_failure("click Continue", e, "Please click it yourself.")
 
         pause(
             "Everything auto-fillable is done. Please REVIEW the booking "

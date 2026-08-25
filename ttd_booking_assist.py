@@ -41,6 +41,7 @@ prints what it's doing at each step so it's easy to see where to adjust.
 
 import base64
 import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -253,12 +254,22 @@ def select_dropdown_value(page, trigger_label: str, option_text: str, after_text
                 continue
         return False
 
+    # Case-insensitive exact match (regex, not a plain string) -- the site's
+    # option casing doesn't always match the config's (confirmed: dropdown
+    # shows "YES"/"NO" but config sends "Yes"). This matches all casings in
+    # ONE pass rather than retrying the whole click sequence per variant,
+    # which matters: re-clicking an already-open trigger to retry a failed
+    # case can toggle the popup closed again, an easy trap for a caller
+    # that isn't clicking (confirmed live: repeated attempts through
+    # different case variants all failed the same way).
+    option_pattern = re.compile(f"^{re.escape(option_text)}$", re.IGNORECASE)
+
     # Short timeout on the role attempt: if role="option" isn't used at
     # all, fail fast rather than burning the full default 30s per call.
-    if _click_first_visible(page.get_by_role("option", name=option_text, exact=True), "role"):
+    if _click_first_visible(page.get_by_role("option", name=option_pattern), "role"):
         return
 
-    text_matches = page.get_by_text(option_text, exact=True)
+    text_matches = page.get_by_text(option_pattern)
     if _click_first_visible(text_matches, "text"):
         return
 
@@ -339,17 +350,16 @@ def fill_category_age_spouse(page, cfg):
         handle_failure("fill Age", e, f"Please enter {pilgrim['age']} yourself.")
 
     print(f"Setting 'Accompany with the Spouse' = {accompany}...")
-    # The site's dropdown options are ALL CAPS ("YES"/"NO"), but the config
-    # value from TTD.html is Title Case ("Yes"/"No") -- try both.
-    last_exc = None
-    for candidate in (accompany, accompany.upper(), accompany.lower()):
-        try:
-            select_dropdown_value(page, "Accompany", candidate)
-            break
-        except Exception as e:
-            last_exc = e
-    else:
-        handle_failure("select spouse option", last_exc, f"Please choose '{accompany}' yourself.")
+    # select_dropdown_value matches option text case-insensitively in one
+    # pass, so a single call handles the site's ALL CAPS "YES"/"NO" against
+    # the config's Title Case "Yes"/"No" -- do NOT retry this with several
+    # case variants: each retry re-clicks the (already open) trigger, which
+    # can toggle the popup closed again and made every variant fail the
+    # same way (confirmed live).
+    try:
+        select_dropdown_value(page, "Accompany", accompany)
+    except Exception as e:
+        handle_failure("select spouse option", e, f"Please choose '{accompany}' yourself.")
 
 
 def fill_pilgrim_details(page, person: dict, s_no: int):

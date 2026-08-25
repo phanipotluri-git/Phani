@@ -94,28 +94,44 @@ def find_field(page, label_text: str, placeholder: str = None, tag: str = "input
 
     If `after_text` is given (e.g. "Pilgrim Details"), the *first* strategy
     tried is a DOM-proximity XPath scoped to elements appearing after that
-    anchor AND near `label_text` specifically -- both scoped, in one query:
-        //*[text() contains after_text]/following::*[text() contains label]
-            /following::tag[1]
+    anchor AND near `label_text` specifically -- both scoped, in one query.
     This matters because some labels/placeholders repeat elsewhere on the
     page (confirmed: "Enter Age" appears both in the top-level slot form
     and in each Pilgrim Details block -- an unscoped placeholder search
     silently fills the wrong field). Falls back to the unscoped versions
     (get_by_label, get_by_placeholder, plain proximity) if that fails.
 
+    Every proximity match here tries the label's *own direct text* (XPath
+    text()) before falling back to its full descendant text (XPath '.').
+    On a real, deeply-nested DOM (this site is visually a Material-style
+    app with wrapper divs everywhere), contains(., label_text) can match
+    an ancestor wrapper whose *aggregate* text happens to contain the
+    label, not just the label element itself -- confirmed by reproducing
+    exactly this failure against a nested mock. text() only ever matches
+    an element's own direct text node, which is unambiguous.
+
     Returns a Locator (which may match 0, 1, or more elements -- caller
     decides via .first / .nth(i)), or raises if nothing at all was found.
     """
+    def _proximity(scope_prefix: str, tag_: str):
+        for predicate in (f"text(), '{label_text}'", f"normalize-space(.), '{label_text}'"):
+            try:
+                xpath = f"xpath={scope_prefix}//*[contains({predicate})]/following::{tag_}[1]"
+                loc = page.locator(xpath)
+                if loc.count() > 0:
+                    return loc
+            except Exception:
+                continue
+        return None
+
     if after_text:
         try:
-            xpath = (
-                f"xpath=//*[contains(text(), '{after_text}')]"
-                f"/following::*[contains(normalize-space(.), '{label_text}')]"
-                f"/following::{tag}[1]"
-            )
-            loc = page.locator(xpath)
-            if loc.count() > 0:
-                return loc
+            anchor_xpath = f"//*[contains(text(), '{after_text}')]"
+            for label_predicate in (f"text(), '{label_text}'", f"normalize-space(.), '{label_text}'"):
+                xpath = f"xpath={anchor_xpath}/following::*[contains({label_predicate})]/following::{tag}[1]"
+                loc = page.locator(xpath)
+                if loc.count() > 0:
+                    return loc
         except Exception:
             pass
 
@@ -134,18 +150,50 @@ def find_field(page, label_text: str, placeholder: str = None, tag: str = "input
         except Exception:
             pass
 
+    loc = _proximity("", tag)
+    if loc is not None:
+        return loc
+
+    raise LookupError(f"no element found for label '{label_text}' (tried proximity/label/placeholder)")
+
+
+def select_dropdown_value(page, trigger_label: str, option_text: str, after_text: str = None, idx: int = 0):
+    """Set a dropdown field's value.
+
+    Confirmed live (screenshot from a real run): TTD's "Category" field is
+    NOT a native <select> -- it's a clickable div showing the current
+    value, which opens a floating popup listing clickable option rows
+    ("Senior Citizen", "Medical Cases", "Differently Abled") when clicked.
+    Gender / Photo ID Proof / Accompany-with-Spouse look visually
+    identical in earlier screenshots, so likely the same component.
+
+    Tries a real <select> first (harmless if it's not one), then falls
+    back to click-trigger-then-click-option for a custom combobox.
+    """
     try:
-        xpath = (
-            f"xpath=//*[contains(normalize-space(.), '{label_text}')]"
-            f"/following::{tag}[1]"
-        )
-        loc = page.locator(xpath)
-        if loc.count() > 0:
-            return loc
+        find_field(page, trigger_label, tag="select", after_text=after_text).nth(idx).select_option(label=option_text)
+        return
     except Exception:
         pass
 
-    raise LookupError(f"no element found for label '{label_text}' (tried proximity/label/placeholder)")
+    try:
+        find_field(page, trigger_label, tag="*", after_text=after_text).nth(idx).click()
+    except Exception as e:
+        raise LookupError(f"could not click the '{trigger_label}' dropdown trigger: {e}")
+
+    try:
+        page.get_by_role("option", name=option_text, exact=True).first.click()
+        return
+    except Exception:
+        pass
+
+    try:
+        # The popup's option row was just added to the page, so it's the
+        # most recent matching text node -- .last avoids re-clicking the
+        # trigger's own (possibly identical) displayed value.
+        page.get_by_text(option_text, exact=True).last.click()
+    except Exception as e:
+        raise LookupError(f"could not click option '{option_text}' in the '{trigger_label}' dropdown: {e}")
 
 
 def wait_for_login(page):
@@ -205,13 +253,9 @@ def fill_category_age_spouse(page, cfg):
 
     print("Selecting Category = Senior Citizen...")
     try:
-        find_field(page, "Category", tag="select").first.select_option(label="Senior Citizen")
+        select_dropdown_value(page, "Category", "Senior Citizen")
     except Exception as e:
-        try:
-            page.get_by_text("Category", exact=False).click()
-            page.get_by_text("Senior Citizen", exact=True).click()
-        except Exception:
-            handle_failure("select Category", e, "Please choose 'Senior Citizen' yourself.")
+        handle_failure("select Category", e, "Please choose 'Senior Citizen' yourself.")
 
     print(f"Filling Age = {pilgrim['age']}...")
     try:
@@ -225,18 +269,12 @@ def fill_category_age_spouse(page, cfg):
     last_exc = None
     for candidate in (accompany, accompany.upper(), accompany.lower()):
         try:
-            find_field(page, "Accompany", tag="select").first.select_option(label=candidate)
+            select_dropdown_value(page, "Accompany", candidate)
             break
         except Exception as e:
             last_exc = e
     else:
-        try:
-            page.get_by_text("Accompany with the Spouse", exact=False).click()
-            page.get_by_text(accompany, exact=False).click()
-        except Exception:
-            handle_failure(
-                "select spouse option", last_exc, f"Please choose '{accompany}' yourself."
-            )
+        handle_failure("select spouse option", last_exc, f"Please choose '{accompany}' yourself.")
 
 
 def fill_pilgrim_details(page, person: dict, s_no: int):
@@ -251,8 +289,8 @@ def fill_pilgrim_details(page, person: dict, s_no: int):
     try:
         find_field(page, "Pilgrim Name", placeholder="Enter Name", tag="input", after_text=anchor).nth(idx).fill(person["name"])
         find_field(page, "Age", placeholder="Enter Age", tag="input", after_text=anchor).nth(idx).fill(str(person["age"]))
-        find_field(page, "Gender", tag="select", after_text=anchor).nth(idx).select_option(label=person["gender"])
-        find_field(page, "Photo ID Proof", tag="select", after_text=anchor).nth(idx).select_option(label=person["id_proof_type"])
+        select_dropdown_value(page, "Gender", person["gender"], after_text=anchor, idx=idx)
+        select_dropdown_value(page, "Photo ID Proof", person["id_proof_type"], after_text=anchor, idx=idx)
         find_field(page, "ID Card Number", placeholder="Enter ID Card Number", tag="input", after_text=anchor).nth(idx).fill(person["id_number"])
     except Exception as e:
         handle_failure(

@@ -76,7 +76,7 @@ const txTbl=tbl(xw,[hdr(xw,["Date","Brand","Type","Invoice No","MRP (₹)","Disc
 // Bank details (no Cash)
 const kw=[1900,1700,2100,2066,1400,1300];
 const bankTbl=tbl(kw,[hdr(kw,["Brand","Bank","Account Name","Account No","IFSC","UPI"]),
- new TableRow({children:[cell('<<Start: SELECT(Brands[Brand], AND([Stmt Used], [Brand] <> "Cash"))>><<[Brand]>>',kw[0],{bold:true}),
+ new TableRow({children:[cell('<<Start: SELECT(Brands[Brand], AND([Stmt Used], NOT(CONTAINS([Brand], "Cash"))))>><<[Brand]>>',kw[0],{bold:true}),
   cell("<<[Bank Name]>>",kw[1]),cell("<<[Account Name]>>",kw[2]),cell("<<[Account No]>>",kw[3]),cell("<<[IFSC]>>",kw[4]),cell("<<[UPI]>><<End>>",kw[5])]})]);
 
 const sign=tbl([5233,5233],[new TableRow({children:[

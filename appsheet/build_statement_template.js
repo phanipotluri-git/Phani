@@ -45,11 +45,13 @@ const sw=[7466,3000];
 const sRow=(a,b,o={})=>new TableRow({children:[cell(a,sw[0],{bold:o.bold,fill:o.fill,color:o.color}),cell(b,sw[1],{align:R,bold:o.bold,fill:o.fill,color:o.color})]});
 const summary=tbl(sw,[
  sRow("Total Sales at MRP",mrpSales,{color:GREY}),
- sRow("Discount Given (<<[Discount %]>>)","<<[Discount Amount]>>",{color:GREY}),
+ sRow("Invoice Discount (MRP − Billed)","<<[MRP Sales (Total)] - [Sales Billed (Total)]>>",{color:GREY}),
+ sRow("TOD / JV Discount",sumT(`[Txn Type] = "JV"`),{color:GREY}),
+ sRow("Total Discount (<<[Discount %]>> of MRP)","<<[Discount Amount]>>",{bold:true,color:GREY}),
  sRow("Opening Balance",sumT(`[Txn Type] = "Opening Balance"`)),
  sRow("Add: Total Sales (Billed)",sumT(`[Txn Type] = "Sale"`)),
  sRow("Less: Stock Returns",sumT(`[Txn Type] = "Stock Return"`)),
- sRow("Less: JV / Adjustments",sumT(`[Txn Type] = "JV"`)),
+ sRow("Less: TOD / JV",sumT(`[Txn Type] = "JV"`)),
  sRow("Less: Total Payments Received",sumT(`[Txn Type] = "Payment"`)),
  sRow("BALANCE DUE (₹)","<<[Balance]>>",{bold:true,fill:GOLD})]);
 

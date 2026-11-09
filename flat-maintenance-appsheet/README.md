@@ -114,20 +114,20 @@ Add these with *Data → Columns → Add virtual column*.
 ```
 Collected      = SUM(SELECT(Collections[Amount], AND([Month] = [_THISROW].[MonthID], [Status] = "Verified")))
 Spent          = SUM(SELECT(Expenses[Amount], [Month] = [_THISROW].[MonthID]))
-ClosingBalance = SUM(SELECT(Months[OpeningBalance], [MonthID] <= [_THISROW].[MonthID]))
-               + SUM(SELECT(Collections[Amount], AND([Month] <= [_THISROW].[MonthID], [Status] = "Verified")))
-               - SUM(SELECT(Expenses[Amount], [Month] <= [_THISROW].[MonthID]))
+ClosingBalance = SUM(SELECT(Months[OpeningBalance], [MonthStart] <= [_THISROW].[MonthStart]))
+               + SUM(SELECT(Collections[Amount], AND([Month].[MonthStart] <= [_THISROW].[MonthStart], [Status] = "Verified")))
+               - SUM(SELECT(Expenses[Amount], [Month].[MonthStart] <= [_THISROW].[MonthStart]))
 OpeningCalc    = [ClosingBalance] - [Collected] + [Spent]
 PaidFlats      = SELECT(Collections[Flat], AND([Month] = [_THISROW].[MonthID], [Status] = "Verified"))
 UnpaidFlats    = Flats[FlatID] - [PaidFlats]
 ```
-(`MonthID` is text like `2026-11`, so `<=` compares months correctly.)
+(AppSheet can't use `<=` on text, so month order is compared with the **MonthStart** date. Every Months row needs MonthStart filled in.)
 
 **On Flats**
 ```
 TotalPaid     = SUM(SELECT(Collections[Amount], AND([Flat] = [_THISROW].[FlatID], [Status] = "Verified")))
 PaidThisMonth = IN([FlatID], SELECT(Collections[Flat], AND([Month] = TEXT(TODAY(), "YYYY-MM"), [Status] = "Verified")))
-PendingMonths = COUNT(Months[MonthID]) - COUNT(SELECT(Collections[CollectionID], AND([Flat] = [_THISROW].[FlatID], [Status] = "Verified")))
+PendingMonths = COUNT(SELECT(Months[MonthID], [MonthStart] <= TODAY())) - COUNT(SELECT(Collections[CollectionID], AND([Flat] = [_THISROW].[FlatID], [Status] = "Verified")))
 ```
 
 **On Contacts**
